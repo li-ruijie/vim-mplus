@@ -1,23 +1,25 @@
-" Vim syntax file
-" Language: Mplus .inp .out
-" Maintainer: J Micah Roos
-" Last Change: 4-3-2013
-" Version: 1
 if exists("b:current_syntax")
-    finish
+   finish
 endif
 setlocal iskeyword+=:
 syn case ignore
-syn keyword mplusSection TITLE: DATA: VARIABLE: MODEL: ANALYSIS: OUTPUT: DEFINE: SAVEDATA: PLOT: MODEL CONSTRAINT: INDIRECT:
+syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
+
 
 syn keyword mplusStatement ANALYSIS ARE CATEGORICAL DATA FILE LINK MISSING MODEL
 syn keyword mplusStatement MODINDICES NAMES OUTPUT PLOT PROCESSORS RESIDUAL SAMPSTAT STANDARDIZED
 syn keyword mplusStatement STD STDYX TITLE TYPE USEVAR USEVARIABLE VARIABLE
 syn keyword mplusStatement TECH1 TECH2 TECH3 TECH4 TECH5 TECH6 TECH7 TECH8
 syn keyword mplusStatement TECH9 TECH10 TECH11 TECH12 TECH13 TECH14 TECH15 TECH16
+syn match   mplusStatement "^SUMMARY OF DATA$"
 
 syn keyword mplusModel with by on WITH BY ON @ PWITH at AT xwith XWITH ind IND via VIA ALL
 syn match mplusComment "!.*$"
+
+syn match mplusSection
+    \ "^  \(TITLE\||DATA\|VARIABLE\|MODEL\|ANALYSIS\|OUTPUT\):"
+syn match mplusSection
+    \ "^  \(DEFINE\|SAVEDATA\|PLOT\|MODEL\|CONSTRAINT\|INDIRECT\):"
 
 "" from http://www.statmodel.com/language.html
 "" Data command
@@ -48,11 +50,12 @@ syn keyword mplusCommand GENERAL BASIC MEANSTRUCTURE MISSING MCOHORT H1 RANDOM C
 
 "" MODEL command
 highlight link mplusStatement Statement
-highlight link mplusCommand Statement
-highlight link mplusModel Function
-highlight link mplusSection Include
-highlight link mplusComment Comment
-highlight link mplusSpeccom Special
+highlight link mplusCommand   Statement
+highlight link mplusModel     Function
+highlight link mplusSection   Include
+highlight link mplusComment   Comment
+highlight link mplusSpeccom   Special
+highlight link mplusHeader    Type
 
 ""highlight link mplusFoo Error
 let b:current_syntax = "mplus"
