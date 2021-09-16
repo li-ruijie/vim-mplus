@@ -1,6 +1,3 @@
-if exists("b:current_syntax")
-   finish
-endif
 setlocal iskeyword+=:
 syn case ignore
 syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
@@ -56,6 +53,3 @@ highlight link mplusSection   Include
 highlight link mplusComment   Comment
 highlight link mplusSpeccom   Special
 highlight link mplusHeader    Type
-
-""highlight link mplusFoo Error
-let b:current_syntax = "mplus"
