@@ -1,0 +1,167 @@
+*vim-mplus.txt*  Syntax, folding, and tools for Mplus statistical software
+
+Author:  Li Ruijie
+License: GPL-3.0
+URL:     https://github.com/li-ruijie/vim-mplus
+
+==============================================================================
+CONTENTS                                                   *vim-mplus-contents*
+
+    1. Introduction .......................... |vim-mplus-introduction|
+    2. Installation .......................... |vim-mplus-installation|
+    3. Filetypes ............................. |vim-mplus-filetypes|
+    4. Syntax highlighting ................... |vim-mplus-syntax|
+    5. Folding ............................... |vim-mplus-folding|
+    6. Indentation ........................... |vim-mplus-indentation|
+    7. Completion ............................ |vim-mplus-completion|
+    8. Commands .............................. |vim-mplus-commands|
+    9. Configuration ......................... |vim-mplus-configuration|
+   10. Snippets .............................. |vim-mplus-snippets|
+
+==============================================================================
+1. INTRODUCTION                                       *vim-mplus-introduction*
+
+vim-mplus provides syntax highlighting, folding, indentation, completion,
+and commands for Mplus statistical software files (.inp input files and
+.out output files).
+
+    https://www.statmodel.com/
+
+==============================================================================
+2. INSTALLATION                                       *vim-mplus-installation*
+
+Using a plugin manager (e.g., vim-plug): >vim
+
+    Plug 'li-ruijie/vim-mplus'
+<
+Or copy the plugin contents to your Vim runtime directory.
+
+Run |:helptags| after installing to generate help tags: >vim
+
+    :helptags ALL
+<
+==============================================================================
+3. FILETYPES                                             *vim-mplus-filetypes*
+
+The plugin registers two filetypes:
+
+    *mplus-inp*    .inp files (Mplus input)
+    *mplus-out*    .out files (Mplus output)
+
+==============================================================================
+4. SYNTAX HIGHLIGHTING                                     *vim-mplus-syntax*
+
+Syntax rules are split across three files:
+
+    syntax/mplus.vim       Shared base (keywords, operators, comments)
+    syntax/mplus-inp.vim   Input: section headers and fold regions
+    syntax/mplus-out.vim   Output: all-caps headers and fold regions
+
+Highlight groups:~
+
+    *mplusStatement*   Links to |hl-Statement|
+                     Section names, output options, TECH keywords.
+
+    *mplusCommand*     Links to |hl-Statement|
+                     Command options and parameters (ESTIMATOR, STARTS, etc.).
+
+    *mplusModel*       Links to |hl-Function|
+                     Model operators: BY, ON, WITH, PWITH, AT, XWITH, etc.
+
+    *mplusSection*     Links to |hl-Include|
+                     Section headers (TITLE:, MODEL CONSTRAINT:, etc.)
+                     and class/level labels (%OVERALL%, %c#1%, etc.).
+
+    *mplusComment*     Links to |hl-Comment|
+                     Comments starting with !
+
+    *mplusSpeccom*     Links to |hl-Special|
+                     Connectors: ARE, IS.
+
+    *mplusHeader*      Links to |hl-Type|
+                     Timestamp headers in output files.
+
+==============================================================================
+5. FOLDING                                               *vim-mplus-folding*
+
+Both filetypes use 'foldmethod'=syntax (set in ftplugin files).
+
+Input files ~
+Each section (TITLE:, DATA:, VARIABLE:, MODEL:, etc.) is a separate fold.
+Compound headers such as MODEL CONSTRAINT: and DATA IMPUTATION: are
+recognised as fold boundaries.
+
+Output files ~
+Folds span between all-caps headers (e.g., MODEL FIT INFORMATION,
+STANDARDIZED MODEL RESULTS).
+
+==============================================================================
+6. INDENTATION                                         *vim-mplus-indentation*
+
+For mplus-inp files, 'indentexpr' applies two rules:
+
+    - Section headers (simple or compound) are placed at column 0.
+    - All other lines are indented by one 'shiftwidth'.
+
+==============================================================================
+7. COMPLETION                                           *vim-mplus-completion*
+
+Omni-completion is enabled for mplus-inp files via |syntaxcomplete|.
+Press CTRL-X CTRL-O in insert mode to complete any Mplus keyword defined
+in the syntax file.
+
+==============================================================================
+8. COMMANDS                                             *vim-mplus-commands*
+
+These commands are available in mplus-inp buffers:
+
+                                                                       *:Mout*
+:Mout           Open the corresponding .out file in a vertical split.
+                For example, if editing model.inp, opens model.out.
+
+                                                                       *:Mrun*
+:Mrun           Run Mplus on the current file. On Windows, launches via
+                `start cmd /c`. On Linux, runs in the background.
+                The executable can be configured with |g:mplus_executable|.
+
+==============================================================================
+9. CONFIGURATION                                   *vim-mplus-configuration*
+
+                                                         *g:mplus_executable*
+g:mplus_executable ~
+    Type: |String|
+    Default: "mplus"
+
+    Path to the Mplus executable used by |:Mrun|. Set this in your |vimrc|
+    if Mplus is not on your PATH: >vim
+
+        let g:mplus_executable = 'C:\Program Files\Mplus\mplus.exe'
+<
+    Or on Linux: >vim
+
+        let g:mplus_executable = '/opt/mplus/mplus'
+<
+==============================================================================
+10. SNIPPETS                                             *vim-mplus-snippets*
+
+UltiSnips snippets are provided for common Mplus analyses. Requires the
+UltiSnips plugin (https://github.com/SirVer/ultisnips). Type the trigger
+in insert mode and press <Tab> to expand.
+
+    Trigger   Description ~
+    inp       Full input file skeleton (TITLE/DATA/VARIABLE/MODEL/OUTPUT)
+    sec       Generic section header
+    cfa       Confirmatory factor analysis
+    sem       Structural equation model (CFA + structural paths)
+    lgm       Latent growth model
+    lca       Latent class analysis
+    gmm       Growth mixture model
+    mlm       Multilevel (TWOLEVEL) model
+    efa       Exploratory factor analysis
+    mc        Monte Carlo simulation
+    mi        Multiple imputation (DATA IMPUTATION)
+
+All snippets use tab stops for user input. See |UltiSnips| for usage.
+
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
