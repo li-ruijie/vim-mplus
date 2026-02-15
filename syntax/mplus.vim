@@ -22,6 +22,11 @@ syn match mplusNumber "-\?\.\d\+\([EDed][-+]\?\d\+\)\?"
 "" Parameter operators: * (start value/free), @ (fix value)
 syn match mplusModel "\*"
 syn match mplusModel "@"
+syn match mplusModel "#"
+syn match mplusModel "\["
+syn match mplusModel "\]"
+syn match mplusModel "("
+syn match mplusModel ")"
 
 "" Match patterns
 syn match mplusStatement "^SUMMARY OF DATA$"
@@ -58,6 +63,7 @@ syn keyword mplusCommand NOBSERVATIONS NGROUPS VARIANCES CHECK NOCHECK FREE
 syn keyword mplusCommand LISTWISE SWMATRIX NDATASETS WIDE LONG REPETITION
 syn keyword mplusCommand CUTPOINT TRANSFORM IMPUTE BINARY CONTINUOUS
 syn keyword mplusCommand DESCRIPTIVE DDROPOUT SDROPOUT
+syn keyword mplusCommand TWOPART WIDETOLONG LONGTOWIDE
 
 "" --- Variable command ---
 syn keyword mplusCommand USEOBSERVATIONS USEVARIABLES CENSORED

@@ -106,6 +106,9 @@ highlighted as mplusSection in the base file.
 │ @          │ Fix parameter value          │
 │ \|         │ Growth model pipe operator   │
 │ &          │ Lag operator (e.g., f&1)     │
+│ #          │ Category/inflation operator  │
+│ [ ]        │ Thresholds/Means             │
+│ ( )        │ Labels/Constraints           │
 └────────────┴──────────────────────────────┘
 ```
 
@@ -209,6 +212,9 @@ highlighted as mplusSection in the base file.
 │ DESCRIPTIVE   │ Descriptive statistics    │
 │ DDROPOUT      │ Dropout model (NMAR)      │
 │ SDROPOUT      │ Selection model (NMAR)    │
+│ TWOPART       │ Two-part model            │
+│ WIDETOLONG    │ Wide to long conversion   │
+│ LONGTOWIDE    │ Long to wide conversion   │
 └───────────────┴───────────────────────────┘
 ```
 
@@ -630,7 +636,7 @@ highlighted as mplusSection in the base file.
 ├─────────────────────────────────────────┼───────────┤
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header    │
 │ ^SUMMARY OF DATA$                       │ Statement │
-│ \C^\u[A-Z 0-9/,&():-]+$  (output only)  │ Header    │
+│ \C^\u[A-Z 0-9/,&():.*%-]+$ (output)     │ Header    │
 │ ^(SECTION):  (input, column 1)          │ Section   │
 │ ^(DATA|MODEL)(\s\S+)?:  (input)         │ Section   │
 │ ^  (SECTION):  (output, 2-space indent) │ Section   │

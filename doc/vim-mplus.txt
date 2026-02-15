@@ -70,7 +70,8 @@ Highlight groups:~
                      Command options and parameters (ESTIMATOR, STARTS, etc.).
 
     *mplusModel*       Links to |hl-Function|
-                     Model operators: BY, ON, WITH, |, &, *, @, SQRT, EXP, LOG.
+                     Model operators: BY, ON, WITH, |, &, *, @, #, [], (),
+                     SQRT, EXP, LOG.
 
     *mplusNumber*      Links to |hl-Number|
                      Integers, floats, and scientific notation (1.5E-3, 0.100D-05).
@@ -86,7 +87,7 @@ Highlight groups:~
                      Connectors: ARE, IS, =.
 
     *mplusHeader*      Links to |hl-Type|
-                     Timestamp headers in output files.
+                     Timestamp and section headers in output files.
 
 ==============================================================================
 5. FOLDING                                               *vim-mplus-folding*

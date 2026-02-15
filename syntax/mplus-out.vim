@@ -12,22 +12,22 @@ syn match mplusComment "!.*$"
 "" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
 syn match mplusSection "%[^%]\+%"
 
-"" Echoed input section headers (2-space indent)
+"" Echoed input section headers (2-space indent or flexible)
 syn match mplusSection
-    \ "^  \(TITLE\|VARIABLE\|DEFINE\|ANALYSIS\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
+    \ "^\s*\(TITLE\|VARIABLE\|DEFINE\|ANALYSIS\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
 syn match mplusSection
-    \ "^  \(DATA\|MODEL\)\(\s\+\S\+\)\?:"
+    \ "^\s*\(DATA\|MODEL\)\(\s\+\S\+\)\?:"
 
 "" Timestamp header (e.g., 01/15/2026  10:30 AM)
 syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
 
-"" All-caps section headers (includes &, parentheses, colon)
-syn match mplusHeader "\C^\u[A-Z 0-9/,&():-]\+$"
+"" All-caps section headers (includes &, parentheses, colon, dot, star, percent)
+syn match mplusHeader "\C^\u[A-Z 0-9/,&():.*%-]\+$"
 
 "" Fold output sections between all-caps headers
 syn region mplusFold matchgroup=mplusHeader
-    \ start="\C^\u[A-Z 0-9/,&():-]\+$"
-    \ end="\C^\ze\u[A-Z 0-9/,&():-]\+$"
+    \ start="\C^\u[A-Z 0-9/,&():.*%-]\+$"
+    \ end="\C^\ze\u[A-Z 0-9/,&():.*%-]\+$"
     \ fold keepend contains=mplusComment,mplusHeader,mplusSection
 
 "" Highlight links
