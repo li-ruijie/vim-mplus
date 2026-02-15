@@ -46,7 +46,7 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 │ mplusModel     │ Function  │ Model operators: BY, ON, *, @, |, &  │
 │ mplusNumber    │ Number    │ Integers, floats, scientific (E/D)   │
 │ mplusSection   │ Include   │ Section headers, %label% markers     │
-│ mplusComment   │ Comment   │ Comments starting with !             │
+│ mplusComment   │ Comment   │ Line comments (!) and block (!*…*!)  │
 │ mplusSpeccom   │ Special   │ ARE, IS, = connectors                │
 │ mplusHeader    │ Type      │ Timestamp and output headers         │
 └────────────────┴───────────┴──────────────────────────────────────┘
@@ -695,5 +695,6 @@ highlighted as mplusSection in the base file.
 │ -?.\d+([EDed][-+]?\d+)?                 │ Number  │
 │ * (start value), @ (fix value)          │ Model   │
 │ !.*$                                    │ Comment │
+│ ^\s*!\*...\*! (block comment)           │ Comment │
 └─────────────────────────────────────────┴─────────┘
 ```

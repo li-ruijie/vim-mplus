@@ -9,9 +9,6 @@ syn case ignore
 "" Timestamp header (e.g., 01/15/2026  10:30  AM)
 syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
 
-"" Comments
-syn match mplusComment "!.*$"
-
 "" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
 syn match mplusSection "%[^%]\+%"
 
@@ -151,6 +148,10 @@ syn keyword mplusCommand HAZARDC PATMISS PATPROBS REPSAVE STARTING POPULATION
 "" --- Confidence intervals ---
 syn keyword mplusCommand SYMMETRIC BCBOOTSTRAP EQTAIL HPD
 
+"" Comments (defined last to override other matches)
+syn match  mplusComment "!.*$"
+syn region mplusBlockComment start="^\s*!\*" end="\*!"
+
 "" Highlight links
 highlight link mplusStatement Statement
 highlight link mplusCommand   Statement
@@ -158,5 +159,6 @@ highlight link mplusModel     Function
 highlight link mplusNumber    Number
 highlight link mplusSection   Include
 highlight link mplusComment   Comment
+highlight link mplusBlockComment Comment
 highlight link mplusSpeccom   Special
 highlight link mplusHeader    Type

@@ -83,7 +83,8 @@ Highlight groups:~
                      and class/level labels (%OVERALL%, %c#1%, etc.).
 
     *mplusComment*     Links to |hl-Comment|
-                     Comments starting with !
+                     Line comments starting with !
+                     Block comments delimited by !* and *!
 
     *mplusSpeccom*     Links to |hl-Special|
                      Connectors: ARE, IS, =.
@@ -135,7 +136,7 @@ These commands are available in mplus-inp buffers:
 
                                                                        *:Mrun*
 :Mrun           Run Mplus on the current file. On Windows, launches via
-                `start cmd /c`. On Linux, runs in the background.
+                `start ""`. On Linux, runs in the background.
                 The executable can be configured with |g:mplus_executable|.
 
 ==============================================================================
