@@ -53,18 +53,18 @@ mplus-inp.vim                    mplus-out.vim
      │
      ▼
   mplus.vim (shared)
-┌─────────────┐
-│ case ignore │
-│ mplusTitle       │  ◄── TITLE body (to ;), no keywords
-│ mplusString      │  ◄── "…" and '…' quoted strings
-│ mplusStatement │
-│ mplusCommand   │
-│ mplusModel       │  ◄── BY, ON, *, @, |, &, SQRT…
-│ mplusNumber      │  ◄── integers, floats, E/D notation
-│ mplusSpeccom │
-│ mplusComment     │  ◄── block comments have @Spell
-│ mplusSection     │  ◄── %label% markers
-│ mplusHeader      │  ◄── timestamp only
+┌─────────────────┐
+│ case ignore     │
+│ mplusTitle      │  ◄── TITLE body (to ;), no keywords
+│ mplusString     │  ◄── "…" and '…' quoted strings
+│ mplusStatement  │
+│ mplusCommand    │
+│ mplusModel      │  ◄── BY, ON, *, @, |, &, SQRT…
+│ mplusNumber     │  ◄── integers, floats, E/D notation
+│ mplusSpeccom    │
+│ mplusComment    │  ◄── block comments have @Spell
+│ mplusSection    │  ◄── %label% markers
+│ mplusHeader     │  ◄── timestamp only
 │ highlight links │
 └─────────────────┘
      ▼
