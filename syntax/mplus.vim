@@ -12,6 +12,9 @@ syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
 "" Comments
 syn match mplusComment "!.*$"
 
+"" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
+syn match mplusSection "%[^%]\+%"
+
 "" Match patterns
 syn match mplusStatement "^SUMMARY OF DATA$"
 
@@ -26,10 +29,11 @@ syn keyword mplusStatement TECH9 TECH10 TECH11 TECH12 TECH13 TECH14 TECH15 TECH1
 syn keyword mplusStatement STDY CINTERVAL SVALUES NOCHISQUARE NOSERROR H1SE
 syn keyword mplusStatement H1TECH3 H1MODEL CROSSTABS FSCOEFFICIENT FSDETERMINACY
 syn keyword mplusStatement FSCOMPARISON BASEHAZARD LOGRANK ALIGNMENT ENTROPY MONTECARLO
+syn keyword mplusStatement PATTERNS
 
 "" Model operators
 syn keyword mplusModel WITH BY ON PWITH AT XWITH IND VIA ALL
-syn keyword mplusModel PON NEW MOD LOOP
+syn keyword mplusModel PON NEW MOD LOOP DO DIFF DIFFERENCE
 
 "" Connectors
 syn keyword mplusSpeccom ARE IS
@@ -49,6 +53,9 @@ syn keyword mplusCommand KNOWNCLASS TRAINING WITHIN BETWEEN PATTERN COHORT COPAT
 syn keyword mplusCommand COHRECODE TIMEMEASURES TNAMES MEMBERSHIP PROBABILITIES
 syn keyword mplusCommand DSURVIVAL FREQWEIGHT WTSCALE REPWEIGHTS SUBPOPULATION
 syn keyword mplusCommand SURVIVAL TIMECENSORED LAGGED TINTERVAL
+syn keyword mplusCommand BWEIGHT B2WEIGHT B3WEIGHT BWTSCALE FINITE CTIME
+syn keyword mplusCommand R3STEP BCH DU3STEP DE3STEP D3STEP D3STEPC BCHC
+syn keyword mplusCommand DCATEGORICAL DCONTINUOUS
 
 "" --- Define command ---
 syn keyword mplusCommand IF THEN CUT
@@ -77,7 +84,7 @@ syn keyword mplusCommand NORMAL SKEWNORMAL TDISTRIBUTION SKEWT PROBABILITY PROBI
 syn keyword mplusCommand GEOMIN QUARTIMIN OBLIMIN VARIMAX PROMAX TARGET
 syn keyword mplusCommand CRAWFER OBLIQUE ORTHOGONAL KAISER
 "" Resampling
-syn keyword mplusCommand JACKKNIFE BRR FAY
+syn keyword mplusCommand JACKKNIFE JACKKNIFE1 JACKKNIFE2 BRR FAY REPSE
 "" Bayesian
 syn keyword mplusCommand BITERATIONS FBITERATIONS CHAINS BSEED BCONVERGENCE THIN
 syn keyword mplusCommand MDITERATIONS KOLMOGOROV PRIOR GIBBS
@@ -85,18 +92,29 @@ syn keyword mplusCommand MDITERATIONS KOLMOGOROV PRIOR GIBBS
 syn keyword mplusCommand LRTBOOTSTRAP MULTIPLIER ADDFREQUENCY RITERATIONS AITERATIONS
 syn keyword mplusCommand RLOGCRITERION RCONVERGENCE ACONVERGENCE SIMPLICITY TOLERANCE
 syn keyword mplusCommand POINT STVALUES PREDICTOR INTERACTIVE
+syn keyword mplusCommand DISTRIBUTION ROTATION ROWSTANDARDIZATION METRIC NESTED
+syn keyword mplusCommand LRTSTARTS RSTARTS ASTARTS H1STARTS
+syn keyword mplusCommand RESCOVARIANCES RESCOV UNPERTURBED PERTURBED FS MH
+"" Hyphenated analysis keywords
+syn match mplusCommand "\<K-1STARTS\>"
+syn match mplusCommand "\<\(CF-VARIMAX\|CF-QUARTIMAX\|CF-EQUAMAX\|CF-PARSIMAX\|CF-FACPARSIM\)\>"
+syn match mplusCommand "\<\(BI-GEOMIN\|BI-CF-QUARTIMAX\)\>"
 
 "" --- Savedata command ---
 syn keyword mplusCommand MISSFLAG RECORDLENGTH SIGBETWEEN ESTIMATES RANKING
 syn keyword mplusCommand FSCORES CPROBABILITIES BPARAMETERS BCHWEIGHTS PROPENSITY
 syn keyword mplusCommand LRESPONSES MFILE MNAMES MFORMAT MMISSING MSELECT
+syn keyword mplusCommand SAMPLE RESULTS STDRESULTS STDDISTRIBUTION SAVE FACTORS
+syn keyword mplusCommand KAPLANMEIER ESTBASELINE RESPONSE H5RESULTS
+syn keyword mplusCommand MAHALANOBIS LOGLIKELIHOOD INFLUENCE COOKS
 
 "" --- Plot command ---
 syn keyword mplusCommand SERIES OUTLIERS MONITOR SENSITIVITY PLOT1 PLOT2 PLOT3
+syn keyword mplusCommand DRIFT
 
 "" --- Montecarlo command ---
 syn keyword mplusCommand NREPS SEED GENERATE CUTPOINTS GENCLASSES NCSIZES CSIZES
-syn keyword mplusCommand HAZARDC PATMISS PATPROBS REPSAVE
+syn keyword mplusCommand HAZARDC PATMISS PATPROBS REPSAVE STARTING
 
 "" --- Confidence intervals ---
 syn keyword mplusCommand SYMMETRIC BCBOOTSTRAP EQTAIL HPD

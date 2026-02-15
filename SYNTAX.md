@@ -22,6 +22,7 @@ mplus-inp.vim                    mplus-out.vim
            │ mplusModel       │
            │ mplusSpeccom     │
            │ mplusComment     │
+           │ mplusSection     │  ◄── %label% markers
            │ mplusHeader      │  ◄── timestamp only
            │ highlight links  │
            └──────────────────┘
@@ -32,12 +33,11 @@ mplus-inp.vim adds:          mplus-out.vim adds:
   mplusSection                 mplusSection
   (column 1)                   (2-space indent)
   ^TITLE:                      ^  TITLE:
-  ^DATA:                       ^  DATA:
-  ^MODEL:  ...                 ^  MODEL:  ...
+  ^(DATA|MODEL)(\s\S+)?:      ^  (DATA|MODEL)(\s\S+)?:
 
                                mplusHeader
                                (all-caps lines)
-                               ^\u[A-Z ]+$
+                               \C^\u[A-Z 0-9/,-]+$
 ```
 
 ## Highlight Groups
@@ -49,7 +49,7 @@ mplus-inp.vim adds:          mplus-out.vim adds:
 │ mplusStatement │ Statement │ Top-level and OUTPUT option keywords │
 │ mplusCommand   │ Statement │ Section-specific command options     │
 │ mplusModel     │ Function  │ Model specification operators        │
-│ mplusSection   │ Include   │ Section headers (TITLE:, MODEL:)     │
+│ mplusSection   │ Include   │ Section headers, %label% markers     │
 │ mplusComment   │ Comment   │ Comments starting with !             │
 │ mplusSpeccom   │ Special   │ ARE, IS connectors                   │
 │ mplusHeader    │ Type      │ Timestamp and output headers         │
@@ -59,44 +59,52 @@ mplus-inp.vim adds:          mplus-out.vim adds:
 ## Section Headers (mplusSection)
 
 Input files match at column 1; output files match with 2-space indent.
+Compound headers (`MODEL X:`, `DATA X:`) are matched via `\(\s\+\S\+\)\?`.
+Class/level labels (`%OVERALL%`, `%c#1%`, `%BETWEEN subject%`) are also
+highlighted as mplusSection in the base file.
 
 ```
-┌────────────┬────────────────────────────────────────────────────┐
-│ Section    │ Sub-sections                                       │
-├────────────┼────────────────────────────────────────────────────┤
-│ TITLE      │                                                    │
-│ DATA       │                                                    │
-│ VARIABLE   │                                                    │
-│ DEFINE     │                                                    │
-│ ANALYSIS   │                                                    │
-│ MODEL      │ CONSTRAINT INDIRECT POPULATION MISSING PRIORS TEST │
-│ OUTPUT     │                                                    │
-│ SAVEDATA   │                                                    │
-│ PLOT       │                                                    │
-│ MONTECARLO │                                                    │
-└────────────┴────────────────────────────────────────────────────┘
+┌────────────┬───────────────────────────────────────────────────────────┐
+│ Section    │ Sub-sections (compound headers)                           │
+├────────────┼───────────────────────────────────────────────────────────┤
+│ TITLE      │                                                           │
+│ DATA       │ IMPUTATION MISSING TWOPART WIDETOLONG LONGTOWIDE SURVIVAL │
+│            │ COHORT                                                    │
+│ VARIABLE   │                                                           │
+│ DEFINE     │                                                           │
+│ ANALYSIS   │                                                           │
+│ MODEL      │ CONSTRAINT INDIRECT POPULATION MISSING PRIORS PRIOR TEST  │
+│            │ MONTECARLO COVERAGE <user-label> POPULATION-<label>       │
+│ OUTPUT     │                                                           │
+│ SAVEDATA   │                                                           │
+│ PLOT       │                                                           │
+│ MONTECARLO │                                                           │
+└────────────┴───────────────────────────────────────────────────────────┘
 ```
 
 ## Model Operators (mplusModel)
 
 ```
-┌──────────┬──────────────────────────────┐
-│ Operator │ Usage                        │
-├──────────┼──────────────────────────────┤
-│ BY       │ Factor loading specification │
-│ ON       │ Regression                   │
-│ WITH     │ Covariance                   │
-│ PWITH    │ Pairwise covariance          │
-│ XWITH    │ Interaction (latent)         │
-│ AT       │ Fix/free parameter value     │
-│ IND      │ Indirect effect path         │
-│ VIA      │ Indirect effect path         │
-│ ALL      │ All variables shorthand      │
-│ PON      │ Partial ON                   │
-│ NEW      │ New parameter declaration    │
-│ MOD      │ Model modification           │
-│ LOOP     │ Loop over values             │
-└──────────┴──────────────────────────────┘
+┌────────────┬──────────────────────────────┐
+│ Operator   │ Usage                        │
+├────────────┼──────────────────────────────┤
+│ BY         │ Factor loading specification │
+│ ON         │ Regression                   │
+│ WITH       │ Covariance                   │
+│ PWITH      │ Pairwise covariance          │
+│ XWITH      │ Interaction (latent)         │
+│ AT         │ Fix/free parameter value     │
+│ IND        │ Indirect effect path         │
+│ VIA        │ Indirect effect path         │
+│ ALL        │ All variables shorthand      │
+│ PON        │ Partial ON                   │
+│ NEW        │ New parameter declaration    │
+│ MOD        │ Model modification           │
+│ LOOP       │ Loop over values             │
+│ DO         │ Loop construct               │
+│ DIFF       │ Parameter difference (short) │
+│ DIFFERENCE │ Parameter difference         │
+└────────────┴──────────────────────────────┘
 ```
 
 ## Statement Keywords (mplusStatement)
@@ -155,6 +163,7 @@ Input files match at column 1; output files match with 2-space indent.
 │ ALIGNMENT     │ Alignment optimization         │
 │ ENTROPY       │ Entropy statistic              │
 │ MONTECARLO    │ Monte Carlo integration info   │
+│ PATTERNS      │ Missing data patterns          │
 │ TECH1–TECH16  │ Technical outputs 1 through 16 │
 └───────────────┴────────────────────────────────┘
 ```
@@ -235,6 +244,21 @@ Input files match at column 1; output files match with 2-space indent.
 │ TIMECENSORED    │ Time censoring indicator      │
 │ LAGGED          │ Lagged variables              │
 │ TINTERVAL       │ Time interval                 │
+│ BWEIGHT         │ Between-level weight          │
+│ B2WEIGHT        │ Level-2 weight                │
+│ B3WEIGHT        │ Level-3 weight                │
+│ BWTSCALE        │ Between weight scaling        │
+│ FINITE          │ Finite population correction  │
+│ CTIME           │ Continuous time               │
+│ R3STEP          │ 3-step auxiliary (R)          │
+│ BCH             │ BCH auxiliary method          │
+│ DU3STEP         │ 3-step auxiliary (DU)         │
+│ DE3STEP         │ 3-step auxiliary (DE)         │
+│ D3STEP          │ 3-step auxiliary (D)          │
+│ D3STEPC         │ 3-step auxiliary (DC)         │
+│ BCHC            │ BCH auxiliary (corrected)     │
+│ DCATEGORICAL    │ Distal categorical auxiliary  │
+│ DCONTINUOUS     │ Distal continuous auxiliary   │
 └─────────────────┴───────────────────────────────┘
 ```
 
@@ -381,32 +405,43 @@ Input files match at column 1; output files match with 2-space indent.
 ### ANALYSIS — Rotation
 
 ```
-┌────────────┬────────────────────────────┐
-│ Keyword    │ Description                │
-├────────────┼────────────────────────────┤
-│ GEOMIN     │ Geomin rotation            │
-│ QUARTIMIN  │ Quartimin rotation         │
-│ OBLIMIN    │ Oblimin rotation           │
-│ VARIMAX    │ Varimax rotation           │
-│ PROMAX     │ Promax rotation            │
-│ TARGET     │ Target rotation            │
-│ CRAWFER    │ Crawford-Ferguson rotation │
-│ OBLIQUE    │ Oblique rotation           │
-│ ORTHOGONAL │ Orthogonal rotation        │
-│ KAISER     │ Kaiser normalization       │
-└────────────┴────────────────────────────┘
+┌──────────────────┬────────────────────────────┐
+│ Keyword          │ Description                │
+├──────────────────┼────────────────────────────┤
+│ GEOMIN           │ Geomin rotation            │
+│ QUARTIMIN        │ Quartimin rotation         │
+│ OBLIMIN          │ Oblimin rotation           │
+│ VARIMAX          │ Varimax rotation           │
+│ PROMAX           │ Promax rotation            │
+│ TARGET           │ Target rotation            │
+│ CRAWFER          │ Crawford-Ferguson rotation │
+│ OBLIQUE          │ Oblique rotation           │
+│ ORTHOGONAL       │ Orthogonal rotation        │
+│ KAISER           │ Kaiser normalization       │
+│ CF-VARIMAX*      │ CF varimax rotation        │
+│ CF-QUARTIMAX*    │ CF quartimax rotation      │
+│ CF-EQUAMAX*      │ CF equamax rotation        │
+│ CF-PARSIMAX*     │ CF parsimax rotation       │
+│ CF-FACPARSIM*    │ CF factor parsimony        │
+│ BI-GEOMIN*       │ Bi-factor geomin rotation  │
+│ BI-CF-QUARTIMAX* │ Bi-factor CF quartimax     │
+└──────────────────┴────────────────────────────┘
+* = syn match (contains hyphen)
 ```
 
 ### ANALYSIS — Resampling
 
 ```
-┌───────────┬───────────────────────────────┐
-│ Keyword   │ Description                   │
-├───────────┼───────────────────────────────┤
-│ JACKKNIFE │ Jackknife estimation          │
-│ BRR       │ Balanced repeated replication │
-│ FAY       │ Fay's adjustment              │
-└───────────┴───────────────────────────────┘
+┌────────────┬───────────────────────────────┐
+│ Keyword    │ Description                   │
+├────────────┼───────────────────────────────┤
+│ JACKKNIFE  │ Jackknife estimation          │
+│ JACKKNIFE1 │ Jackknife type 1              │
+│ JACKKNIFE2 │ Jackknife type 2              │
+│ BRR        │ Balanced repeated replication │
+│ FAY        │ Fay's adjustment              │
+│ REPSE      │ Replicated SE method          │
+└────────────┴───────────────────────────────┘
 ```
 
 ### ANALYSIS — Bayesian
@@ -431,49 +466,81 @@ Input files match at column 1; output files match with 2-space indent.
 ### ANALYSIS — Other
 
 ```
-┌───────────────┬──────────────────────────┐
-│ Keyword       │ Description              │
-├───────────────┼──────────────────────────┤
-│ LRTBOOTSTRAP  │ LRT bootstrap test       │
-│ MULTIPLIER    │ Multiplier adjustment    │
-│ ADDFREQUENCY  │ Add frequency            │
-│ RITERATIONS   │ Ridging iterations       │
-│ AITERATIONS   │ Acceleration iterations  │
-│ RLOGCRITERION │ Ridging log criterion    │
-│ RCONVERGENCE  │ Ridging convergence      │
-│ ACONVERGENCE  │ Acceleration convergence │
-│ SIMPLICITY    │ Simplicity function      │
-│ TOLERANCE     │ Tolerance criterion      │
-│ POINT         │ Point estimate           │
-│ STVALUES      │ Starting values          │
-│ PREDICTOR     │ Predictor specification  │
-│ INTERACTIVE   │ Interactive mode         │
-└───────────────┴──────────────────────────┘
+┌────────────────────┬──────────────────────────────┐
+│ Keyword            │ Description                  │
+├────────────────────┼──────────────────────────────┤
+│ LRTBOOTSTRAP       │ LRT bootstrap test           │
+│ MULTIPLIER         │ Multiplier adjustment        │
+│ ADDFREQUENCY       │ Add frequency                │
+│ RITERATIONS        │ Ridging iterations           │
+│ AITERATIONS        │ Acceleration iterations      │
+│ RLOGCRITERION      │ Ridging log criterion        │
+│ RCONVERGENCE       │ Ridging convergence          │
+│ ACONVERGENCE       │ Acceleration convergence     │
+│ SIMPLICITY         │ Simplicity function          │
+│ TOLERANCE          │ Tolerance criterion          │
+│ POINT              │ Point estimate               │
+│ STVALUES           │ Starting values              │
+│ PREDICTOR          │ Predictor specification      │
+│ INTERACTIVE        │ Interactive mode             │
+│ DISTRIBUTION       │ Distribution specification   │
+│ ROTATION           │ Rotation method              │
+│ ROWSTANDARDIZATION │ Row standardization          │
+│ METRIC             │ Alignment metric             │
+│ NESTED             │ Nested model specification   │
+│ LRTSTARTS          │ LRT random starts            │
+│ RSTARTS            │ Random starts (ridging)      │
+│ ASTARTS            │ Acceleration starts          │
+│ H1STARTS           │ H1 model starts              │
+│ K-1STARTS*         │ K-1 random starts            │
+│ RESCOVARIANCES     │ Residual covariances         │
+│ RESCOV             │ Residual covariances (short) │
+│ UNPERTURBED        │ Unperturbed start values     │
+│ PERTURBED          │ Perturbed start values       │
+│ FS                 │ Fisher scoring algorithm     │
+│ MH                 │ Metropolis-Hastings sampler  │
+└────────────────────┴──────────────────────────────┘
+* = syn match (contains hyphen)
+```
 ```
 
 ### SAVEDATA
 
 ```
-┌────────────────┬───────────────────────────────┐
-│ Keyword        │ Description                   │
-├────────────────┼───────────────────────────────┤
-│ MISSFLAG       │ Missing data flag value       │
-│ RECORDLENGTH   │ Record length                 │
-│ SIGBETWEEN     │ Significant between effects   │
-│ ESTIMATES      │ Save parameter estimates      │
-│ RANKING        │ Ranking information           │
-│ FSCORES        │ Factor scores                 │
-│ CPROBABILITIES │ Class probabilities           │
-│ BPARAMETERS    │ Bayesian parameter draws      │
-│ BCHWEIGHTS     │ BCH weights                   │
-│ PROPENSITY     │ Propensity scores             │
-│ LRESPONSES     │ Latent responses              │
-│ MFILE          │ Montecarlo output file        │
-│ MNAMES         │ Montecarlo variable names     │
-│ MFORMAT        │ Montecarlo format             │
-│ MMISSING       │ Montecarlo missing flag       │
-│ MSELECT        │ Montecarlo variable selection │
-└────────────────┴───────────────────────────────┘
+┌─────────────────┬───────────────────────────────┐
+│ Keyword         │ Description                   │
+├─────────────────┼───────────────────────────────┤
+│ MISSFLAG        │ Missing data flag value       │
+│ RECORDLENGTH    │ Record length                 │
+│ SIGBETWEEN      │ Significant between effects   │
+│ ESTIMATES       │ Save parameter estimates      │
+│ RANKING         │ Ranking information           │
+│ FSCORES         │ Factor scores                 │
+│ CPROBABILITIES  │ Class probabilities           │
+│ BPARAMETERS     │ Bayesian parameter draws      │
+│ BCHWEIGHTS      │ BCH weights                   │
+│ PROPENSITY      │ Propensity scores             │
+│ LRESPONSES      │ Latent responses              │
+│ MFILE           │ Montecarlo output file        │
+│ MNAMES          │ Montecarlo variable names     │
+│ MFORMAT         │ Montecarlo format             │
+│ MMISSING        │ Montecarlo missing flag       │
+│ MSELECT         │ Montecarlo variable selection │
+│ SAMPLE          │ Save sample data              │
+│ RESULTS         │ Save results                  │
+│ STDRESULTS      │ Save standardized results     │
+│ STDDISTRIBUTION │ Standardized distribution     │
+│ SAVE            │ Save specification            │
+│ FACTORS         │ Save factor scores            │
+│ KAPLANMEIER     │ Kaplan-Meier estimates        │
+│ ESTBASELINE     │ Estimated baseline hazard     │
+│ RESPONSE        │ Save response patterns        │
+│ H5RESULTS       │ HDF5 results output           │
+│ MAHALANOBIS     │ Mahalanobis distance          │
+│ LOGLIKELIHOOD   │ Observation log-likelihood    │
+│ INFLUENCE       │ Influence statistics          │
+│ COOKS           │ Cook's distance               │
+└─────────────────┴───────────────────────────────┘
 ```
 
 ### PLOT
@@ -489,6 +556,7 @@ Input files match at column 1; output files match with 2-space indent.
 │ PLOT1       │ Plot type 1               │
 │ PLOT2       │ Plot type 2               │
 │ PLOT3       │ Plot type 3               │
+│ DRIFT       │ Drift plot (continuous)   │
 └─────────────┴───────────────────────────┘
 ```
 
@@ -509,6 +577,7 @@ Input files match at column 1; output files match with 2-space indent.
 │ PATMISS    │ Missing data patterns         │
 │ PATPROBS   │ Pattern probabilities         │
 │ REPSAVE    │ Save replication results      │
+│ STARTING   │ Starting values specification │
 └────────────┴───────────────────────────────┘
 ```
 
@@ -544,9 +613,11 @@ Input files match at column 1; output files match with 2-space indent.
 ├─────────────────────────────────────────┼───────────┤
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header    │
 │ ^SUMMARY OF DATA$                       │ Statement │
-│ ^\u[A-Z ]+$  (output only)              │ Header    │
+│ \C^\u[A-Z 0-9/,-]+$  (output only)      │ Header    │
 │ ^(SECTION):  (input, column 1)          │ Section   │
+│ ^(DATA|MODEL)(\s\S+)?:  (input)         │ Section   │
 │ ^  (SECTION):  (output, 2-space indent) │ Section   │
+│ %[^%]+%  (class/level labels)           │ Section   │
 │ !.*$                                    │ Comment   │
 └─────────────────────────────────────────┴───────────┘
 ```

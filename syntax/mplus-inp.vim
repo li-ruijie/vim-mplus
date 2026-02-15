@@ -4,18 +4,16 @@ endif
 
 runtime syntax/mplus.vim
 
-"" Section headers at column 1 (input files)
+"" Section headers (input files)
 syn match mplusSection
-    \ "^\(TITLE\|DATA\|VARIABLE\|MODEL\|ANALYSIS\|OUTPUT\):"
+    \ "^\(TITLE\|VARIABLE\|DEFINE\|ANALYSIS\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
 syn match mplusSection
-    \ "^\(DEFINE\|SAVEDATA\|PLOT\|MONTECARLO\):"
-syn match mplusSection
-    \ "^\(CONSTRAINT\|INDIRECT\|POPULATION\|MISSING\|PRIORS\|TEST\):"
+    \ "^\(DATA\|MODEL\)\(\s\+\S\+\)\?:"
 
 "" Fold sections
 syn region mplusFold
-    \ start="^\(TITLE\|DATA\|VARIABLE\|DEFINE\|ANALYSIS\|MODEL\(\s\+\S\+\)\?\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
-    \ end="\ze^\(TITLE\|DATA\|VARIABLE\|DEFINE\|ANALYSIS\|MODEL\(\s\+\S\+\)\?\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
+    \ start="^\(TITLE\|DATA\(\s\+\S\+\)\?\|VARIABLE\|DEFINE\|ANALYSIS\|MODEL\(\s\+\S\+\)\?\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
+    \ end="\ze^\(TITLE\|DATA\(\s\+\S\+\)\?\|VARIABLE\|DEFINE\|ANALYSIS\|MODEL\(\s\+\S\+\)\?\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
     \ fold transparent keepend
 
 let b:current_syntax = "mplus-inp"
