@@ -8,8 +8,32 @@ Vim plugin for [Mplus](https://www.statmodel.com/) statistical software files (`
 - Syntax-based folding for input sections and output blocks
 - Indentation (section headers at column 0, body indented)
 - Omni-completion (`<C-x><C-o>`) for all Mplus keywords via `syntaxcomplete`
-- Formatting (`gq`): uppercase, expand abbreviations, split headers, replace IS/ARE with =
 - [UltiSnips](https://github.com/SirVer/ultisnips) snippets for common analyses (CFA, SEM, LGM, LCA, and more)
+
+### Formatter (`gq`)
+
+Mplus is case-insensitive and allows keywords to be abbreviated to four or
+more characters, `IS`/`ARE` to be used in place of `=`, and section headers
+to share a line with their content. This flexibility means input files
+written by different people—or pasted from different sources—can look wildly
+inconsistent. The `gq` formatter normalises a selection (or the whole file
+with `gggqG`) into a canonical style:
+
+- **Uppercase all code** — Mplus convention; makes keywords stand out from
+  variable names.
+- **Expand abbreviations** — e.g. `ANAL:` → `ANALYSIS:`, `ESTI` →
+  `ESTIMATOR`. Only unambiguous 4+ character abbreviations are expanded.
+- **Split section headers** — `DATA: FILE = ex.dat;` becomes two lines
+  (`DATA:` on its own line, body indented below) so each section is clearly
+  delimited and folds correctly.
+- **Replace `IS`/`ARE` with `=`** — all three are interchangeable in Mplus;
+  `=` is shorter and more common.
+- **Normalise whitespace** — tabs → 4 spaces, trailing whitespace removed.
+- **Re-indent** — section headers at column 0, body at one `shiftwidth`.
+
+TITLE sections and comments are left alone (whitespace cleanup only).
+The formatter also sets `fileformat=unix` and `fileencoding=utf-8` to avoid
+encoding issues across platforms.
 
 ## Installation
 
