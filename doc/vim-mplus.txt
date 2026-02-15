@@ -71,7 +71,9 @@ Highlight groups:~
 
     *mplusModel*       Links to |hl-Function|
                      Model operators: BY, ON, WITH, |, &, *, @, #, [], (),
-                     SQRT, EXP, LOG.
+                     SQRT, EXP, LOG, DO, END.
+                     Bayesian priors: N, IG, IW, D (used with ~).
+                     Logical/comparison: EQ, NE, GT, LT, GE, LE, AND, OR, NOT.
 
     *mplusNumber*      Links to |hl-Number|
                      Integers, floats, and scientific notation (1.5E-3, 0.100D-05).
@@ -108,7 +110,7 @@ STANDARDIZED MODEL RESULTS).
 
 For mplus-inp files, 'indentexpr' applies contextual rules:
 
-    - Section headers (simple or compound) are placed at column 0.
+    - Section headers (full or abbreviated) are placed at column 0.
     - Lines after a section header are indented by one 'shiftwidth'.
     - DO(...) loops increase indent by one level; END DO decreases it.
     - Other lines preserve the previous line's indentation.

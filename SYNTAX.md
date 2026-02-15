@@ -55,6 +55,7 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 
 Input files match at column 1; output files match with 2-space indent.
 Compound headers (`MODEL X:`, `DATA X:`) are matched via `\(\s\+\S\+\)\?`.
+Abbreviated section names are matched with `\w*` (e.g., `ANAL:` matches `ANALYSIS:`).
 Class/level labels (`%OVERALL%`, `%c#1%`, `%BETWEEN subject%`) are also
 highlighted as mplusSection in the base file.
 
@@ -97,6 +98,7 @@ highlighted as mplusSection in the base file.
 │ MOD        │ Model modification           │
 │ LOOP       │ Loop over values             │
 │ DO         │ Loop construct               │
+│ END        │ End loop (END DO)            │
 │ DIFF       │ Parameter difference (short) │
 │ DIFFERENCE │ Parameter difference         │
 │ SQRT       │ Square root function         │
@@ -114,6 +116,19 @@ highlighted as mplusSection in the base file.
 │ ~          │ Distribution (Bayesian)      │
 │ + - /      │ Arithmetic operators         │
 │ < >        │ Inequality constraints       │
+│ N          │ Normal prior (Bayesian)      │
+│ IG         │ Inverse Gamma prior          │
+│ IW         │ Inverse Wishart prior        │
+│ D          │ Dirichlet prior              │
+│ EQ         │ Equal comparison             │
+│ NE         │ Not equal comparison         │
+│ GT         │ Greater than                 │
+│ LT         │ Less than                    │
+│ GE         │ Greater than or equal        │
+│ LE         │ Less than or equal           │
+│ AND        │ Logical AND                  │
+│ OR         │ Logical OR                   │
+│ NOT        │ Logical NOT                  │
 └────────────┴──────────────────────────────┘
 ```
 
@@ -122,28 +137,26 @@ highlighted as mplusSection in the base file.
 ### Top-Level
 
 ```
-┌─────────────┬────────────────────────────┐
-│ Keyword     │ Description                │
-├─────────────┼────────────────────────────┤
-│ ANALYSIS    │ Analysis section keyword   │
-│ CATEGORICAL │ Categorical variable decl  │
-│ DATA        │ Data section keyword       │
-│ DEFINE      │ Define section keyword     │
-│ FILE        │ Data file specification    │
-│ LINK        │ Link function              │
-│ MISSING     │ Missing value code         │
-│ MODEL       │ Model section keyword      │
-│ NAMES       │ Variable names             │
-│ OUTPUT      │ Output section keyword     │
-│ PLOT        │ Plot section keyword       │
-│ PROCESSORS  │ Number of processors       │
-│ SAVEDATA    │ Savedata section keyword   │
-│ TITLE       │ Title section keyword      │
-│ TYPE        │ Analysis/data type         │
-│ USEVAR      │ Use variables (short form) │
-│ USEV        │ Use variables (short form) │
-│ VARIABLE    │ Variable section keyword   │
-└─────────────┴────────────────────────────┘
+┌────────────┬────────────────────────────┐
+│ Keyword    │ Description                │
+├────────────┼────────────────────────────┤
+│ ANALYSIS   │ Analysis section keyword   │
+│ ANAL       │ ANALYSIS (short form)      │
+│ DATA       │ Data section keyword       │
+│ DEFINE     │ Define section keyword     │
+│ DEFI       │ DEFINE (short form)        │
+│ MODEL      │ Model section keyword      │
+│ MODE       │ MODEL (short form)         │
+│ MONTECARLO │ Montecarlo section keyword │
+│ MONT       │ MONTECARLO (short form)    │
+│ OUTPUT     │ Output section keyword     │
+│ OUTP       │ OUTPUT (short form)        │
+│ PLOT       │ Plot section keyword       │
+│ SAVEDATA   │ Savedata section keyword   │
+│ TITLE      │ Title section keyword      │
+│ VARIABLE   │ Variable section keyword   │
+│ VARI       │ VARIABLE (short form)      │
+└────────────┴────────────────────────────┘
 ```
 
 ### Output Options
@@ -170,12 +183,16 @@ highlighted as mplusSection in the base file.
 │ FSCOEFFICIENT │ Factor score coefficients      │
 │ FSDETERMINACY │ Factor score determinacy       │
 │ FSCOMPARISON  │ Factor score comparison        │
-│ BASEHAZARD    │ Baseline hazard function       │
 │ LOGRANK       │ Log-rank test                  │
 │ ALIGNMENT     │ Alignment optimization         │
 │ ENTROPY       │ Entropy statistic              │
-│ MONTECARLO    │ Monte Carlo integration info   │
 │ PATTERNS      │ Missing data patterns          │
+│ CONSTRAINT    │ MODEL CONSTRAINT sub-section   │
+│ INDIRECT      │ MODEL INDIRECT sub-section     │
+│ POPULATION    │ MODEL POPULATION sub-section   │
+│ PRIORS        │ MODEL PRIORS sub-section       │
+│ COVERAGE      │ MODEL COVERAGE sub-section     │
+│ TEST          │ MODEL TEST sub-section         │
 │ TECH1–TECH16  │ Technical outputs 1 through 16 │
 └───────────────┴────────────────────────────────┘
 ```
@@ -220,6 +237,7 @@ highlighted as mplusSection in the base file.
 │ TWOPART       │ Two-part model            │
 │ WIDETOLONG    │ Wide to long conversion   │
 │ LONGTOWIDE    │ Long to wide conversion   │
+│ FILE          │ Data file specification   │
 └───────────────┴───────────────────────────┘
 ```
 
@@ -229,7 +247,11 @@ highlighted as mplusSection in the base file.
 ┌─────────────────┬───────────────────────────────┐
 │ Keyword         │ Description                   │
 ├─────────────────┼───────────────────────────────┤
+│ NAMES           │ Variable names                │
+│ USEVAR          │ Use variables (short form)    │
+│ USEV            │ Use variables (short form)    │
 │ USEOBSERVATIONS │ Select observations           │
+│ USEOBS          │ USEOBSERVATIONS (short form)  │
 │ USEVARIABLES    │ Select variables              │
 │ CENSORED        │ Censored variable declaration │
 │ NOMINAL         │ Nominal variable declaration  │
@@ -244,6 +266,7 @@ highlighted as mplusSection in the base file.
 │ TSCORES         │ Time scores                   │
 │ AUXILIARY       │ Auxiliary variables           │
 │ CLASSES         │ Latent class specification    │
+│ CLASS           │ CLASSES (short form)          │
 │ KNOWNCLASS      │ Known class membership        │
 │ TRAINING        │ Training data specification   │
 │ WITHIN          │ Within-level variables        │
@@ -280,6 +303,8 @@ highlighted as mplusSection in the base file.
 │ BCHC            │ BCH auxiliary (corrected)     │
 │ DCATEGORICAL    │ Distal categorical auxiliary  │
 │ DCONTINUOUS     │ Distal continuous auxiliary   │
+│ CATEGORICAL     │ Categorical variable decl     │
+│ MISSING         │ Missing value code            │
 └─────────────────┴───────────────────────────────┘
 ```
 
@@ -310,6 +335,7 @@ highlighted as mplusSection in the base file.
 │ EST              │ Estimation method (short form)  │
 │ PARAMETERIZATION │ Parameterization type           │
 │ ALGORITHM        │ Optimization algorithm          │
+│ ALGO             │ ALGORITHM (short form)          │
 │ ML               │ Maximum likelihood              │
 │ MLM              │ ML with robust SEs (mean adj)   │
 │ MLMV             │ ML with robust SEs (mean/var)   │
@@ -338,6 +364,9 @@ highlighted as mplusSection in the base file.
 │ LOGISTIC         │ Logistic regression             │
 │ ARIMA            │ Autoregressive integrated MA    │
 │ ARMA             │ Autoregressive moving average   │
+│ TYPE             │ Analysis/data type              │
+│ LINK             │ Link function                   │
+│ PROCESSORS       │ Number of processors            │
 └──────────────────┴─────────────────────────────────┘
 ```
 
@@ -373,6 +402,7 @@ highlighted as mplusSection in the base file.
 │ MCCONVERGENCE │ MC convergence               │
 │ MUCONVERGENCE │ MU convergence               │
 │ INTEGRATION   │ Numerical integration        │
+│ INT           │ INTEGRATION (short form)     │
 │ STANDARD      │ Standard integration         │
 │ GAUSSHERMITE  │ Gauss-Hermite quadrature     │
 │ MIXC          │ Mixture convergence          │
@@ -417,16 +447,22 @@ highlighted as mplusSection in the base file.
 ### ANALYSIS — Distribution and Parameterization
 
 ```
-┌───────────────┬──────────────────────────────┐
-│ Keyword       │ Description                  │
-├───────────────┼──────────────────────────────┤
-│ NORMAL        │ Normal distribution          │
-│ SKEWNORMAL    │ Skew-normal distribution     │
-│ TDISTRIBUTION │ t-distribution               │
-│ SKEWT         │ Skew-t distribution          │
-│ PROBABILITY   │ Probability parameterization │
-│ PROBIT        │ Probit link                  │
-└───────────────┴──────────────────────────────┘
+┌──────────────────┬────────────────────────────────┐
+│ Keyword          │ Description                    │
+├──────────────────┼────────────────────────────────┤
+│ NORMAL           │ Normal distribution            │
+│ SKEWNORMAL       │ Skew-normal distribution       │
+│ TDISTRIBUTION    │ t-distribution                 │
+│ SKEWT            │ Skew-t distribution            │
+│ PROBABILITY      │ Probability parameterization   │
+│ PROBIT           │ Probit link                    │
+│ POISSON          │ Poisson distribution           │
+│ NB               │ Negative binomial (short form) │
+│ NEGATIVEBINOMIAL │ Negative binomial distribution │
+│ ZIP              │ Zero-inflated Poisson          │
+│ ZINB             │ Zero-inflated neg. binomial    │
+│ GAMMA            │ Gamma distribution             │
+└──────────────────┴────────────────────────────────┘
 ```
 
 ### ANALYSIS — Rotation
@@ -496,6 +532,7 @@ highlighted as mplusSection in the base file.
 ┌────────────────────┬──────────────────────────────┐
 │ Keyword            │ Description                  │
 ├────────────────────┼──────────────────────────────┤
+│ BASEHAZARD         │ Baseline hazard function     │
 │ LRTBOOTSTRAP       │ LRT bootstrap test           │
 │ MULTIPLIER         │ Multiplier adjustment        │
 │ ADDFREQUENCY       │ Add frequency                │
@@ -595,10 +632,12 @@ highlighted as mplusSection in the base file.
 │ Keyword    │ Description                   │
 ├────────────┼───────────────────────────────┤
 │ NREPS      │ Number of replications        │
+│ NREP       │ NREPS (short form)            │
 │ SEED       │ Random seed                   │
 │ GENERATE   │ Data generation specification │
 │ CUTPOINTS  │ Cutpoints for categorization  │
 │ GENCLASSES │ Generated latent classes      │
+│ GENCLASS   │ GENCLASSES (short form)       │
 │ NCSIZES    │ Number of cluster sizes       │
 │ CSIZES     │ Cluster sizes                 │
 │ HAZARDC    │ Hazard function cutpoints     │
@@ -642,7 +681,7 @@ highlighted as mplusSection in the base file.
 ├─────────────────────────────────────────┼───────────┤
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header    │
 │ ^SUMMARY OF DATA$                       │ Statement │
-│ \C^\u[A-Z 0-9/,&():.*%-]+$ (output)     │ Header    │
+│ \C^\u[A-Z 0-9/,&():.*%=-]+$ (output)    │ Header    │
 │ ^(SECTION):  (input, column 1)          │ Section   │
 │ ^(DATA|MODEL)(\s\S+)?:  (input)         │ Section   │
 │ ^  (SECTION):  (output, 2-space indent) │ Section   │

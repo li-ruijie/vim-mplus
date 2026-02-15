@@ -4,8 +4,9 @@ endif
 let b:did_indent = 1
 
 setlocal indentexpr=GetMplusInpIndent()
-setlocal indentkeys+==TITLE:,=DATA:,=VARIABLE:,=DEFINE:,=ANALYSIS:,=MODEL:
-setlocal indentkeys+==OUTPUT:,=SAVEDATA:,=PLOT:,=MONTECARLO:
+setlocal indentkeys+==TITLE:,=TITL:,=DATA:,=VARIABLE:,=VARI:,=DEFINE:,=DEFI:
+setlocal indentkeys+==ANALYSIS:,=ANAL:,=MODEL:,=MODE:,=OUTPUT:,=OUTP:
+setlocal indentkeys+==SAVEDATA:,=SAVE:,=PLOT:,=MONTECARLO:,=MONT:
 setlocal indentkeys+==CONSTRAINT:,=INDIRECT:,=POPULATION:,=MISSING:,=PRIORS:,=TEST:
 setlocal indentkeys+==PRIOR:,=COVERAGE:
 setlocal indentkeys+==IMPUTATION:,=TWOPART:,=WIDETOLONG:,=LONGTOWIDE:,=SURVIVAL:,=COHORT:
@@ -28,18 +29,18 @@ function! GetMplusInpIndent()
     let ind = indent(lnum)
 
     "" Section headers always go to column 0
-    if line =~? '^\s*\(TITLE\|VARIABLE\|DEFINE\|ANALYSIS\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\)\s*:'
+    if line =~? '^\s*\(TITL\w*\|VARI\w*\|DEFI\w*\|ANAL\w*\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\)\s*:'
         return 0
     endif
-    if line =~? '^\s*\(DATA\|MODEL\)\(\s\+\S\+\)\?\s*:'
+    if line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+\S\+\)\?\s*:'
         return 0
     endif
 
     "" If previous line was a section header, indent one level
-    if prev_line =~? '^\s*\(TITLE\|VARIABLE\|DEFINE\|ANALYSIS\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\)\s*:'
+    if prev_line =~? '^\s*\(TITL\w*\|VARI\w*\|DEFI\w*\|ANAL\w*\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\)\s*:'
         return shiftwidth()
     endif
-    if prev_line =~? '^\s*\(DATA\|MODEL\)\(\s\+\S\+\)\?\s*:'
+    if prev_line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+\S\+\)\?\s*:'
         return shiftwidth()
     endif
 
