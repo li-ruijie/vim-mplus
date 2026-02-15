@@ -16,7 +16,7 @@ syn match mplusSection
 "" Fold output sections
 syn region mplusFold
     \ start="\C^\u[A-Z 0-9/,-]\+$"
-    \ end="\ze\C^\u[A-Z 0-9/,-]\+$"
+    \ end="\C^\ze\u[A-Z 0-9/,-]\+$"
     \ fold transparent keepend
 
 let b:current_syntax = "mplus-out"
