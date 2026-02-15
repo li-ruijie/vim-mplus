@@ -502,7 +502,6 @@ highlighted as mplusSection in the base file.
 └────────────────────┴──────────────────────────────┘
 * = syn match (contains hyphen)
 ```
-```
 
 ### SAVEDATA
 
