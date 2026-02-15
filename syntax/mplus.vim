@@ -15,11 +15,19 @@ syn match mplusComment "!.*$"
 "" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
 syn match mplusSection "%[^%]\+%"
 
+"" Numbers: integers, floats, scientific notation (1.5E-3, 0.100D-05)
+syn match mplusNumber "-\?\d\+\.\?\d*\([EDed][-+]\?\d\+\)\?"
+syn match mplusNumber "-\?\.\d\+\([EDed][-+]\?\d\+\)\?"
+
+"" Parameter operators: * (start value/free), @ (fix value)
+syn match mplusModel "\*"
+syn match mplusModel "@"
+
 "" Match patterns
 syn match mplusStatement "^SUMMARY OF DATA$"
 
 "" Statement keywords
-syn keyword mplusStatement ANALYSIS CATEGORICAL FILE LINK MISSING
+syn keyword mplusStatement ANALYSIS CATEGORICAL DEFINE FILE LINK MISSING SAVEDATA
 syn match   mplusStatement "\<DATA\>"
 syn match   mplusStatement "\<MODEL\>"
 syn keyword mplusStatement MODINDICES NAMES OUTPUT PLOT PROCESSORS RESIDUAL SAMPSTAT STANDARDIZED
@@ -129,6 +137,7 @@ syn keyword mplusCommand SYMMETRIC BCBOOTSTRAP EQTAIL HPD
 highlight link mplusStatement Statement
 highlight link mplusCommand   Statement
 highlight link mplusModel     Function
+highlight link mplusNumber    Number
 highlight link mplusSection   Include
 highlight link mplusComment   Comment
 highlight link mplusSpeccom   Special

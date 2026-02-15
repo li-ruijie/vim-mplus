@@ -8,36 +8,30 @@ case-insensitive. Source: <https://www.statmodel.com/language.html>.
 ```
 mplus-inp.vim                    mplus-out.vim
 (*.inp files)                    (*.out files)
-     │                                │
-     │  runtime syntax/mplus.vim      │  runtime syntax/mplus.vim
-     │                                │
-     └──────────┐          ┌──────────┘
-                │          │
-                ▼          ▼
-              mplus.vim (shared)
-           ┌──────────────────┐
-           │ iskeyword, case  │
-           │ mplusStatement   │
-           │ mplusCommand     │
-           │ mplusModel       │
-           │ mplusSpeccom     │
-           │ mplusComment     │
-           │ mplusSection     │  ◄── %label% markers
-           │ mplusHeader      │  ◄── timestamp only
-           │ highlight links  │
-           └──────────────────┘
-                │          │
-     ┌──────────┘          └──────────┐
-     ▼                                ▼
-mplus-inp.vim adds:          mplus-out.vim adds:
-  mplusFold regions              mplusSection
-  matchgroup=mplusSection        (2-space indent)
-  ^TITLE:  (no keywords)        ^  TITLE:
-  ^(DATA|MODEL)(\s\S+)?:        ^  (DATA|MODEL)(\s\S+)?:
-
-                                 mplusHeader
-                                 (all-caps lines)
-                                 \C^\u[A-Z 0-9/,-]+$
+     │                           (standalone — no shared base)
+     │  runtime syntax/mplus.vim
+     │
+     ▼
+  mplus.vim (shared)
+┌─────────────────┐
+│ iskeyword, case │
+│ mplusStatement  │
+│ mplusCommand    │
+│ mplusModel       │  ◄── BY, ON, *, @, |, &, SQRT…
+│ mplusNumber      │  ◄── integers, floats, E/D notation
+│ mplusSpeccom │
+│ mplusComment │
+│ mplusSection     │  ◄── %label% markers
+│ mplusHeader      │  ◄── timestamp only
+│ highlight links │
+└─────────────────┘
+     ▼
+mplus-inp.vim adds:          mplus-out.vim defines:
+  mplusFold regions            mplusComment  (! comments)
+  matchgroup=mplusSection      mplusSection  (%labels%, indented headers)
+  ^TITLE:  (no keywords)      mplusHeader   (timestamp + all-caps lines)
+  ^(DATA|MODEL)(\s\S+)?:      mplusFold     (between all-caps headers)
+                               \C^\u[A-Z 0-9/,&():-]+$
 ```
 
 ## Highlight Groups
@@ -48,10 +42,11 @@ mplus-inp.vim adds:          mplus-out.vim adds:
 ├────────────────┼───────────┼──────────────────────────────────────┤
 │ mplusStatement │ Statement │ Top-level and OUTPUT option keywords │
 │ mplusCommand   │ Statement │ Section-specific command options     │
-│ mplusModel     │ Function  │ Model specification operators        │
+│ mplusModel     │ Function  │ Model operators: BY, ON, *, @, |, &  │
+│ mplusNumber    │ Number    │ Integers, floats, scientific (E/D)   │
 │ mplusSection   │ Include   │ Section headers, %label% markers     │
 │ mplusComment   │ Comment   │ Comments starting with !             │
-│ mplusSpeccom   │ Special   │ ARE, IS connectors                   │
+│ mplusSpeccom   │ Special   │ ARE, IS, = connectors                │
 │ mplusHeader    │ Type      │ Timestamp and output headers         │
 └────────────────┴───────────┴──────────────────────────────────────┘
 ```
@@ -107,6 +102,8 @@ highlighted as mplusSection in the base file.
 │ SQRT       │ Square root function         │
 │ EXP        │ Exponential function         │
 │ LOG        │ Natural logarithm function   │
+│ *          │ Start value / free parameter │
+│ @          │ Fix parameter value          │
 │ \|         │ Growth model pipe operator   │
 │ &          │ Lag operator (e.g., f&1)     │
 └────────────┴──────────────────────────────┘
@@ -123,6 +120,7 @@ highlighted as mplusSection in the base file.
 │ ANALYSIS    │ Analysis section keyword   │
 │ CATEGORICAL │ Categorical variable decl  │
 │ DATA        │ Data section keyword       │
+│ DEFINE      │ Define section keyword     │
 │ FILE        │ Data file specification    │
 │ LINK        │ Link function              │
 │ MISSING     │ Missing value code         │
@@ -131,6 +129,7 @@ highlighted as mplusSection in the base file.
 │ OUTPUT      │ Output section keyword     │
 │ PLOT        │ Plot section keyword       │
 │ PROCESSORS  │ Number of processors       │
+│ SAVEDATA    │ Savedata section keyword   │
 │ TITLE       │ Title section keyword      │
 │ TYPE        │ Analysis/data type         │
 │ USEVAR      │ Use variables (short form) │
@@ -631,11 +630,14 @@ highlighted as mplusSection in the base file.
 ├─────────────────────────────────────────┼───────────┤
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header    │
 │ ^SUMMARY OF DATA$                       │ Statement │
-│ \C^\u[A-Z 0-9/,-]+$  (output only)      │ Header    │
+│ \C^\u[A-Z 0-9/,&():-]+$  (output only)  │ Header    │
 │ ^(SECTION):  (input, column 1)          │ Section   │
 │ ^(DATA|MODEL)(\s\S+)?:  (input)         │ Section   │
 │ ^  (SECTION):  (output, 2-space indent) │ Section   │
 │ %[^%]+%  (class/level labels)           │ Section   │
+│ -?\d+\.?\d*([EDed][-+]?\d+)?            │ Number    │
+│ -?.\d+([EDed][-+]?\d+)?                 │ Number    │
+│ * (start value), @ (fix value)          │ Model     │
 │ !.*$                                    │ Comment   │
 └─────────────────────────────────────────┴───────────┘
 ```

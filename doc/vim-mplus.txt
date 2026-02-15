@@ -53,9 +53,13 @@ The plugin registers two filetypes:
 
 Syntax rules are split across three files:
 
-    syntax/mplus.vim       Shared base (keywords, operators, comments)
-    syntax/mplus-inp.vim   Input: section headers and fold regions
-    syntax/mplus-out.vim   Output: all-caps headers and fold regions
+    syntax/mplus.vim       Shared base (keywords, operators, numbers, comments)
+    syntax/mplus-inp.vim   Input: sources mplus.vim, section headers, fold regions
+    syntax/mplus-out.vim   Output: standalone (does not source mplus.vim),
+                           all-caps headers, fold regions
+
+Output files do not source the shared base because Mplus keywords appear
+as plain English in output text and should not be highlighted.
 
 Highlight groups:~
 
@@ -66,7 +70,10 @@ Highlight groups:~
                      Command options and parameters (ESTIMATOR, STARTS, etc.).
 
     *mplusModel*       Links to |hl-Function|
-                     Model operators: BY, ON, WITH, |, &, SQRT, EXP, LOG, etc.
+                     Model operators: BY, ON, WITH, |, &, *, @, SQRT, EXP, LOG.
+
+    *mplusNumber*      Links to |hl-Number|
+                     Integers, floats, and scientific notation (1.5E-3, 0.100D-05).
 
     *mplusSection*     Links to |hl-Include|
                      Section headers (TITLE:, MODEL CONSTRAINT:, etc.)

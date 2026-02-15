@@ -2,10 +2,15 @@ if exists("b:current_syntax")
    finish
 endif
 
-runtime syntax/mplus.vim
+"" Output files do not source mplus.vim — keywords like RANDOM, SEED,
+"" CHAINS etc. appear as plain English in output text and should not
+"" be highlighted. Only comments, headers, and section labels apply.
 
-"" Uppercase section headers in output
-syn match mplusHeader "\C^\u[A-Z 0-9/,-]\+$"
+"" Comments
+syn match mplusComment "!.*$"
+
+"" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
+syn match mplusSection "%[^%]\+%"
 
 "" Echoed input section headers (2-space indent)
 syn match mplusSection
@@ -13,10 +18,21 @@ syn match mplusSection
 syn match mplusSection
     \ "^  \(DATA\|MODEL\)\(\s\+\S\+\)\?:"
 
-"" Fold output sections
-syn region mplusFold
-    \ start="\C^\u[A-Z 0-9/,-]\+$"
-    \ end="\C^\ze\u[A-Z 0-9/,-]\+$"
-    \ fold transparent keepend
+"" Timestamp header (e.g., 01/15/2026  10:30 AM)
+syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
+
+"" All-caps section headers (includes &, parentheses, colon)
+syn match mplusHeader "\C^\u[A-Z 0-9/,&():-]\+$"
+
+"" Fold output sections between all-caps headers
+syn region mplusFold matchgroup=mplusHeader
+    \ start="\C^\u[A-Z 0-9/,&():-]\+$"
+    \ end="\C^\ze\u[A-Z 0-9/,&():-]\+$"
+    \ fold keepend contains=mplusComment,mplusHeader,mplusSection
+
+"" Highlight links
+highlight link mplusSection Include
+highlight link mplusComment Comment
+highlight link mplusHeader  Type
 
 let b:current_syntax = "mplus-out"
