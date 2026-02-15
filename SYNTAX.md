@@ -142,7 +142,6 @@ highlighted as mplusSection in the base file.
 │ TYPE        │ Analysis/data type         │
 │ USEVAR      │ Use variables (short form) │
 │ USEV        │ Use variables (short form) │
-│ USEVARIABLE │ Use variables              │
 │ VARIABLE    │ Variable section keyword   │
 └─────────────┴────────────────────────────┘
 ```
@@ -198,6 +197,7 @@ highlighted as mplusSection in the base file.
 │ STDEVIATIONS  │ Standard deviations input │
 │ IMPUTATION    │ Multiple imputation data  │
 │ NOBSERVATIONS │ Number of observations    │
+│ NOBS          │ Number of observations    │
 │ NGROUPS       │ Number of groups          │
 │ VARIANCES     │ Variance input            │
 │ CHECK         │ Check data                │
@@ -307,6 +307,7 @@ highlighted as mplusSection in the base file.
 │ Keyword          │ Description                     │
 ├──────────────────┼─────────────────────────────────┤
 │ ESTIMATOR        │ Estimation method               │
+│ EST              │ Estimation method (short form)  │
 │ PARAMETERIZATION │ Parameterization type           │
 │ ALGORITHM        │ Optimization algorithm          │
 │ ML               │ Maximum likelihood              │

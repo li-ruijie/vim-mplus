@@ -106,10 +106,12 @@ STANDARDIZED MODEL RESULTS).
 ==============================================================================
 6. INDENTATION                                         *vim-mplus-indentation*
 
-For mplus-inp files, 'indentexpr' applies two rules:
+For mplus-inp files, 'indentexpr' applies contextual rules:
 
     - Section headers (simple or compound) are placed at column 0.
-    - All other lines are indented by one 'shiftwidth'.
+    - Lines after a section header are indented by one 'shiftwidth'.
+    - DO(...) loops increase indent by one level; END DO decreases it.
+    - Other lines preserve the previous line's indentation.
 
 ==============================================================================
 7. COMPLETION                                           *vim-mplus-completion*

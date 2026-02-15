@@ -7,7 +7,7 @@ if !exists('g:mplus_executable')
   let g:mplus_executable = 'mplus'
 endif
 
-command! Mout vsp <bar> e %:r.out <bar> exe "normal \<c-w>\<c-w>"
+command! Mout vsp <bar> e %:r.out <bar> wincmd p
 
 if has('win32')
   command! Mrun execute '!start cmd /c ' . g:mplus_executable . ' ' . shellescape(expand('%'))
