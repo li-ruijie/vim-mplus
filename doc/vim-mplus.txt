@@ -141,17 +141,26 @@ with |gq|. The formatter performs the following operations on the
 selected range:
 
     - Replaces tabs with 4 spaces and strips trailing whitespace.
+    - Preserves TITLE body lines (free-form text, whitespace cleanup only).
+    - Preserves comment lines (whitespace cleanup only).
     - Splits section headers onto their own line (e.g.,
       "DATA: FILE IS ..." becomes "DATA:" followed by "  FILE IS ...").
+    - Uppercases all code (Mplus is case-insensitive; standard convention).
     - Replaces IS/ARE connectors with =.
     - Expands keyword abbreviations to their full forms.
     - Re-indents using 'indentexpr'.
+
+The formatter also sets buffer-wide: 'fileformat'=unix,
+'fileencoding'=utf-8, 'nobomb', 'endofline'.
 
 Buffer settings applied by ftplugin:~
 
     'comments'      :!
     'commentstring' !%s
+    'textwidth'     90
+    'formatoptions' -t +croql
     'tabstop'       4
+    'softtabstop'   4
     'shiftwidth'    4
     'expandtab'     on
     'fileencoding'  utf-8

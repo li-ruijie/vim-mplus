@@ -8,6 +8,7 @@ Vim plugin for [Mplus](https://www.statmodel.com/) statistical software files (`
 - Syntax-based folding for input sections and output blocks
 - Indentation (section headers at column 0, body indented)
 - Omni-completion (`<C-x><C-o>`) for all Mplus keywords via `syntaxcomplete`
+- Formatting (`gq`): uppercase, expand abbreviations, split headers, replace IS/ARE with =
 - [UltiSnips](https://github.com/SirVer/ultisnips) snippets for common analyses (CFA, SEM, LGM, LCA, and more)
 
 ## Installation

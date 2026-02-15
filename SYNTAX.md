@@ -1,10 +1,47 @@
 # Mplus Syntax Reference
 
 Reference for syntax groups used by the vim-mplus plugin. Keywords are
-case-insensitive. Mplus accepts keywords truncated to 4 characters;
-all intermediate truncations (4-char through full length) are included
-in the syntax file.
+case-insensitive. Keywords longer than 4 characters can be abbreviated
+to as few as 4 characters; the syntax file highlights all intermediate
+truncations.
 Source: <https://www.statmodel.com/language.html>.
+
+### Ambiguous 4-character abbreviations
+
+The following keywords share a 4-character prefix with another keyword.
+Use 5 or more characters to disambiguate.
+
+```
+┌──────┬──────────────────────────────────────┐
+│ Abbr │ Keywords                             │
+├──────┼──────────────────────────────────────┤
+│ CENT │ CENTER, CENTERING                    │
+│ CROS │ CROSSCLASSIFIED, CROSSTABS           │
+│ DIFF │ DIFFERENCE, DIFFTEST                 │
+│ ESTI │ ESTIMATES, ESTIMATOR                 │
+│ FSCO │ FSCOEFFICIENT, FSCOMPARISON, FSCORES │
+│ FULL │ FULLCORR, FULLCOV                    │
+│ GENE │ GENERAL, GENERATE                    │
+│ GROU │ GROUPING, GROUPMEAN                  │
+│ IMPU │ IMPUTATION, IMPUTE                   │
+│ INDI │ INDIRECT, INDIVIDUAL                 │
+│ INTE │ INTEGRATION, INTERACTIVE             │
+│ LOGI │ LOGISTIC, LOGIT                      │
+│ LOGL │ LOGLIKELIHOOD, LOGLINEAR, LOGLOW     │
+│ MEAN │ MEANS, MEANSTRUCTURE                 │
+│ MISS │ MISSFLAG, MISSING                    │
+│ NOCH │ NOCHECK, NOCHISQUARE                 │
+│ OBLI │ OBLIMIN, OBLIQUE                     │
+│ PROB │ PROBABILITIES, PROBABILITY, PROBIT   │
+│ REPS │ REPSAVE, REPSE                       │
+│ SAMP │ SAMPLE, SAMPSTAT                     │
+│ SKEW │ SKEWNORMAL, SKEWT                    │
+│ STAN │ STANDARD, STANDARDIZE, STANDARDIZED  │
+│ STAR │ STARTING, STARTS                     │
+│ TIME │ TIMECENSORED, TIMEMEASURES           │
+│ VARI │ VARIABLE, VARIANCES, VARIMAX         │
+└──────┴──────────────────────────────────────┘
+```
 
 ## File Structure
 
@@ -16,12 +53,12 @@ mplus-inp.vim                    mplus-out.vim
      │
      ▼
   mplus.vim (shared)
-┌─────────────────┐
-│ case ignore     │
+┌─────────────┐
+│ case ignore │
 │ mplusTitle       │  ◄── TITLE body (to ;), no keywords
 │ mplusString      │  ◄── "…" and '…' quoted strings
-│ mplusStatement  │
-│ mplusCommand    │
+│ mplusStatement │
+│ mplusCommand   │
 │ mplusModel       │  ◄── BY, ON, *, @, |, &, SQRT…
 │ mplusNumber      │  ◄── integers, floats, E/D notation
 │ mplusSpeccom │
@@ -108,7 +145,6 @@ highlighted as mplusSection in the base file.
 │ LOOP       │ Loop over values             │
 │ DO         │ Loop construct               │
 │ END        │ End loop (END DO)            │
-│ DIFF       │ Parameter difference (short) │
 │ DIFFERENCE │ Parameter difference         │
 │ SQRT       │ Square root function         │
 │ EXP        │ Exponential function         │
@@ -150,61 +186,59 @@ highlighted as mplusSection in the base file.
 │ Keyword    │ Description                │
 ├────────────┼────────────────────────────┤
 │ ANALYSIS   │ Analysis section keyword   │
-│ ANAL       │ ANALYSIS (short form)      │
 │ DATA       │ Data section keyword       │
 │ DEFINE     │ Define section keyword     │
-│ DEFI       │ DEFINE (short form)        │
 │ MODEL      │ Model section keyword      │
-│ MODE       │ MODEL (short form)         │
 │ MONTECARLO │ Montecarlo section keyword │
-│ MONT       │ MONTECARLO (short form)    │
 │ OUTPUT     │ Output section keyword     │
-│ OUTP       │ OUTPUT (short form)        │
 │ PLOT       │ Plot section keyword       │
 │ SAVEDATA   │ Savedata section keyword   │
 │ TITLE      │ Title section keyword      │
 │ VARIABLE   │ Variable section keyword   │
-│ VARI       │ VARIABLE (short form)      │
 └────────────┴────────────────────────────┘
 ```
 
 ### Output Options
 
 ```
-┌───────────────┬────────────────────────────────┐
-│ Keyword       │ Description                    │
-├───────────────┼────────────────────────────────┤
-│ MODINDICES    │ Modification indices           │
-│ RESIDUAL      │ Residual output                │
-│ SAMPSTAT      │ Sample statistics              │
-│ STANDARDIZED  │ Standardized solution          │
-│ STD           │ Unstandardized std solution    │
-│ STDYX         │ StdYX standardized solution    │
-│ STDY          │ StdY standardized solution     │
-│ CINTERVAL     │ Confidence intervals           │
-│ SVALUES       │ Starting values in output      │
-│ NOCHISQUARE   │ Suppress chi-square test       │
-│ NOSERROR      │ Suppress standard errors       │
-│ H1SE          │ H1 model standard errors       │
-│ H1TECH3       │ H1 model TECH3 output          │
-│ H1MODEL       │ H1 model estimation            │
-│ CROSSTABS     │ Cross-tabulations              │
-│ FSCOEFFICIENT │ Factor score coefficients      │
-│ FSDETERMINACY │ Factor score determinacy       │
-│ FSCOMPARISON  │ Factor score comparison        │
-│ LOGRANK       │ Log-rank test                  │
-│ ALIGNMENT     │ Alignment optimization         │
-│ ENTROPY       │ Entropy statistic              │
-│ PATTERNS      │ Missing data patterns          │
-│ PAIRS         │ Pairwise output                │
-│ CONSTRAINT    │ MODEL CONSTRAINT sub-section   │
-│ INDIRECT      │ MODEL INDIRECT sub-section     │
-│ POPULATION    │ MODEL POPULATION sub-section   │
-│ PRIORS        │ MODEL PRIORS sub-section       │
-│ COVERAGE      │ MODEL COVERAGE sub-section     │
-│ TEST          │ MODEL TEST sub-section         │
-│ TECH1–TECH16  │ Technical outputs 1 through 16 │
-└───────────────┴────────────────────────────────┘
+┌───────────────┬─────────────────────────────────┐
+│ Keyword       │ Description                     │
+├───────────────┼─────────────────────────────────┤
+│ MODINDICES    │ Modification indices            │
+│ RESIDUAL      │ Residual output                 │
+│ SAMPSTAT      │ Sample statistics               │
+│ STANDARDIZED  │ Standardized solution           │
+│ STD           │ Unstandardized std solution     │
+│ STDYX         │ StdYX standardized solution     │
+│ STDY          │ StdY standardized solution      │
+│ CINTERVAL     │ Confidence intervals            │
+│ SVALUES       │ Starting values in output       │
+│ NOCHISQUARE   │ Suppress chi-square test        │
+│ NOSERROR      │ Suppress standard errors        │
+│ H1SE          │ H1 model standard errors        │
+│ H1TECH3       │ H1 model TECH3 output           │
+│ H1MODEL       │ H1 model estimation             │
+│ CROSSTABS     │ Cross-tabulations               │
+│ FSCOEFFICIENT │ Factor score coefficients       │
+│ FSDETERMINACY │ Factor score determinacy        │
+│ FSCOMPARISON  │ Factor score comparison         │
+│ LOGRANK       │ Log-rank test                   │
+│ ALIGNMENT     │ Alignment optimization          │
+│ ENTROPY       │ Entropy statistic               │
+│ PATTERNS      │ Missing data patterns           │
+│ PAIRS         │ Pairwise output                 │
+│ CONSTRAINT    │ MODEL CONSTRAINT sub-section    │
+│ INDIRECT      │ MODEL INDIRECT sub-section      │
+│ POPULATION    │ MODEL POPULATION sub-section    │
+│ PRIORS        │ MODEL PRIORS sub-section        │
+│ COVERAGE      │ MODEL COVERAGE sub-section      │
+│ TEST          │ MODEL TEST sub-section          │
+│ TECH1–TECH16  │ Technical outputs 1 through 16  │
+│ SYMMETRIC     │ Symmetric confidence interval   │
+│ BCBOOTSTRAP   │ Bias-corrected bootstrap CI     │
+│ EQTAIL        │ Equal-tail credibility interval │
+│ HPD           │ Highest posterior density CI    │
+└───────────────┴─────────────────────────────────┘
 ```
 
 ## Command Keywords by Section (mplusCommand)
@@ -224,7 +258,6 @@ highlighted as mplusSection in the base file.
 │ STDEVIATIONS  │ Standard deviations input │
 │ IMPUTATION    │ Multiple imputation data  │
 │ NOBSERVATIONS │ Number of observations    │
-│ NOBS          │ Number of observations    │
 │ NGROUPS       │ Number of groups          │
 │ VARIANCES     │ Variance input            │
 │ CHECK         │ Check data                │
@@ -260,10 +293,7 @@ highlighted as mplusSection in the base file.
 │ Keyword         │ Description                   │
 ├─────────────────┼───────────────────────────────┤
 │ NAMES           │ Variable names                │
-│ USEVAR          │ Use variables (short form)    │
-│ USEV            │ Use variables (short form)    │
 │ USEOBSERVATIONS │ Select observations           │
-│ USEOBS          │ USEOBSERVATIONS (short form)  │
 │ USEVARIABLES    │ Select variables              │
 │ CENSORED        │ Censored variable declaration │
 │ NOMINAL         │ Nominal variable declaration  │
@@ -278,7 +308,6 @@ highlighted as mplusSection in the base file.
 │ TSCORES         │ Time scores                   │
 │ AUXILIARY       │ Auxiliary variables           │
 │ CLASSES         │ Latent class specification    │
-│ CLASS           │ CLASSES (short form)          │
 │ KNOWNCLASS      │ Known class membership        │
 │ TRAINING        │ Training data specification   │
 │ WITHIN          │ Within-level variables        │
@@ -344,10 +373,8 @@ highlighted as mplusSection in the base file.
 │ Keyword          │ Description                     │
 ├──────────────────┼─────────────────────────────────┤
 │ ESTIMATOR        │ Estimation method               │
-│ EST              │ Estimation method (short form)  │
 │ PARAMETERIZATION │ Parameterization type           │
 │ ALGORITHM        │ Optimization algorithm          │
-│ ALGO             │ ALGORITHM (short form)          │
 │ ML               │ Maximum likelihood              │
 │ MLM              │ ML with robust SEs (mean adj)   │
 │ MLMV             │ ML with robust SEs (mean/var)   │
@@ -414,7 +441,6 @@ highlighted as mplusSection in the base file.
 │ MCCONVERGENCE │ MC convergence               │
 │ MUCONVERGENCE │ MU convergence               │
 │ INTEGRATION   │ Numerical integration        │
-│ INT           │ INTEGRATION (short form)     │
 │ STANDARD      │ Standard integration         │
 │ GAUSSHERMITE  │ Gauss-Hermite quadrature     │
 │ MIXC          │ Mixture convergence          │
@@ -469,7 +495,6 @@ highlighted as mplusSection in the base file.
 │ PROBABILITY      │ Probability parameterization   │
 │ PROBIT           │ Probit link                    │
 │ POISSON          │ Poisson distribution           │
-│ NB               │ Negative binomial (short form) │
 │ NEGATIVEBINOMIAL │ Negative binomial distribution │
 │ ZIP              │ Zero-inflated Poisson          │
 │ ZINB             │ Zero-inflated neg. binomial    │
@@ -541,43 +566,42 @@ highlighted as mplusSection in the base file.
 ### ANALYSIS — Other
 
 ```
-┌────────────────────┬──────────────────────────────┐
-│ Keyword            │ Description                  │
-├────────────────────┼──────────────────────────────┤
-│ BASEHAZARD         │ Baseline hazard function     │
-│ LRTBOOTSTRAP       │ LRT bootstrap test           │
-│ MULTIPLIER         │ Multiplier adjustment        │
-│ ADDFREQUENCY       │ Add frequency                │
-│ RITERATIONS        │ Ridging iterations           │
-│ AITERATIONS        │ Acceleration iterations      │
-│ RLOGCRITERION      │ Ridging log criterion        │
-│ RCONVERGENCE       │ Ridging convergence          │
-│ ACONVERGENCE       │ Acceleration convergence     │
-│ SIMPLICITY         │ Simplicity function          │
-│ TOLERANCE          │ Tolerance criterion          │
-│ POINT              │ Point estimate               │
-│ STVALUES           │ Starting values              │
-│ PREDICTOR          │ Predictor specification      │
-│ INTERACTIVE        │ Interactive mode             │
-│ DISTRIBUTION       │ Distribution specification   │
-│ ROTATION           │ Rotation method              │
-│ ROWSTANDARDIZATION │ Row standardization          │
-│ METRIC             │ Alignment metric             │
-│ NESTED             │ Nested model specification   │
-│ UW                 │ Unrotated within (EFA)       │
-│ UB                 │ Unrotated between (EFA)      │
-│ LRTSTARTS          │ LRT random starts            │
-│ RSTARTS            │ Random starts (ridging)      │
-│ ASTARTS            │ Acceleration starts          │
-│ H1STARTS           │ H1 model starts              │
-│ K-1STARTS*         │ K-1 random starts            │
-│ RESCOVARIANCES     │ Residual covariances         │
-│ RESCOV             │ Residual covariances (short) │
-│ UNPERTURBED        │ Unperturbed start values     │
-│ PERTURBED          │ Perturbed start values       │
-│ FS                 │ Fisher scoring algorithm     │
-│ MH                 │ Metropolis-Hastings sampler  │
-└────────────────────┴──────────────────────────────┘
+┌────────────────────┬─────────────────────────────┐
+│ Keyword            │ Description                 │
+├────────────────────┼─────────────────────────────┤
+│ BASEHAZARD         │ Baseline hazard function    │
+│ LRTBOOTSTRAP       │ LRT bootstrap test          │
+│ MULTIPLIER         │ Multiplier adjustment       │
+│ ADDFREQUENCY       │ Add frequency               │
+│ RITERATIONS        │ Ridging iterations          │
+│ AITERATIONS        │ Acceleration iterations     │
+│ RLOGCRITERION      │ Ridging log criterion       │
+│ RCONVERGENCE       │ Ridging convergence         │
+│ ACONVERGENCE       │ Acceleration convergence    │
+│ SIMPLICITY         │ Simplicity function         │
+│ TOLERANCE          │ Tolerance criterion         │
+│ POINT              │ Point estimate              │
+│ STVALUES           │ Starting values             │
+│ PREDICTOR          │ Predictor specification     │
+│ INTERACTIVE        │ Interactive mode            │
+│ DISTRIBUTION       │ Distribution specification  │
+│ ROTATION           │ Rotation method             │
+│ ROWSTANDARDIZATION │ Row standardization         │
+│ METRIC             │ Alignment metric            │
+│ NESTED             │ Nested model specification  │
+│ UW                 │ Unrotated within (EFA)      │
+│ UB                 │ Unrotated between (EFA)     │
+│ LRTSTARTS          │ LRT random starts           │
+│ RSTARTS            │ Random starts (ridging)     │
+│ ASTARTS            │ Acceleration starts         │
+│ H1STARTS           │ H1 model starts             │
+│ K-1STARTS*         │ K-1 random starts           │
+│ RESCOVARIANCES     │ Residual covariances        │
+│ UNPERTURBED        │ Unperturbed start values    │
+│ PERTURBED          │ Perturbed start values      │
+│ FS                 │ Fisher scoring algorithm    │
+│ MH                 │ Metropolis-Hastings sampler │
+└────────────────────┴─────────────────────────────┘
 * = syn match (contains hyphen)
 ```
 
@@ -644,12 +668,10 @@ highlighted as mplusSection in the base file.
 │ Keyword    │ Description                   │
 ├────────────┼───────────────────────────────┤
 │ NREPS      │ Number of replications        │
-│ NREP       │ NREPS (short form)            │
 │ SEED       │ Random seed                   │
 │ GENERATE   │ Data generation specification │
 │ CUTPOINTS  │ Cutpoints for categorization  │
 │ GENCLASSES │ Generated latent classes      │
-│ GENCLASS   │ GENCLASSES (short form)       │
 │ NCSIZES    │ Number of cluster sizes       │
 │ CSIZES     │ Cluster sizes                 │
 │ HAZARDC    │ Hazard function cutpoints     │
@@ -659,19 +681,6 @@ highlighted as mplusSection in the base file.
 │ STARTING   │ Starting values specification │
 │ POPULATION │ Population model values       │
 └────────────┴───────────────────────────────┘
-```
-
-### Confidence Intervals
-
-```
-┌─────────────┬─────────────────────────────────┐
-│ Keyword     │ Description                     │
-├─────────────┼─────────────────────────────────┤
-│ SYMMETRIC   │ Symmetric confidence interval   │
-│ BCBOOTSTRAP │ Bias-corrected bootstrap CI     │
-│ EQTAIL      │ Equal-tail credibility interval │
-│ HPD         │ Highest posterior density CI    │
-└─────────────┴─────────────────────────────────┘
 ```
 
 ## Connectors (mplusSpeccom)
@@ -709,4 +718,394 @@ highlighted as mplusSection in the base file.
 │ ^TITLE\> ... ;  (TITLE body region)     │ Title   │
 │ "…" and '…' (quoted strings)            │ String  │
 └─────────────────────────────────────────┴─────────┘
+```
+
+## Abbreviations
+
+Complete list of keywords and their abbreviated forms, generated from
+the syntax files. Each keyword is followed by all valid truncations
+(4 characters through one less than the full keyword). See the
+ambiguity table above for 4-character prefixes shared by multiple
+keywords.
+
+### mplusStatement
+
+```
+ALIGNMENT      ALIG ALIGN ALIGNM ALIGNME ALIGNMEN
+ANALYSIS       ANAL ANALY ANALYS ANALYSI
+BCBOOTSTRAP    BCBO BCBOO BCBOOT BCBOOTS BCBOOTST BCBOOTSTR BCBOOTSTRA
+CINTERVAL      CINTE CINTER CINTERV CINTERVA
+CONSTRAINT     CONS CONST CONSTR CONSTRA CONSTRAI CONSTRAIN
+COVERAGE       COVE COVER COVERA COVERAG
+CROSSTABS      CROS CROSS CROSST CROSSTA CROSSTAB
+DEFINE         DEFI DEFIN
+ENTROPY        ENTR ENTRO ENTROP
+EQTAIL         EQTA EQTAI
+FSCOEFFICIENT  FSCO FSCOE FSCOEF FSCOEFF FSCOEFFI FSCOEFFIC FSCOEFFICI
+               FSCOEFFICIE FSCOEFFICIEN
+FSCOMPARISON   FSCO FSCOM FSCOMP FSCOMPA FSCOMPAR FSCOMPARI FSCOMPARIS
+               FSCOMPARISO
+FSDETERMINACY  FSDE FSDET FSDETE FSDETER FSDETERM FSDETERMI FSDETERMIN
+               FSDETERMINA FSDETERMINAC
+H1MODEL        H1MO H1MOD H1MODE
+H1TECH3        H1TE H1TEC H1TECH
+INDIRECT       INDI INDIR INDIRE INDIREC
+LOGRANK        LOGR LOGRA LOGRAN
+MODEL
+MODINDICES     MODI MODIN MODIND MODINDI MODINDIC MODINDICE
+MONTECARLO     MONT MONTE MONTEC MONTECA MONTECAR MONTECARL
+NOCHISQUARE    NOCH NOCHI NOCHIS NOCHISQ NOCHISQU NOCHISQUA NOCHISQUAR
+NOSERROR       NOSE NOSER NOSERR NOSERRO
+OUTPUT         OUTP OUTPU
+PAIRS          PAIR
+PATTERNS       PATT PATTE PATTER PATTERN
+POPULATION     POPU POPUL POPULA POPULAT POPULATI POPULATIO
+PRIORS         PRIO PRIOR
+RESIDUAL       RESI RESID RESIDU RESIDUA
+SAMPSTAT       SAMP SAMPS SAMPST SAMPSTA
+SAVEDATA       SAVED SAVEDA SAVEDAT
+STANDARDIZED
+STDYX          STDY
+SVALUES        SVAL SVALU SVALUE
+SYMMETRIC      SYMM SYMME SYMMET SYMMETR SYMMETRI
+TECH1          TECH
+TECH10         TECH TECH1
+TECH11         TECH TECH1
+TECH12         TECH TECH1
+TECH13         TECH TECH1
+TECH14         TECH TECH1
+TECH15         TECH TECH1
+TECH16         TECH TECH1
+TECH2          TECH
+TECH3          TECH
+TECH4          TECH
+TECH5          TECH
+TECH6          TECH
+TECH7          TECH
+TECH8          TECH
+TECH9          TECH
+TITLE          TITL
+VARIABLE       VARI VARIA VARIAB VARIABL
+```
+
+### mplusCommand
+
+```
+ACONVERGENCE        ACON ACONV ACONVE ACONVER ACONVERG ACONVERGE ACONVERGEN
+                    ACONVERGENC
+ADAPTIVE            ADAP ADAPT ADAPTI ADAPTIV
+ADDFREQUENCY        ADDF ADDFR ADDFRE ADDFREQ ADDFREQU ADDFREQUE ADDFREQUEN
+                    ADDFREQUENC
+AITERATIONS         AITE AITER AITERA AITERAT AITERATI AITERATIO AITERATION
+ALGORITHM           ALGO ALGOR ALGORI ALGORIT ALGORITH
+ALLFREE             ALLF ALLFR ALLFRE
+ARIMA               ARIM
+ASTARTS             ASTA ASTAR ASTART
+AUXILIARY           AUXI AUXIL AUXILI AUXILIA AUXILIAR
+B2WEIGHT            B2WE B2WEI B2WEIG B2WEIGH
+B3WEIGHT            B3WE B3WEI B3WEIG B3WEIGH
+BASEHAZARD          BASE BASEH BASEHA BASEHAZ BASEHAZA BASEHAZAR
+BASIC               BASI
+BAYES               BAYE
+BCHWEIGHTS          BCHW BCHWE BCHWEI BCHWEIG BCHWEIGH BCHWEIGHT
+BCONVERGENCE        BCON BCONV BCONVE BCONVER BCONVERG BCONVERGE BCONVERGEN
+                    BCONVERGENC
+BESEM               BESE
+BETWEEN             BETW BETWE BETWEE
+BINARY              BINA BINAR
+BITERATIONS         BITE BITER BITERA BITERAT BITERATI BITERATIO BITERATION
+BOOTSTRAP           BOOT BOOTS BOOTST BOOTSTR BOOTSTRA
+BPARAMETERS         BPAR BPARA BPARAM BPARAME BPARAMET BPARAMETE BPARAMETER
+BSEED               BSEE
+BWEIGHT             BWEI BWEIG BWEIGH
+BWTSCALE            BWTS BWTSC BWTSCA BWTSCAL
+CATEGORICAL         CATE CATEG CATEGO CATEGOR CATEGORI CATEGORIC CATEGORICA
+CENSORED            CENS CENSO CENSOR CENSORE
+CENTER              CENT CENTE
+CENTERING           CENTERI CENTERIN
+CHAINS              CHAI CHAIN
+CHECK               CHEC
+CHOLESKY            CHOL CHOLE CHOLES CHOLESK
+CLASS               CLAS
+CLASSES             CLAS CLASS CLASSE
+CLUSTER             CLUS CLUST CLUSTE
+CLUSTER_MEAN        CLUS CLUST CLUSTE CLUSTER CLUSTER_ CLUSTER_M CLUSTER_ME
+                    CLUSTER_MEA
+COHORT              COHO COHOR
+COHRECODE           COHR COHRE COHREC COHRECO COHRECOD
+COMBINATION         COMB COMBI COMBIN COMBINA COMBINAT COMBINATI COMBINATIO
+COMPLEX             COMP COMPL COMPLE
+CONFIGURAL          CONF CONFI CONFIG CONFIGU CONFIGUR CONFIGURA
+CONTINUOUS          CONT CONTI CONTIN CONTINU CONTINUO CONTINUOU
+CONVERGENCE         CONV CONVE CONVER CONVERG CONVERGE CONVERGEN CONVERGENC
+COOKS               COOK
+COPATTERN           COPA COPAT COPATT COPATTE COPATTER
+CORRELATION         CORR CORRE CORREL CORRELA CORRELAT CORRELATI CORRELATIO
+COUNT               COUN
+COVARIANCE          COVA COVAR COVARI COVARIA COVARIAN COVARIANC
+CPROBABILITIES      CPRO CPROB CPROBA CPROBAB CPROBABI CPROBABIL CPROBABILI
+                    CPROBABILIT CPROBABILITI CPROBABILITIE
+CRAWFER             CRAW CRAWF CRAWFE
+CROSSCLASSIFIED     CROS CROSS CROSSC CROSSCL CROSSCLA CROSSCLAS
+                    CROSSCLASSI CROSSCLASSIF CROSSCLASSIFI CROSSCLASSIFIE
+CSIZES              CSIZ CSIZE
+CTIME               CTIM
+CUTPOINT            CUTP CUTPO CUTPOI CUTPOIN
+CUTPOINTS           CUTP CUTPO CUTPOI CUTPOIN CUTPOINT
+D3STEP              D3ST D3STE
+D3STEPC             D3ST D3STE D3STEP
+DCATEGORICAL        DCAT DCATE DCATEG DCATEGO DCATEGOR DCATEGORI DCATEGORIC
+                    DCATEGORICA
+DCONTINUOUS         DCON DCONT DCONTI DCONTIN DCONTINU DCONTINUO DCONTINUOU
+DDROPOUT            DDRO DDROP DDROPO DDROPOU
+DE3STEP             DE3S DE3ST DE3STE
+DELTA               DELT
+DESCRIPTIVE         DESC DESCR DESCRI DESCRIP DESCRIPT DESCRIPTI DESCRIPTIV
+DIFFTEST            DIFF DIFFT DIFFTE DIFFTES
+DISTRIBUTION        DIST DISTR DISTRI DISTRIB DISTRIBU DISTRIBUT DISTRIBUTI
+                    DISTRIBUTIO
+DRIFT               DRIF
+DSURVIVAL           DSUR DSURV DSURVI DSURVIV DSURVIVA
+DU3STEP             DU3S DU3ST DU3STE
+ESTBASELINE         ESTB ESTBA ESTBAS ESTBASE ESTBASEL ESTBASELI ESTBASELIN
+ESTIMATES           ESTI ESTIM ESTIMA ESTIMAT ESTIMATE
+ESTIMATOR           ESTI ESTIM ESTIMA ESTIMAT ESTIMATO
+EXPECTED            EXPE EXPEC EXPECT EXPECTE
+FACTORS             FACT FACTO FACTOR
+FBITERATIONS        FBIT FBITE FBITER FBITERA FBITERAT FBITERATI FBITERATIO
+                    FBITERATION
+FINITE              FINI FINIT
+FORMAT              FORM FORMA
+FREQWEIGHT          FREQ FREQW FREQWE FREQWEI FREQWEIG FREQWEIGH
+FSCORES             FSCO FSCOR FSCORE
+FULLCOV             FULL FULLC FULLCO FULLCOR
+GAMMA               GAMM
+GAUSSHERMITE        GAUS GAUSS GAUSSH GAUSSHE GAUSSHER GAUSSHERM GAUSSHERMI
+                    GAUSSHERMIT
+GENCLASS            GENC GENCL GENCLA GENCLAS
+GENCLASSES          GENC GENCL GENCLA GENCLAS GENCLASS GENCLASSE
+GENERAL             GENE GENER GENERA
+GENERATE            GENE GENER GENERA GENERAT
+GEOMIN              GEOM GEOMI
+GIBBS               GIBB
+GRANDMEAN           GRAN GRAND GRANDM GRANDME GRANDMEA
+GROUPING            GROU GROUP GROUPI GROUPIN
+GROUPMEAN           GROU GROUP GROUPM GROUPME GROUPMEA
+H1CONVERGENCE       H1CO H1CON H1CONV H1CONVE H1CONVER H1CONVERG H1CONVERGE
+                    H1CONVERGEN H1CONVERGENC
+H1ITERATIONS        H1IT H1ITE H1ITER H1ITERA H1ITERAT H1ITERATI H1ITERATIO
+                    H1ITERATION
+H1STARTS            H1ST H1STA H1STAR H1START
+H5RESULTS           H5RE H5RES H5RESU H5RESUL H5RESULT
+HAZARDC             HAZA HAZAR HAZARD
+IDVARIABLE          IDVA IDVAR IDVARI IDVARIA IDVARIAB IDVARIABL
+IMPUTATION          IMPU IMPUT IMPUTA IMPUTAT IMPUTATI IMPUTATIO
+IMPUTE              IMPU IMPUT
+INDIVIDUAL          INDI INDIV INDIVI INDIVID INDIVIDU INDIVIDUA
+INFLUENCE           INFL INFLU INFLUE INFLUEN INFLUENC
+INFORMATION         INFOR INFORM INFORMA INFORMAT INFORMATI INFORMATIO
+INTEGRATION         INTE INTEG INTEGR INTEGRA INTEGRAT INTEGRATI INTEGRATIO
+INTERACTIVE         INTE INTER INTERA INTERAC INTERACT INTERACTI INTERACTIV
+ITERATIONS          ITERS ITERA ITERAT ITERATI ITERATIO
+JACKKNIFE           JACK JACKK JACKKN JACKKNI JACKKNIF
+JACKKNIFE1          JACK JACKK JACKKN JACKKNI JACKKNIF JACKKNIFE
+JACKKNIFE2          JACK JACKK JACKKN JACKKNI JACKKNIF JACKKNIFE
+KAISER              KAIS KAISE
+KAPLANMEIER         KAPL KAPLA KAPLAN KAPLANM KAPLANME KAPLANMEI KAPLANMEIE
+KNOWNCLASS          KNOW KNOWN KNOWNC KNOWNCL KNOWNCLA KNOWNCLAS
+KOLMOGOROV          KOLM KOLMO KOLMOG KOLMOGO KOLMOGOR KOLMOGORO
+LAGGED              LAGG LAGGE
+LATENT              LATE LATEN
+LISTWISE            LISTW LISTWI LISTWIS
+LOGCRITERION        LOGC LOGCR LOGCRI LOGCRIT LOGCRITE LOGCRITER LOGCRITERI
+                    LOGCRITERIO
+LOGHIGH             LOGH LOGHI LOGHIG
+LOGISTIC            LOGI LOGIS LOGIST LOGISTI
+LOGIT               LOGI
+LOGLIKELIHOOD       LOGL LOGLI LOGLIK LOGLIKE LOGLIKEL LOGLIKELI LOGLIKELIH
+                    LOGLIKELIHO LOGLIKELIHOO
+LOGLINEAR           LOGL LOGLI LOGLIN LOGLINE LOGLINEA
+LOGLOW              LOGL LOGLO
+LONGTOWIDE          LONG LONGT LONGTO LONGTOW LONGTOWI LONGTOWID
+LRESPONSES          LRES LRESP LRESPO LRESPON LRESPONS LRESPONSE
+LRTBOOTSTRAP        LRTB LRTBO LRTBOO LRTBOOT LRTBOOTS LRTBOOTST LRTBOOTSTR
+                    LRTBOOTSTRA
+LRTSTARTS           LRTS LRTST LRTSTA LRTSTAR LRTSTART
+MAHALANOBIS         MAHA MAHAL MAHALA MAHALAN MAHALANO MAHALANOB MAHALANOBI
+MATRIX              MATR MATRI
+MCCONVERGENCE       MCCO MCCON MCCONV MCCONVE MCCONVER MCCONVERG MCCONVERGE
+                    MCCONVERGEN MCCONVERGENC
+MCITERATIONS        MCIT MCITE MCITER MCITERA MCITERAT MCITERATI MCITERATIO
+                    MCITERATION
+MCOHORT             MCOH MCOHO MCOHOR
+MCONVERGENCE        MCON MCONV MCONVE MCONVER MCONVERG MCONVERGE MCONVERGEN
+                    MCONVERGENC
+MCSEED              MCSE MCSEE
+MDITERATIONS        MDIT MDITE MDITER MDITERA MDITERAT MDITERATI MDITERATIO
+                    MDITERATION
+MEANS               MEAN
+MEANSTRUCTURE       MEAN MEANS MEANST MEANSTR MEANSTRU MEANSTRUC MEANSTRUCT
+                    MEANSTRUCTU MEANSTRUCTUR
+MEMBERSHIP          MEMB MEMBE MEMBER MEMBERS MEMBERSI MEMBERSHI
+METRIC              METR METRI
+MFILE               MFIL
+MFORMAT             MFOR MFORM MFORMA
+MISSFLAG            MISS MISSF MISSFL MISSFLA
+MISSING             MISS MISSI MISSIN
+MITERATIONS         MITE MITER MITERA MITERAT MITERATI MITERATIO MITERATION
+MIXTURE             MIXT MIXTU MIXTUR
+MMISSING            MMIS MMISS MMISSI MMISSIN
+MNAMES              MNAM MNAME
+MONITOR             MONI MONIT MONITO
+MSELECT             MSEL MSELE MSELEC
+MUCONVERGENCE       MUCO MUCON MUCONV MUCONVE MUCONVER MUCONVERG MUCONVERGE
+                    MUCONVERGEN MUCONVERGENC
+MUITERATIONS        MUIT MUITE MUITER MUITERA MUITERAT MUITERATI MUITERATIO
+                    MUITERATION
+MULTIPLIER          MULT MULTI MULTIP MULTIPL MULTIPLI MULTIPLIE
+NAMES               NAME
+NCSIZES             NCSI NCSIZ NCSIZE
+NDATASETS           NDAT NDATA NDATAS NDATASE NDATASET
+NEGATIVEBINOMIAL    NEGA NEGAT NEGATI NEGATIV NEGATIVE NEGATIVEB NEGATIVEBI
+                    NEGATIVEBIN NEGATIVEBINO NEGATIVEBINOM NEGATIVEBINOMI
+                    NEGATIVEBINOMIA
+NESTED              NEST NESTE
+NGROUPS             NGRO NGROU NGROUP
+NOBSERVATIONS       NOBS NOBSE NOBSER NOBSERV NOBSERVA NOBSERVAT NOBSERVATI
+                    NOBSERVATIO
+NOCHECK             NOCH NOCHE NOCHEC
+NOCOVARIANCES       NOCO NOCOV NOCOVA NOCOVAR NOCOVARI NOCOVARIA NOCOVARIAN
+                    NOCOVARIANC NOCOVARIANCE
+NOMEANSTRUCTURE     NOME NOMEA NOMEAN NOMEANS NOMEANST NOMEANSTR NOMEANSTRU
+                    NOMEANSTRUC NOMEANSTRUCT NOMEANSTRUCTU NOMEANSTRUCTUR
+NOMINAL             NOMI NOMIN NOMINA
+NORMAL              NORM NORMA
+NREPS               NREP
+OBLIMIN             OBLI OBLIM OBLIMI
+OBLIQUE             OBLI OBLIQ OBLIQU
+OBSERVED            OBSE OBSER OBSERV OBSERVE
+OPTSEED             OPTS OPTSE OPTSEE
+ORTHOGONAL          ORTH ORTHO ORTHOG ORTHOGO ORTHOGON ORTHOGONA
+OUTLIERS            OUTL OUTLI OUTLIE OUTLIER
+PARAMETERIZATION    PARA PARAM PARAME PARAMET PARAMETE PARAMETER PARAMETERI
+                    PARAMETERIZ PARAMETERIZA PARAMETERIZAT PARAMETERIZATI
+                    PARAMETERIZATIO
+PATMISS             PATM PATMI PATMIS
+PATPROBS            PATP PATPR PATPRO PATPROB
+PATTERN             PATT PATTE PATTER
+PERTURBED           PERT PERTU PERTUR PERTURB PERTURBE
+PLAUSIBLE           PLAU PLAUS PLAUSI PLAUSIB PLAUSIBL
+PLOT1               PLOT
+PLOT2               PLOT
+PLOT3               PLOT
+POINT               POIN
+POISSON             POIS POISS POISSO
+PREDICTOR           PRED PREDI PREDIC PREDICT PREDICTO
+PRIOR               PRIO
+PROBABILITIES       PROB PROBA PROBAB PROBABI PROBABIL PROBABILI PROBABILIT
+                    PROBABILITI PROBABILITIE
+PROBABILITY         PROB PROBA PROBAB PROBABI PROBABIL PROBABILI PROBABILIT
+PROBIT              PROB PROBI
+PROCESSORS          PROC PROCE PROCES PROCESS PROCESSO PROCESSOR
+PROMAX              PROM PROMA
+PROPENSITY          PROP PROPE PROPEN PROPENS PROPENSI PROPENSIT
+QUARTIMIN           QUAR QUART QUARTI QUARTIM QUARTIMI
+R3STEP              R3ST R3STE
+RANDOM              RAND RANDO
+RANKING             RANK RANKI RANKIN
+RCONVERGENCE        RCON RCONV RCONVE RCONVER RCONVERG RCONVERGE RCONVERGEN
+                    RCONVERGENC
+RECORDLENGTH        RECO RECOR RECORD RECORDL RECORDLE RECORDLEN RECORDLENG
+                    RECORDLENGT
+REPETITION          REPE REPET REPETI REPETIT REPETITI REPETITIO
+REPSAVE             REPS REPSA REPSAV
+REPSE               REPS
+REPWEIGHTS          REPW REPWE REPWEI REPWEIG REPWEIGH REPWEIGHT
+RESCOV              RESC RESCO
+RESCOVARIANCES      RESC RESCO RESCOV RESCOVA RESCOVAR RESCOVARI RESCOVARIA
+                    RESCOVARIAN RESCOVARIANC RESCOVARIANCE
+RESPONSE            RESP RESPO RESPON RESPONS
+RESULTS             RESU RESUL RESULT
+RITERATIONS         RITE RITER RITERA RITERAT RITERATI RITERATIO RITERATION
+RLOGCRITERION       RLOG RLOGC RLOGCR RLOGCRI RLOGCRIT RLOGCRITE RLOGCRITER
+                    RLOGCRITERI RLOGCRITERIO
+ROTATION            ROTA ROTAT ROTATI ROTATIO
+ROWSTANDARDIZATION  ROWS ROWST ROWSTA ROWSTAN ROWSTAND ROWSTANDA ROWSTANDAR
+                    ROWSTANDARD ROWSTANDARDI ROWSTANDARDIZ ROWSTANDARDIZA
+                    ROWSTANDARDIZAT ROWSTANDARDIZATI ROWSTANDARDIZATIO
+RSTARTS             RSTA RSTAR RSTART
+SAMPLE              SAMP SAMPL
+SCALAR              SCAL SCALA
+SDITERATIONS        SDIT SDITE SDITER SDITERA SDITERAT SDITERATI SDITERATIO
+                    SDITERATION
+SDROPOUT            SDRO SDROP SDROPO SDROPOU
+SENSITIVITY         SENS SENSI SENSIT SENSITI SENSITIV SENSITIVI SENSITIVIT
+SERIES              SERI SERIE
+SIGBETWEEN          SIGB SIGBE SIGBET SIGBETW SIGBETWE SIGBETWEE
+SIMPLICITY          SIMP SIMPL SIMPLI SIMPLIC SIMPLICI SIMPLICIT
+SKEWNORMAL          SKEW SKEWN SKEWNO SKEWNOR SKEWNORM SKEWNORMA
+SKEWT               SKEW
+STANDARDIZE         STAN STAND STANDA STANDAR STANDARD STANDARDI STANDARDIZ
+STARTING            STAR START STARTI STARTIN
+STARTS              STAR START
+STCONVERGENCE       STCO STCON STCONV STCONVE STCONVER STCONVERG STCONVERGE
+                    STCONVERGEN STCONVERGENC
+STDDISTRIBUTION     STDD STDDI STDDIS STDDIST STDDISTR STDDISTRI STDDISTRIB
+                    STDDISTRIBU STDDISTRIBUT STDDISTRIBUTI STDDISTRIBUTIO
+STDEVIATIONS        STDE STDEV STDEVI STDEVIA STDEVIAT STDEVIATI STDEVIATIO
+                    STDEVIATION
+STDRESULTS          STDR STDRE STDRES STDRESU STDRESUL STDRESULT
+STITERATIONS        STIT STITE STITER STITERA STITERAT STITERATI STITERATIO
+                    STITERATION
+STRATIFICATION      STRA STRAT STRATI STRATIF STRATIFI STRATIFIC STRATIFICA
+                    STRATIFICAT STRATIFICATI STRATIFICATIO
+STSCALE             STSC STSCA STSCAL
+STSEED              STSE STSEE
+STVALUES            STVA STVAL STVALU STVALUE
+SUBPOPULATION       SUBP SUBPO SUBPOP SUBPOPU SUBPOPUL SUBPOPULA SUBPOPULAT
+                    SUBPOPULATI SUBPOPULATIO
+SURVIVAL            SURV SURVI SURVIV SURVIVA
+SWMATRIX            SWMA SWMAT SWMATR SWMATRI
+TARGET              TARG TARGE
+TDISTRIBUTION       TDIS TDIST TDISTR TDISTRI TDISTRIB TDISTRIBU TDISTRIBUT
+                    TDISTRIBUTI TDISTRIBUTIO
+THETA               THET
+THREELEVEL          THRE THREE THREELE THREELEV THREELEVE
+TIMECENSORED        TIME TIMEC TIMECE TIMECEN TIMECENS TIMECENSO TIMECENSOR
+                    TIMECENSORE
+TIMEMEASURES        TIME TIMEM TIMEME TIMEMEA TIMEMEAS TIMEMEASU TIMEMEASUR
+                    TIMEMEASURE
+TINTERVAL           TINT TINTE TINTER TINTERV TINTERVA
+TNAMES              TNAM TNAME
+TOLERANCE           TOLE TOLER TOLERA TOLERAN TOLERANC
+TRAINING            TRAI TRAIN TRAINI TRAININ
+TRANSFORM           TRAN TRANS TRANSF TRANSFO TRANSFOR
+TSCORES             TSCO TSCOR TSCORE
+TWOLEVEL            TWOL TWOLE TWOLEV TWOLEVE
+TWOPART             TWOP TWOPA TWOPAR
+UCELLSIZE           UCEL UCELL UCELLS UCELLSI UCELLSIZ
+ULSMV               ULSM
+UNPERTURBED         UNPE UNPER UNPERT UNPERTU UNPERTUR UNPERTURB UNPERTURBE
+USEOBS              USEO USEOB
+USEOBSERVATIONS     USEO USEOB USEOBS USEOBSE USEOBSER USEOBSERV USEOBSERVA
+                    USEOBSERVAT USEOBSERVATI USEOBSERVATIO USEOBSERVATION
+USEVAR              USEV USEVA
+USEVARIABLES        USEV USEVA USEVAR USEVARI USEVARIA USEVARIAB USEVARIABL
+                    USEVARIABLE
+VARIANCE            VARI VARIA VARIAN VARIANC
+VARIANCES           VARI VARIA VARIAN VARIANC VARIANCE
+VARIMAX             VARI VARIM VARIMA
+WEIGHT              WEIG WEIGH
+WIDETOLONG          WIDE WIDET WIDETO WIDETOL WIDETOLO WIDETOLON
+WITHIN              WITHI
+WLSMV               WLSM
+WTSCALE             WTSC WTSCA WTSCAL
+```
+
+### mplusModel
+
+```
+DIFFERENCE  DIFF DIFFE DIFFER DIFFERE DIFFEREN DIFFERENC
+PWITH       PWIT
+XWITH       XWIT
 ```

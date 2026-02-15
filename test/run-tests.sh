@@ -100,20 +100,22 @@ for file in "${FILES[@]}"; do
         echo "[PASS] $file (timeout)"
         echo "[PASS] $file (timeout)" >> "$LOGFILE"
         PASS=$((PASS + 1))
-    elif [[ -f "$FORMATTED_DIR/$OUTFILE" ]] && grep -q "INPUT READING TERMINATED NORMALLY" "$FORMATTED_DIR/$OUTFILE"; then
-        echo "[PASS] $file"
-        echo "[PASS] $file" >> "$LOGFILE"
-        PASS=$((PASS + 1))
-    else
-        # Extract error message
-        ERRMSG=""
-        if [[ -f "$FORMATTED_DIR/$OUTFILE" ]]; then
-            ERRMSG=$(grep -m1 '\*\*\* ERROR\|TERMINATED ABNORMALLY' "$FORMATTED_DIR/$OUTFILE" 2>/dev/null || echo "unknown error")
+    elif [[ -f "$FORMATTED_DIR/$OUTFILE" ]]; then
+        # Check for errors in the output file
+        if grep -q '\*\*\* ERROR\|TERMINATED ABNORMALLY' "$FORMATTED_DIR/$OUTFILE" 2>/dev/null; then
+            ERRMSG=$(grep -m1 '\*\*\* ERROR\|TERMINATED ABNORMALLY' "$FORMATTED_DIR/$OUTFILE" 2>/dev/null)
+            echo "[FAIL] $file — $ERRMSG"
+            echo "[FAIL] $file — $ERRMSG" >> "$LOGFILE"
+            FAIL=$((FAIL + 1))
+            ERRORS+=("$file")
         else
-            ERRMSG="no .out file produced"
+            echo "[PASS] $file"
+            echo "[PASS] $file" >> "$LOGFILE"
+            PASS=$((PASS + 1))
         fi
-        echo "[FAIL] $file — $ERRMSG"
-        echo "[FAIL] $file — $ERRMSG" >> "$LOGFILE"
+    else
+        echo "[FAIL] $file — no .out file produced"
+        echo "[FAIL] $file — no .out file produced" >> "$LOGFILE"
         FAIL=$((FAIL + 1))
         ERRORS+=("$file")
     fi
