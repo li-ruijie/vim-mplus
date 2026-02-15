@@ -1,0 +1,207 @@
+# UltiSnips snippets for Mplus input files (filetype: mplus-inp)
+
+# Full input file skeleton
+snippet inp "Full input file skeleton" b
+TITLE:
+  ${1:title}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  MISSING = ${5:*};
+MODEL:
+  ${0}
+OUTPUT:
+  STANDARDIZED;
+endsnippet
+
+# Generic section header
+snippet sec "Section header" b
+${1:SECTION}:
+  ${0}
+endsnippet
+
+# Confirmatory factor analysis
+snippet cfa "Confirmatory factor analysis" b
+TITLE:
+  ${1:CFA}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  MISSING = ${5:*};
+ANALYSIS:
+  ESTIMATOR = ${6:MLR};
+MODEL:
+  ${7:f1} BY ${8:y1 y2 y3};
+  ${0}
+OUTPUT:
+  STANDARDIZED MODINDICES;
+endsnippet
+
+# SEM (CFA + structural regression)
+snippet sem "Structural equation model" b
+TITLE:
+  ${1:SEM}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  MISSING = ${5:*};
+ANALYSIS:
+  ESTIMATOR = ${6:MLR};
+MODEL:
+  ! measurement model
+  ${7:f1} BY ${8:y1 y2 y3};
+  ${9:f2} BY ${10:y4 y5 y6};
+  ! structural model
+  ${9} ON ${7};
+  ${0}
+OUTPUT:
+  STANDARDIZED MODINDICES;
+endsnippet
+
+# Latent growth model
+snippet lgm "Latent growth model" b
+TITLE:
+  ${1:Latent growth model}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:y1 y2 y3 y4};
+  MISSING = ${5:*};
+ANALYSIS:
+  ESTIMATOR = ${6:MLR};
+MODEL:
+  i s | ${4}@0 ${7:y2@1 y3@2 y4@3};
+  ${0}
+OUTPUT:
+  STANDARDIZED;
+endsnippet
+
+# Latent class analysis
+snippet lca "Latent class analysis" b
+TITLE:
+  ${1:LCA}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  CATEGORICAL = ${5:vars};
+  CLASSES = c(${6:3});
+  MISSING = ${7:*};
+ANALYSIS:
+  TYPE = MIXTURE;
+  STARTS = ${8:500 100};
+MODEL:
+  %OVERALL%
+  ${0}
+OUTPUT:
+  ENTROPY STANDARDIZED;
+endsnippet
+
+# Growth mixture model
+snippet gmm "Growth mixture model" b
+TITLE:
+  ${1:Growth mixture model}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:y1 y2 y3 y4};
+  CLASSES = c(${5:3});
+  MISSING = ${6:*};
+ANALYSIS:
+  TYPE = MIXTURE;
+  STARTS = ${7:500 100};
+MODEL:
+  %OVERALL%
+  i s | ${4}@0 ${8:y2@1 y3@2 y4@3};
+  ${0}
+OUTPUT:
+  ENTROPY STANDARDIZED;
+endsnippet
+
+# Multilevel (TWOLEVEL) model
+snippet mlm "Multilevel model" b
+TITLE:
+  ${1:Multilevel model}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  CLUSTER = ${5:clustervar};
+  WITHIN = ${6:wvars};
+  BETWEEN = ${7:bvars};
+  MISSING = ${8:*};
+ANALYSIS:
+  TYPE = TWOLEVEL;
+  ESTIMATOR = ${9:MLR};
+MODEL:
+  %WITHIN%
+  ${10}
+  %BETWEEN%
+  ${0}
+OUTPUT:
+  STANDARDIZED;
+endsnippet
+
+# Exploratory factor analysis
+snippet efa "Exploratory factor analysis" b
+TITLE:
+  ${1:EFA}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  MISSING = ${5:*};
+ANALYSIS:
+  TYPE = EFA ${6:1} ${7:5};
+  ESTIMATOR = ${8:MLR};
+  ROTATION = ${9:GEOMIN};
+  ${0}
+OUTPUT:
+  STANDARDIZED;
+endsnippet
+
+# Monte Carlo simulation
+snippet mc "Monte Carlo simulation" b
+TITLE:
+  ${1:Monte Carlo simulation}
+MONTECARLO:
+  NAMES = ${2:y1 y2 y3};
+  NOBSERVATIONS = ${3:500};
+  NREPS = ${4:1000};
+  SEED = ${5:12345};
+MODEL POPULATION:
+  ${6:f1} BY ${7:y1*1 y2*.8 y3*.6};
+  ${0}
+MODEL:
+  ${6} BY ${7};
+OUTPUT:
+  STANDARDIZED;
+endsnippet
+
+# Multiple imputation (DATA IMPUTATION)
+snippet mi "Multiple imputation" b
+TITLE:
+  ${1:Multiple imputation}
+DATA:
+  FILE = ${2:data.dat};
+VARIABLE:
+  NAMES = ${3:vars};
+  USEVARIABLES = ${4:vars};
+  MISSING = ${5:*};
+DATA IMPUTATION:
+  IMPUTE = ${6:vars};
+  NDATASETS = ${7:20};
+  SAVE = ${8:imputed*.dat};
+  ${0}
+endsnippet
