@@ -19,9 +19,11 @@ syn match mplusSection "%[^%]\+%"
 syn match mplusStatement "^SUMMARY OF DATA$"
 
 "" Statement keywords
-syn keyword mplusStatement ANALYSIS CATEGORICAL DATA FILE LINK MISSING MODEL
+syn keyword mplusStatement ANALYSIS CATEGORICAL FILE LINK MISSING
+syn match   mplusStatement "\<DATA\>"
+syn match   mplusStatement "\<MODEL\>"
 syn keyword mplusStatement MODINDICES NAMES OUTPUT PLOT PROCESSORS RESIDUAL SAMPSTAT STANDARDIZED
-syn keyword mplusStatement STD STDYX TITLE TYPE USEVAR USEVARIABLE VARIABLE
+syn keyword mplusStatement STD STDYX TITLE TYPE USEVAR USEV USEVARIABLE VARIABLE
 syn keyword mplusStatement TECH1 TECH2 TECH3 TECH4 TECH5 TECH6 TECH7 TECH8
 syn keyword mplusStatement TECH9 TECH10 TECH11 TECH12 TECH13 TECH14 TECH15 TECH16
 
@@ -33,17 +35,21 @@ syn keyword mplusStatement PATTERNS
 
 "" Model operators
 syn keyword mplusModel WITH BY ON PWITH AT XWITH IND VIA ALL
-syn keyword mplusModel PON NEW MOD LOOP DO DIFF DIFFERENCE
+syn keyword mplusModel PON NEW MOD LOOP DO DIFF DIFFERENCE SQRT EXP LOG
+syn match   mplusModel "|"
+syn match   mplusModel "&"
 
 "" Connectors
 syn keyword mplusSpeccom ARE IS
+syn match   mplusSpeccom "="
 
 "" --- Data command ---
 syn keyword mplusCommand INDIVIDUAL COVARIANCE CORRELATION FULLCOV
 syn keyword mplusCommand FULLCORR MEANS STDEVIATIONS IMPUTATION
 syn keyword mplusCommand NOBSERVATIONS NGROUPS VARIANCES CHECK NOCHECK FREE
 syn keyword mplusCommand LISTWISE SWMATRIX NDATASETS WIDE LONG REPETITION
-syn keyword mplusCommand CUTPOINT TRANSFORM IMPUTE
+syn keyword mplusCommand CUTPOINT TRANSFORM IMPUTE BINARY CONTINUOUS
+syn keyword mplusCommand DESCRIPTIVE DDROPOUT SDROPOUT
 
 "" --- Variable command ---
 syn keyword mplusCommand USEOBSERVATIONS USEVARIABLES CENSORED
@@ -70,12 +76,12 @@ syn keyword mplusCommand MITERATIONS MCITERATIONS MUITERATIONS H1CONVERGENCE LOG
 syn keyword mplusCommand MCONVERGENCE MCCONVERGENCE MUCONVERGENCE MIXC MIXU LOGHIGH LOGLOW
 syn keyword mplusCommand UCELLSIZE VARIANCE MATRIX ITERATIONS CONVERGENCE INTEGRATION STANDARD
 syn keyword mplusCommand GENERAL BASIC MEANSTRUCTURE MCOHORT H1 RANDOM COMPLEX MIXTURE
-syn keyword mplusCommand TWOLEVEL EFA LOGISTIC
+syn keyword mplusCommand TWOLEVEL EFA ESEM BSEM BESEM LOGISTIC
 syn keyword mplusCommand ML MLM MLMV MLR MLF MUML WLS WLSM WLSMV GLS ULS
 syn keyword mplusCommand DELTA THETA LOGIT LOGLINEAR
 syn keyword mplusCommand ON OFF EMA EM ODLL GAUSSHERMITE
 syn keyword mplusCommand OBSERVED EXPECTED COMBINATION
-syn keyword mplusCommand THREELEVEL CROSSCLASSIFIED ULSMV BAYES
+syn keyword mplusCommand THREELEVEL CROSSCLASSIFIED ULSMV BAYES ARIMA ARMA
 "" Model structure
 syn keyword mplusCommand CONFIGURAL SCALAR NOMEANSTRUCTURE NOCOVARIANCES ALLFREE
 "" Distribution and parameterization
@@ -92,7 +98,7 @@ syn keyword mplusCommand MDITERATIONS KOLMOGOROV PRIOR GIBBS
 syn keyword mplusCommand LRTBOOTSTRAP MULTIPLIER ADDFREQUENCY RITERATIONS AITERATIONS
 syn keyword mplusCommand RLOGCRITERION RCONVERGENCE ACONVERGENCE SIMPLICITY TOLERANCE
 syn keyword mplusCommand POINT STVALUES PREDICTOR INTERACTIVE
-syn keyword mplusCommand DISTRIBUTION ROTATION ROWSTANDARDIZATION METRIC NESTED
+syn keyword mplusCommand DISTRIBUTION ROTATION ROWSTANDARDIZATION METRIC NESTED UW UB
 syn keyword mplusCommand LRTSTARTS RSTARTS ASTARTS H1STARTS
 syn keyword mplusCommand RESCOVARIANCES RESCOV UNPERTURBED PERTURBED FS MH
 "" Hyphenated analysis keywords

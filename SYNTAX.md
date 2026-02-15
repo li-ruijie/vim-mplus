@@ -30,14 +30,14 @@ mplus-inp.vim                    mplus-out.vim
      ┌──────────┘          └──────────┐
      ▼                                ▼
 mplus-inp.vim adds:          mplus-out.vim adds:
-  mplusSection                 mplusSection
-  (column 1)                   (2-space indent)
-  ^TITLE:                      ^  TITLE:
-  ^(DATA|MODEL)(\s\S+)?:      ^  (DATA|MODEL)(\s\S+)?:
+  mplusFold regions              mplusSection
+  matchgroup=mplusSection        (2-space indent)
+  ^TITLE:  (no keywords)        ^  TITLE:
+  ^(DATA|MODEL)(\s\S+)?:        ^  (DATA|MODEL)(\s\S+)?:
 
-                               mplusHeader
-                               (all-caps lines)
-                               \C^\u[A-Z 0-9/,-]+$
+                                 mplusHeader
+                                 (all-caps lines)
+                                 \C^\u[A-Z 0-9/,-]+$
 ```
 
 ## Highlight Groups
@@ -104,6 +104,11 @@ highlighted as mplusSection in the base file.
 │ DO         │ Loop construct               │
 │ DIFF       │ Parameter difference (short) │
 │ DIFFERENCE │ Parameter difference         │
+│ SQRT       │ Square root function         │
+│ EXP        │ Exponential function         │
+│ LOG        │ Natural logarithm function   │
+│ \|         │ Growth model pipe operator   │
+│ &          │ Lag operator (e.g., f&1)     │
 └────────────┴──────────────────────────────┘
 ```
 
@@ -129,6 +134,7 @@ highlighted as mplusSection in the base file.
 │ TITLE       │ Title section keyword      │
 │ TYPE        │ Analysis/data type         │
 │ USEVAR      │ Use variables (short form) │
+│ USEV        │ Use variables (short form) │
 │ USEVARIABLE │ Use variables              │
 │ VARIABLE    │ Variable section keyword   │
 └─────────────┴────────────────────────────┘
@@ -199,6 +205,11 @@ highlighted as mplusSection in the base file.
 │ CUTPOINT      │ Cutpoint specification    │
 │ TRANSFORM     │ Data transformation       │
 │ IMPUTE        │ Imputation specification  │
+│ BINARY        │ Binary part (TWOPART)     │
+│ CONTINUOUS    │ Continuous part (TWOPART) │
+│ DESCRIPTIVE   │ Descriptive statistics    │
+│ DDROPOUT      │ Dropout model (NMAR)      │
+│ SDROPOUT      │ Selection model (NMAR)    │
 └───────────────┴───────────────────────────┘
 ```
 
@@ -310,7 +321,12 @@ highlighted as mplusSection in the base file.
 │ THREELEVEL       │ Three-level modeling            │
 │ CROSSCLASSIFIED  │ Cross-classified modeling       │
 │ EFA              │ Exploratory factor analysis     │
+│ ESEM             │ Exploratory SEM                 │
+│ BSEM             │ Bayesian SEM                    │
+│ BESEM            │ Bayesian exploratory SEM        │
 │ LOGISTIC         │ Logistic regression             │
+│ ARIMA            │ Autoregressive integrated MA    │
+│ ARMA             │ Autoregressive moving average   │
 └──────────────────┴─────────────────────────────────┘
 ```
 
@@ -488,6 +504,8 @@ highlighted as mplusSection in the base file.
 │ ROWSTANDARDIZATION │ Row standardization          │
 │ METRIC             │ Alignment metric             │
 │ NESTED             │ Nested model specification   │
+│ UW                 │ Unrotated within (EFA)       │
+│ UB                 │ Unrotated between (EFA)      │
 │ LRTSTARTS          │ LRT random starts            │
 │ RSTARTS            │ Random starts (ridging)      │
 │ ASTARTS            │ Acceleration starts          │
@@ -601,6 +619,7 @@ highlighted as mplusSection in the base file.
 ├─────────┼────────────────────────────┤
 │ ARE     │ Variable list connector    │
 │ IS      │ Value assignment connector │
+│ =       │ Value assignment (syn IS)  │
 └─────────┴────────────────────────────┘
 ```
 

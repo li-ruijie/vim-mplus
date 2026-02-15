@@ -66,7 +66,7 @@ Highlight groups:~
                      Command options and parameters (ESTIMATOR, STARTS, etc.).
 
     *mplusModel*       Links to |hl-Function|
-                     Model operators: BY, ON, WITH, PWITH, AT, XWITH, etc.
+                     Model operators: BY, ON, WITH, |, &, SQRT, EXP, LOG, etc.
 
     *mplusSection*     Links to |hl-Include|
                      Section headers (TITLE:, MODEL CONSTRAINT:, etc.)
@@ -76,7 +76,7 @@ Highlight groups:~
                      Comments starting with !
 
     *mplusSpeccom*     Links to |hl-Special|
-                     Connectors: ARE, IS.
+                     Connectors: ARE, IS, =.
 
     *mplusHeader*      Links to |hl-Type|
                      Timestamp headers in output files.
