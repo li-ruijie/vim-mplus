@@ -25,7 +25,7 @@ Or copy the contents to your Vim runtime directory.
 | Command | Description                                  |
 |---------|----------------------------------------------|
 | `:Mout` | Open corresponding `.out` file in vertical split |
-| `:Mrun` | Run Mplus on current file (Windows)          |
+| `:Mrun` | Run Mplus on current file (Windows/Linux)    |
 
 ## Snippets
 

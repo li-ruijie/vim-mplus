@@ -5,10 +5,10 @@ endif
 runtime syntax/mplus.vim
 
 "" TITLE section: no keyword highlighting in body (free-form text)
-syn region mplusFold matchgroup=mplusSection
+syn region mplusFold
     \ start="^\s*TITL\w*\s*:"
     \ end="^\s*\ze\(TITL\w*\|DATA\w*\(\s\+\S\+\)\?\|VARI\w*\|DEFI\w*\|ANAL\w*\|MODE\w*\(\s\+\S\+\)\?\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\):"
-    \ fold keepend contains=mplusComment
+    \ fold keepend contains=mplusComment,mplusTitle
 
 "" All other sections: matchgroup overrides keyword priority for headers
 "" contains=ALLBUT,mplusFold prevents self-nesting (flat folds)

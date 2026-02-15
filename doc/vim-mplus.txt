@@ -45,7 +45,7 @@ Run |:helptags| after installing to generate help tags: >vim
 
 The plugin registers two filetypes:
 
-    *mplus-inp*    .inp files (Mplus input)
+    *mplus-inp*    .inp and .mdg files (Mplus input / diagrammer)
     *mplus-out*    .out files (Mplus output)
 
 ==============================================================================
@@ -72,6 +72,7 @@ Highlight groups:~
     *mplusModel*       Links to |hl-Function|
                      Model operators: BY, ON, WITH, |, &, *, @, #, [], (),
                      SQRT, EXP, LOG, DO, END.
+                     ON after = (e.g., BASEHAZARD = ON) links to mplusCommand.
                      Bayesian priors: N, IG, IW, D (used with ~).
                      Logical/comparison: EQ, NE, GT, LT, GE, LE, AND, OR, NOT.
 
@@ -84,13 +85,19 @@ Highlight groups:~
 
     *mplusComment*     Links to |hl-Comment|
                      Line comments starting with !
-                     Block comments delimited by !* and *!
+                     Block comments delimited by !* and *! (spell-checked).
 
     *mplusSpeccom*     Links to |hl-Special|
                      Connectors: ARE, IS, =.
 
     *mplusHeader*      Links to |hl-Type|
                      Timestamp and section headers in output files.
+
+    *mplusTitle*       Links to |hl-String|
+                     TITLE section body (suppresses keyword highlighting).
+
+    *mplusString*      Links to |hl-String|
+                     Quoted strings ("..." and '...').
 
 ==============================================================================
 5. FOLDING                                               *vim-mplus-folding*

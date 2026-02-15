@@ -1,1 +1,1 @@
-autocmd BufRead,BufNewFile *.inp set filetype=mplus-inp
+autocmd BufRead,BufNewFile *.inp,*.mdg set filetype=mplus-inp

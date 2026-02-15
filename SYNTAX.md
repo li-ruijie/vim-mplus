@@ -1,7 +1,10 @@
 # Mplus Syntax Reference
 
 Reference for syntax groups used by the vim-mplus plugin. Keywords are
-case-insensitive. Source: <https://www.statmodel.com/language.html>.
+case-insensitive. Mplus accepts keywords truncated to 4 characters;
+all intermediate truncations (4-char through full length) are included
+in the syntax file.
+Source: <https://www.statmodel.com/language.html>.
 
 ## File Structure
 
@@ -14,13 +17,15 @@ mplus-inp.vim                    mplus-out.vim
      ▼
   mplus.vim (shared)
 ┌─────────────────┐
-│ iskeyword, case │
+│ case ignore     │
+│ mplusTitle       │  ◄── TITLE body (to ;), no keywords
+│ mplusString      │  ◄── "…" and '…' quoted strings
 │ mplusStatement  │
 │ mplusCommand    │
 │ mplusModel       │  ◄── BY, ON, *, @, |, &, SQRT…
 │ mplusNumber      │  ◄── integers, floats, E/D notation
 │ mplusSpeccom │
-│ mplusComment │
+│ mplusComment     │  ◄── block comments have @Spell
 │ mplusSection     │  ◄── %label% markers
 │ mplusHeader      │  ◄── timestamp only
 │ highlight links │
@@ -29,7 +34,8 @@ mplus-inp.vim                    mplus-out.vim
 mplus-inp.vim adds:          mplus-out.vim defines:
   mplusFold regions            mplusComment  (! comments)
   matchgroup=mplusSection      mplusSection  (%labels%, indented headers)
-  ^TITLE:  (no keywords)      mplusHeader   (timestamp + all-caps lines)
+  ^TITLE:  (contains mplusTitle) mplusHeader (timestamp + all-caps lines
+                                              + mixed-case syn matches)
   ^(DATA|MODEL)(\s\S+)?:      mplusFold     (between all-caps headers
                                               + mixed-case fit headers)
                                \C^\s*\u[A-Z 0-9/,&():.*%=-]+$
@@ -49,6 +55,8 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 │ mplusComment   │ Comment   │ Line comments (!) and block (!*…*!)  │
 │ mplusSpeccom   │ Special   │ ARE, IS, = connectors                │
 │ mplusHeader    │ Type      │ Timestamp and output headers         │
+│ mplusTitle     │ String    │ TITLE section body (no keywords)     │
+│ mplusString    │ String    │ Quoted strings ("…" and '…')         │
 └────────────────┴───────────┴──────────────────────────────────────┘
 ```
 
@@ -86,7 +94,7 @@ highlighted as mplusSection in the base file.
 │ Operator   │ Usage                        │
 ├────────────┼──────────────────────────────┤
 │ BY         │ Factor loading specification │
-│ ON         │ Regression                   │
+│ ON         │ Regression (= ON → Command)  │
 │ WITH       │ Covariance                   │
 │ PWITH      │ Pairwise covariance          │
 │ XWITH      │ Interaction (latent)         │
@@ -694,7 +702,11 @@ highlighted as mplusSection in the base file.
 │ -?\d+\.?\d*([EDed][-+]?\d+)?            │ Number  │
 │ -?.\d+([EDed][-+]?\d+)?                 │ Number  │
 │ * (start value), @ (fix value)          │ Model   │
+│ \<ON\> (model operator by default)      │ Model   │
+│ \%(=\s*\)\@<=\<ON\> (setting value)     │ Command │
 │ !.*$                                    │ Comment │
-│ ^\s*!\*...\*! (block comment)           │ Comment │
+│ ^\s*!\*...\*! (block comment, @Spell)   │ Comment │
+│ ^TITLE\> ... ;  (TITLE body region)     │ Title   │
+│ "…" and '…' (quoted strings)            │ String  │
 └─────────────────────────────────────────┴─────────┘
 ```
