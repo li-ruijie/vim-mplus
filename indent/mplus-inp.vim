@@ -32,7 +32,7 @@ function! GetMplusInpIndent()
     if line =~? '^\s*\(TITL\w*\|VARI\w*\|DEFI\w*\|ANAL\w*\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\)\s*:'
         return 0
     endif
-    if line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+\S\+\)\?\s*:'
+    if line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+[^: \t]\+\)\?\s*:'
         return 0
     endif
 
@@ -40,7 +40,7 @@ function! GetMplusInpIndent()
     if prev_line =~? '^\s*\(TITL\w*\|VARI\w*\|DEFI\w*\|ANAL\w*\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\)\s*:'
         return shiftwidth()
     endif
-    if prev_line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+\S\+\)\?\s*:'
+    if prev_line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+[^: \t]\+\)\?\s*:'
         return shiftwidth()
     endif
 

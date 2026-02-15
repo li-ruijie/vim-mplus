@@ -103,7 +103,9 @@ recognised as fold boundaries.
 
 Output files ~
 Folds span between all-caps headers (e.g., MODEL FIT INFORMATION,
-STANDARDIZED MODEL RESULTS).
+STANDARDIZED MODEL RESULTS) and specific mixed-case headers from
+model fit output (Loglikelihood, Information Criteria, Chi-Square
+Test of Model Fit, RMSEA, SRMR, WRMR).
 
 ==============================================================================
 6. INDENTATION                                         *vim-mplus-indentation*

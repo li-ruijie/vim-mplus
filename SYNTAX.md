@@ -30,8 +30,9 @@ mplus-inp.vim adds:          mplus-out.vim defines:
   mplusFold regions            mplusComment  (! comments)
   matchgroup=mplusSection      mplusSection  (%labels%, indented headers)
   ^TITLE:  (no keywords)      mplusHeader   (timestamp + all-caps lines)
-  ^(DATA|MODEL)(\s\S+)?:      mplusFold     (between all-caps headers)
-                               \C^\u[A-Z 0-9/,&():-]+$
+  ^(DATA|MODEL)(\s\S+)?:      mplusFold     (between all-caps headers
+                                              + mixed-case fit headers)
+                               \C^\s*\u[A-Z 0-9/,&():.*%=-]+$
 ```
 
 ## Highlight Groups
@@ -54,7 +55,7 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 ## Section Headers (mplusSection)
 
 Input files match at column 1; output files match with 2-space indent.
-Compound headers (`MODEL X:`, `DATA X:`) are matched via `\(\s\+\S\+\)\?`.
+Compound headers (`MODEL X:`, `DATA X:`) are matched via `\(\s\+[^: \t]\+\)\?`.
 Abbreviated section names are matched with `\w*` (e.g., `ANAL:` matches `ANALYSIS:`).
 Class/level labels (`%OVERALL%`, `%c#1%`, `%BETWEEN subject%`) are also
 highlighted as mplusSection in the base file.
@@ -187,6 +188,7 @@ highlighted as mplusSection in the base file.
 │ ALIGNMENT     │ Alignment optimization         │
 │ ENTROPY       │ Entropy statistic              │
 │ PATTERNS      │ Missing data patterns          │
+│ PAIRS         │ Pairwise output                │
 │ CONSTRAINT    │ MODEL CONSTRAINT sub-section   │
 │ INDIRECT      │ MODEL INDIRECT sub-section     │
 │ POPULATION    │ MODEL POPULATION sub-section   │
@@ -234,6 +236,8 @@ highlighted as mplusSection in the base file.
 │ DESCRIPTIVE   │ Descriptive statistics    │
 │ DDROPOUT      │ Dropout model (NMAR)      │
 │ SDROPOUT      │ Selection model (NMAR)    │
+│ PLAUSIBLE     │ Plausible values          │
+│ LATENT        │ Latent variable data      │
 │ TWOPART       │ Two-part model            │
 │ WIDETOLONG    │ Wide to long conversion   │
 │ LONGTOWIDE    │ Long to wide conversion   │
@@ -645,6 +649,7 @@ highlighted as mplusSection in the base file.
 │ PATPROBS   │ Pattern probabilities         │
 │ REPSAVE    │ Save replication results      │
 │ STARTING   │ Starting values specification │
+│ POPULATION │ Population model values       │
 └────────────┴───────────────────────────────┘
 ```
 
@@ -676,19 +681,19 @@ highlighted as mplusSection in the base file.
 ## Match Patterns
 
 ```
-┌─────────────────────────────────────────┬───────────┐
-│ Pattern                                 │ Group     │
-├─────────────────────────────────────────┼───────────┤
-│ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header    │
-│ ^SUMMARY OF DATA$                       │ Statement │
-│ \C^\u[A-Z 0-9/,&():.*%=-]+$ (output)    │ Header    │
-│ ^(SECTION):  (input, column 1)          │ Section   │
-│ ^(DATA|MODEL)(\s\S+)?:  (input)         │ Section   │
-│ ^  (SECTION):  (output, 2-space indent) │ Section   │
-│ %[^%]+%  (class/level labels)           │ Section   │
-│ -?\d+\.?\d*([EDed][-+]?\d+)?            │ Number    │
-│ -?.\d+([EDed][-+]?\d+)?                 │ Number    │
-│ * (start value), @ (fix value)          │ Model     │
-│ !.*$                                    │ Comment   │
-└─────────────────────────────────────────┴───────────┘
+┌─────────────────────────────────────────┬─────────┐
+│ Pattern                                 │ Group   │
+├─────────────────────────────────────────┼─────────┤
+│ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header  │
+│ \C^\s*\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
+│ Mixed-case fit headers (output)         │ Header  │
+│ ^(SECTION):  (input, column 1)          │ Section │
+│ ^(DATA|MODEL)(\s[^: \t]+)?:  (input)    │ Section │
+│ ^  (SECTION):  (output, 2-space indent) │ Section │
+│ %[^%]+%  (class/level labels)           │ Section │
+│ -?\d+\.?\d*([EDed][-+]?\d+)?            │ Number  │
+│ -?.\d+([EDed][-+]?\d+)?                 │ Number  │
+│ * (start value), @ (fix value)          │ Model   │
+│ !.*$                                    │ Comment │
+└─────────────────────────────────────────┴─────────┘
 ```

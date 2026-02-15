@@ -37,10 +37,7 @@ syn match mplusModel "/"
 syn match mplusModel ">"
 syn match mplusModel "<"
 
-"" Match patterns
-syn match mplusStatement "^SUMMARY OF DATA$"
 
-"" Statement keywords
 syn keyword mplusStatement ANALYSIS DEFINE SAVEDATA
 syn match   mplusStatement "\<DATA\>"
 syn match   mplusStatement "\<MODEL\>"
@@ -53,7 +50,7 @@ syn keyword mplusStatement TECH9 TECH10 TECH11 TECH12 TECH13 TECH14 TECH15 TECH1
 syn keyword mplusStatement STDY CINTERVAL SVALUES NOCHISQUARE NOSERROR H1SE
 syn keyword mplusStatement H1TECH3 H1MODEL CROSSTABS FSCOEFFICIENT FSDETERMINACY
 syn keyword mplusStatement FSCOMPARISON LOGRANK ALIGNMENT ENTROPY
-syn keyword mplusStatement PATTERNS
+syn keyword mplusStatement PATTERNS PAIRS
 "" Model sub-sections
 syn keyword mplusStatement CONSTRAINT INDIRECT POPULATION PRIORS COVERAGE TEST
 
@@ -75,7 +72,7 @@ syn keyword mplusCommand FULLCORR MEANS STDEVIATIONS IMPUTATION
 syn keyword mplusCommand NOBSERVATIONS NOBS NGROUPS VARIANCES CHECK NOCHECK FREE
 syn keyword mplusCommand LISTWISE SWMATRIX NDATASETS WIDE LONG REPETITION
 syn keyword mplusCommand CUTPOINT TRANSFORM IMPUTE BINARY CONTINUOUS
-syn keyword mplusCommand DESCRIPTIVE DDROPOUT SDROPOUT
+syn keyword mplusCommand DESCRIPTIVE DDROPOUT SDROPOUT PLAUSIBLE LATENT
 syn keyword mplusCommand TWOPART WIDETOLONG LONGTOWIDE FILE
 
 "" --- Variable command ---
@@ -149,7 +146,7 @@ syn keyword mplusCommand DRIFT
 
 "" --- Montecarlo command ---
 syn keyword mplusCommand NREPS NREP SEED GENERATE CUTPOINTS GENCLASSES GENCLASS NCSIZES CSIZES
-syn keyword mplusCommand HAZARDC PATMISS PATPROBS REPSAVE STARTING
+syn keyword mplusCommand HAZARDC PATMISS PATPROBS REPSAVE STARTING POPULATION
 
 "" --- Confidence intervals ---
 syn keyword mplusCommand SYMMETRIC BCBOOTSTRAP EQTAIL HPD
