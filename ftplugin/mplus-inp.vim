@@ -1,6 +1,16 @@
 setlocal foldmethod=syntax
 setlocal omnifunc=syntaxcomplete#Complete
 
+" Formatting configuration
+setlocal textwidth=90
+setlocal formatoptions-=t
+setlocal formatoptions+=croql
+setlocal comments=:!
+setlocal commentstring=!%s
+setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+setlocal fileencoding=utf-8 nobomb
+setlocal formatexpr=mplus#format#Format()
+
 "" Mplus executable: override with g:mplus_executable (default: 'mplus')
 if !exists('g:mplus_executable')
   let g:mplus_executable = 'mplus'

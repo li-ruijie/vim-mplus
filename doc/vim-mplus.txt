@@ -14,9 +14,10 @@ CONTENTS                                                   *vim-mplus-contents*
     5. Folding ............................... |vim-mplus-folding|
     6. Indentation ........................... |vim-mplus-indentation|
     7. Completion ............................ |vim-mplus-completion|
-    8. Commands .............................. |vim-mplus-commands|
-    9. Configuration ......................... |vim-mplus-configuration|
-   10. Snippets .............................. |vim-mplus-snippets|
+    8. Formatting ............................ |vim-mplus-formatting|
+    9. Commands .............................. |vim-mplus-commands|
+   10. Configuration ......................... |vim-mplus-configuration|
+   11. Snippets .............................. |vim-mplus-snippets|
 
 ==============================================================================
 1. INTRODUCTION                                       *vim-mplus-introduction*
@@ -133,7 +134,31 @@ Press CTRL-X CTRL-O in insert mode to complete any Mplus keyword defined
 in the syntax file.
 
 ==============================================================================
-8. COMMANDS                                             *vim-mplus-commands*
+8. FORMATTING                                           *vim-mplus-formatting*
+
+For mplus-inp files, 'formatexpr' is set to a custom formatter invoked
+with |gq|. The formatter performs the following operations on the
+selected range:
+
+    - Replaces tabs with 4 spaces and strips trailing whitespace.
+    - Splits section headers onto their own line (e.g.,
+      "DATA: FILE IS ..." becomes "DATA:" followed by "  FILE IS ...").
+    - Replaces IS/ARE connectors with =.
+    - Expands keyword abbreviations to their full forms.
+    - Re-indents using 'indentexpr'.
+
+Buffer settings applied by ftplugin:~
+
+    'comments'      :!
+    'commentstring' !%s
+    'tabstop'       4
+    'shiftwidth'    4
+    'expandtab'     on
+    'fileencoding'  utf-8
+    'bomb'          off
+
+==============================================================================
+9. COMMANDS                                             *vim-mplus-commands*
 
 These commands are available in mplus-inp buffers:
 
@@ -147,7 +172,7 @@ These commands are available in mplus-inp buffers:
                 The executable can be configured with |g:mplus_executable|.
 
 ==============================================================================
-9. CONFIGURATION                                   *vim-mplus-configuration*
+10. CONFIGURATION                                  *vim-mplus-configuration*
 
                                                          *g:mplus_executable*
 g:mplus_executable ~
@@ -164,7 +189,7 @@ g:mplus_executable ~
         let g:mplus_executable = '/opt/mplus/mplus'
 <
 ==============================================================================
-10. SNIPPETS                                             *vim-mplus-snippets*
+11. SNIPPETS                                             *vim-mplus-snippets*
 
 UltiSnips snippets are provided for common Mplus analyses. Requires the
 UltiSnips plugin (https://github.com/SirVer/ultisnips). Type the trigger
