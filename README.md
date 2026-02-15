@@ -13,10 +13,16 @@ Vim plugin for [Mplus](https://www.statmodel.com/) statistical software files (`
 
 ## Installation
 
-Using a plugin manager (e.g., vim-plug):
+[vim-plug](https://github.com/junegunn/vim-plug):
 
 ```vim
 Plug 'li-ruijie/vim-mplus'
+```
+
+[lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{ 'li-ruijie/vim-mplus', ft = { 'mplus-inp', 'mplus-out' } }
 ```
 
 Or copy the contents to your Vim runtime directory.
