@@ -12,4 +12,10 @@ syn match mplusSection
 syn match mplusSection
     \ "^\(CONSTRAINT\|INDIRECT\|POPULATION\|MISSING\|PRIORS\|TEST\):"
 
+"" Fold sections
+syn region mplusFold
+    \ start="^\(TITLE\|DATA\|VARIABLE\|DEFINE\|ANALYSIS\|MODEL\(\s\+\S\+\)\?\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
+    \ end="\ze^\(TITLE\|DATA\|VARIABLE\|DEFINE\|ANALYSIS\|MODEL\(\s\+\S\+\)\?\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
+    \ fold transparent keepend
+
 let b:current_syntax = "mplus-inp"

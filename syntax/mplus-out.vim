@@ -15,4 +15,10 @@ syn match mplusSection
 syn match mplusSection
     \ "^  \(CONSTRAINT\|INDIRECT\|POPULATION\|MISSING\|PRIORS\|TEST\):"
 
+"" Fold output sections
+syn region mplusFold
+    \ start="\C^\u[A-Z ]\+$"
+    \ end="\ze\C^\u[A-Z ]\+$"
+    \ fold transparent keepend
+
 let b:current_syntax = "mplus-out"
