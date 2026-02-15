@@ -109,6 +109,11 @@ highlighted as mplusSection in the base file.
 │ #          │ Category/inflation operator  │
 │ [ ]        │ Thresholds/Means             │
 │ ( )        │ Labels/Constraints           │
+│ { }        │ Scale factors                │
+│ $          │ Threshold separator          │
+│ ~          │ Distribution (Bayesian)      │
+│ + - /      │ Arithmetic operators         │
+│ < >        │ Inequality constraints       │
 └────────────┴──────────────────────────────┘
 ```
 
