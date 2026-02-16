@@ -5,6 +5,16 @@
 
 syn case ignore
 
+"" Section headers: matches (not keywords) so fold regions take priority
+syn match mplusStatement "\<\(TITL\|TITLE\)\>"
+syn match mplusStatement "\<\(VARI\|VARIA\|VARIAB\|VARIABL\|VARIABLE\)\>"
+syn match mplusStatement "\<\(DEFI\|DEFIN\|DEFINE\)\>"
+syn match mplusStatement "\<\(ANAL\|ANALY\|ANALYS\|ANALYSI\|ANALYSIS\)\>"
+syn match mplusStatement "\<\(OUTP\|OUTPU\|OUTPUT\)\>"
+syn match mplusStatement "\<\(SAVED\|SAVEDA\|SAVEDAT\|SAVEDATA\)\>"
+syn match mplusStatement "\<PLOT\>"
+syn match mplusStatement "\<\(MONT\|MONTE\|MONTEC\|MONTECA\|MONTECAR\|MONTECARL\|MONTECARLO\)\>"
+
 "" Safe regions to prevent keyword matching in free text
 syn region mplusTitle matchgroup=mplusStatement start="^\s*\(TITLE\|TITL\)\>\s*:\?" end=";" contains=mplusComment
 syn region mplusString start=+"+ end=+"+
@@ -39,11 +49,10 @@ syn match mplusModel ">"
 syn match mplusModel "<"
 
 
-syn keyword mplusStatement ANALYSIS DEFINE SAVEDATA
 syn match   mplusStatement "\<DATA\>"
 syn match   mplusStatement "\<MODEL\>"
-syn keyword mplusStatement MODINDICES OUTPUT PLOT RESIDUAL SAMPSTAT STANDARDIZED
-syn keyword mplusStatement STD STDYX TITLE VARIABLE VARI DEFINE DEFI ANALYSIS ANAL MODEL OUTP MONTECARLO MONT
+syn keyword mplusStatement MODINDICES RESIDUAL SAMPSTAT STANDARDIZED
+syn keyword mplusStatement STD STDYX
 syn keyword mplusStatement TECH1 TECH2 TECH3 TECH4 TECH5 TECH6 TECH7 TECH8
 syn keyword mplusStatement TECH9 TECH10 TECH11 TECH12 TECH13 TECH14 TECH15 TECH16
 
@@ -141,7 +150,8 @@ syn match mplusCommand "\<\(BI-GEOMIN\|BI-CF-QUARTIMAX\)\>"
 syn keyword mplusCommand MISSFLAG RECORDLENGTH SIGBETWEEN ESTIMATES RANKING
 syn keyword mplusCommand FSCORES CPROBABILITIES BPARAMETERS BCHWEIGHTS PROPENSITY
 syn keyword mplusCommand LRESPONSES MFILE MNAMES MFORMAT MMISSING MSELECT
-syn keyword mplusCommand SAMPLE RESULTS STDRESULTS STDDISTRIBUTION SAVE FACTORS
+syn keyword mplusCommand SAMPLE RESULTS STDRESULTS STDDISTRIBUTION FACTORS
+syn match   mplusCommand "\<SAVE\>"
 syn keyword mplusCommand KAPLANMEIER ESTBASELINE RESPONSE H5RESULTS
 syn keyword mplusCommand MAHALANOBIS LOGLIKELIHOOD INFLUENCE COOKS
 
@@ -156,13 +166,11 @@ syn keyword mplusCommand HAZARDC PATMISS PATPROBS REPSAVE STARTING POPULATION
 "" Abbreviations (4+ chars) - Comprehensive Auto-Generated List
 "" mplusStatement abbreviations
 syn keyword mplusStatement ALIGNMENT ALIG ALIGN ALIGNM ALIGNME ALIGNMEN
-syn keyword mplusStatement ANALYSIS ANAL ANALY ANALYS ANALYSI
 syn keyword mplusStatement BCBOOTSTRAP BCBO BCBOO BCBOOT BCBOOTS BCBOOTST BCBOOTSTR BCBOOTSTRA
 syn keyword mplusStatement CINTERVAL CINT CINTE CINTER CINTERV CINTERVA
 syn keyword mplusStatement CONSTRAINT CONS CONST CONSTR CONSTRA CONSTRAI CONSTRAIN
 syn keyword mplusStatement COVERAGE COVE COVER COVERA COVERAG
 syn keyword mplusStatement CROSSTABS CROS CROSS CROSST CROSSTA CROSSTAB
-syn keyword mplusStatement DEFINE DEFI DEFIN
 syn keyword mplusStatement ENTROPY ENTR ENTRO ENTROP
 syn keyword mplusStatement EQTAIL EQTA EQTAI
 syn keyword mplusStatement FSCOEFFICIENT FSCO FSCOE FSCOEF FSCOEFF FSCOEFFI FSCOEFFIC FSCOEFFICI FSCOEFFICIE FSCOEFFICIEN
@@ -172,25 +180,19 @@ syn keyword mplusStatement H1MODEL H1MO H1MOD H1MODE
 syn keyword mplusStatement H1TECH3 H1TE H1TEC H1TECH
 syn keyword mplusStatement INDIRECT INDI INDIR INDIRE INDIREC
 syn keyword mplusStatement LOGRANK LOGR LOGRA LOGRAN
-syn keyword mplusStatement MODEL
 syn keyword mplusStatement MODINDICES MODI MODIN MODIND MODINDI MODINDIC MODINDICE
-syn keyword mplusStatement MONTECARLO MONT MONTE MONTEC MONTECA MONTECAR MONTECARL
 syn keyword mplusStatement NOCHISQUARE NOCH NOCHI NOCHIS NOCHISQ NOCHISQU NOCHISQUA NOCHISQUAR
 syn keyword mplusStatement NOSERROR NOSE NOSER NOSERR NOSERRO
-syn keyword mplusStatement OUTPUT OUTP OUTPU
 syn keyword mplusStatement PAIRS PAIR
 syn keyword mplusStatement PATTERNS PATT PATTE PATTER PATTERN
 syn keyword mplusStatement POPULATION POPU POPUL POPULA POPULAT POPULATI POPULATIO
 syn keyword mplusStatement PRIORS PRIO PRIOR
 syn keyword mplusStatement RESIDUAL RESI RESID RESIDU RESIDUA
 syn keyword mplusStatement SAMPSTAT SAMP SAMPS SAMPST SAMPSTA
-syn keyword mplusStatement SAVEDATA SAVED SAVEDA SAVEDAT
 syn keyword mplusStatement STANDARDIZED
 syn keyword mplusStatement STDY
 syn keyword mplusStatement SVALUES SVAL SVALU SVALUE
 syn keyword mplusStatement SYMMETRIC SYMM SYMME SYMMET SYMMETR SYMMETRI
-syn keyword mplusStatement TITLE TITL
-syn keyword mplusStatement VARIABLE VARI VARIA VARIAB VARIABL
 
 "" mplusCommand abbreviations
 syn keyword mplusCommand ACONVERGENCE ACON ACONV ACONVE ACONVER ACONVERG ACONVERGE ACONVERGEN ACONVERGENC
@@ -362,7 +364,6 @@ syn keyword mplusCommand PATPROBS PATP PATPR PATPRO PATPROB
 syn keyword mplusCommand PATTERN PATT PATTE PATTER
 syn keyword mplusCommand PERTURBED PERT PERTU PERTUR PERTURB PERTURBE
 syn keyword mplusCommand PLAUSIBLE PLAU PLAUS PLAUSI PLAUSIB PLAUSIBL
-syn keyword mplusCommand PLOT
 syn keyword mplusCommand POINT POIN
 syn keyword mplusCommand POISSON POIS POISS POISSO
 syn keyword mplusCommand PREDICTOR PRED PREDI PREDIC PREDICT PREDICTO
