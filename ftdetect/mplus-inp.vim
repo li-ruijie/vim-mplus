@@ -17,7 +17,9 @@ autocmd BufNewFile *.inp setfiletype mplus-inp
 autocmd BufRead *.inp if s:IsMplusInput() | setfiletype mplus-inp | endif
 
 " A command name in full or shortened to four or more letters, then a colon.
-" Only DATA and MODEL take a second word (DATA IMPUTATION:, MODEL male:).
+" A second word is taken after DATA and MODEL only (DATA IMPUTATION:, MODEL
+" male:). Mplus starts a section at a second word after any command, as
+" autoload/mplus/section.vim tells, and passes over it after the others.
 let s:header_re = '\c^\s*\%(TITL\%[E]\|VARI\%[ABLE]\|DEFI\%[NE]\|ANAL\%[YSIS]'
     \ . '\|OUTP\%[UT]\|SAVE\%[DATA]\|PLOT\|MONT\%[ECARLO]'
     \ . '\|\%(DATA\|MODE\%[L]\)\%(\s\+[^: \t]\+\)\=\)\s*:'
