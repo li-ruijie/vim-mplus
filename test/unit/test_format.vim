@@ -233,6 +233,28 @@ function! Test_header_that_mplus_does_not_read_is_kept() abort
     endfor
 endfunction
 
+function! Test_statement_is_read_from_above_a_range() abort
+    " A line that goes on with a statement is formatted as part of it. The
+    " name of a file keeps its case, also when gq is used on its line only.
+    enew!
+    call setline(1, ['DATA:', '    FILE IS', '    Mixed.dat;', '    vari = nocheck;',
+        \ 'ANALYSIS:', '    esti', '    = mlr; type =', '    Basic; ! esti = x;',
+        \ '    !* inte = 1;', '    esti = y; *!', '    inte = 7;'])
+    set filetype=mplus-inp
+    3normal gqq
+    call assert_equal('    Mixed.dat;', getline(3))
+    4normal gqq
+    call assert_equal('    VARIANCES = NOCHECK;', getline(4))
+    8normal gqq
+    call assert_equal('    BASIC; ! esti = x;', getline(8))
+    10normal gqq
+    call assert_equal('    esti = y; *!', getline(10))
+    11normal gqq
+    call assert_equal('    INTEGRATION = 7;', getline(11))
+    7normal gqq
+    call assert_equal('    = MLR; TYPE =', getline(7))
+endfunction
+
 function! Test_header_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['TITLE: a study', '  step 2: twenty sets', '  impu = y1;',

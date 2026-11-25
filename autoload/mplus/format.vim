@@ -101,53 +101,6 @@ function! s:IsFileOption(name, section) abort
     return 0
 endfunction
 
-" Return the code part of a:line, without quoted strings and the comment.
-function! s:CodeOnly(line) abort
-    let l:code = ''
-    let l:pos = 0
-    while 1
-        let [l:piece, l:start, l:pos] = matchstrpos(a:line, s:piece_re, l:pos)
-        if l:start < 0 || l:piece[0] ==# '!'
-            return l:code
-        endif
-        let l:code .= l:piece =~# '^["'']' ? '' : l:piece
-    endwhile
-endfunction
-
-" Describe the text above line a:lnum: the section it belongs to, whether it
-" is free text, whether it is inside a block comment, and whether a new
-" statement starts on a:lnum.
-function! s:StateBefore(lnum) abort
-    let l:state = {'section': '', 'free': 0, 'in_block': 0, 'at_start': 1,
-        \ 'verbatim': 0}
-    let l:have_code = 0
-    let l:have_block = 0
-    let l:at_start = 1
-    let l:lnum = a:lnum - 1
-    while l:lnum >= 1
-        let l:line = getline(l:lnum)
-        let l:lnum -= 1
-        if !l:have_block && l:line =~# '\*!\|^\s*!\*'
-            let l:state.in_block = l:line !~# '\*!'
-            let l:have_block = 1
-        endif
-        if l:line =~# '^\s*\%(!.*\)\?$'
-            continue
-        endif
-        let l:header = mplus#section#Parse(l:line)
-        if !l:have_code
-            let l:at_start = !empty(l:header) || s:CodeOnly(l:line) =~# ';\s*$'
-            let l:have_code = 1
-        endif
-        if !empty(l:header)
-            call s:Enter(l:state, l:header)
-            break
-        endif
-    endwhile
-    let l:state.at_start = l:at_start
-    return l:state
-endfunction
-
 " Format one run of code outside strings and comments. Everything is
 " uppercased. An abbreviation is expanded only where Mplus reads a keyword:
 " every word of the OUTPUT list, and the option name that starts a statement
@@ -201,6 +154,34 @@ function! s:FormatCode(line, state) abort
             let l:out .= s:FormatText(l:piece, a:state)
         endif
     endwhile
+endfunction
+
+" Describe the text above line a:lnum: the section it belongs to, whether it
+" is free text, whether it is inside a block comment, whether a new
+" statement starts on a:lnum, and whether a:lnum goes on with the value of
+" a file option. The lines between the nearest header above and a:lnum are
+" read as mplus#format#Format() reads them, so that a part of a file is
+" formatted as it is with the whole file.
+function! s:StateBefore(lnum) abort
+    let l:state = {'section': '', 'free': 0, 'in_block': 0, 'at_start': 1,
+        \ 'verbatim': 0}
+    let l:top = a:lnum - 1
+    while l:top >= 1
+        let l:header = mplus#section#Parse(getline(l:top))
+        if !empty(l:header)
+            call s:Enter(l:state, l:header)
+            break
+        endif
+        let l:top -= 1
+    endwhile
+    for l:line in getline(l:top + 1, a:lnum - 1)
+        if l:state.in_block || l:line =~# '^\s*!\*'
+            let l:state.in_block = l:line !~# '\*!'
+        elseif !l:state.free && l:line !~# '^\s*!'
+            call s:FormatCode(l:line, l:state)
+        endif
+    endfor
+    return l:state
 endfunction
 
 " Mplus reads the first 90 characters of an input line and drops the rest,
