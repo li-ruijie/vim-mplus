@@ -16,7 +16,11 @@ if !exists('g:mplus_executable')
   let g:mplus_executable = 'mplus'
 endif
 
-command! -buffer Mout execute 'vsp ' . fnameescape(expand('%:r') . '.out') <bar> wincmd p
+"" An output file that Mplus has not written yet has no content to detect
+"" the type from, so the type is set here.
+command! -buffer Mout execute 'vsp ' . fnameescape(expand('%:r') . '.out')
+    \ <bar> if empty(&filetype) <bar> setlocal filetype=mplus-out <bar> endif
+    \ <bar> wincmd p
 
 "" The second argument of shellescape() also escapes !, %, and #, which :!
 "" would otherwise expand inside a file name.

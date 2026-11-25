@@ -6,7 +6,7 @@ source <sfile>:p:h/common.vim
 augroup filetypedetect
     autocmd BufRead,BufNewFile claimed.inp,claimed.out setfiletype claimed
 augroup END
-filetype on
+filetype plugin on
 
 let s:dir = tempname()
 call mkdir(s:dir, 'p')
@@ -95,6 +95,17 @@ endfunction
 function! Test_type_set_by_another_rule_is_kept() abort
     call assert_equal('claimed', s:Detect('claimed.inp', ['TITLE: x']))
     call assert_equal('claimed', s:Detect('claimed.out', ['Mplus VERSION 8.8']))
+endfunction
+
+function! Test_mout_opens_a_missing_output_as_mplus_output() abort
+    execute 'edit' fnameescape(s:dir . '/notrun.inp')
+    Mout
+    call assert_equal('notrun.inp', expand('%:t'))
+    wincmd p
+    call assert_equal('notrun.out', expand('%:t'))
+    call assert_equal('mplus-out', &filetype)
+    bwipeout!
+    bwipeout!
 endfunction
 
 function! Test_mdg() abort
