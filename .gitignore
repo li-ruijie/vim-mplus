@@ -15,7 +15,6 @@ AGENTS.md
 
 # Test
 test/original/
-test/formatted/
 test/*.log
 
 # Windows

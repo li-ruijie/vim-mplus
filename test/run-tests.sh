@@ -1,17 +1,38 @@
-#!/bin/bash
-# Automated formatter test suite for vim-mplus
-# Usage: ./run-tests.sh partial   (first 10 .inp per chapter, ~100 files)
-#        ./run-tests.sh full      (all 436 files)
+#!/usr/bin/env bash
+# Check with Mplus that formatting an input does not change what Mplus reads.
+# Usage: ./run-tests.sh [partial|full]
+#
+#   partial   the first 10 inputs of every chapter of examples (the default)
+#   full      every input
+#
+# Every example input is run through Mplus as it is and again after gq has
+# formatted it. The two runs have to end with the same exit status and the
+# same output below the echoed input, apart from the lines that give a time.
+# That output holds the messages about the input, the summary of the
+# analysis, and the model results.
+#
+# The script is skipped when Mplus is not found. It reads these variables.
+#
+#   MPLUS             the Mplus executable. Without it, mplus on the PATH is
+#                     taken, and then the place where Scoop installs it.
+#   MPLUS_EXAMPLES    the directory with the example inputs and their data,
+#                     searched with every directory below it. The default
+#                     is test/original/.
+#   MPLUS_TIME_LIMIT  the seconds that one run may take, 60 by default. Of
+#                     an example that takes longer, only the messages about
+#                     the input are compared.
+#   MPLUS_TEST_DIR    the directory for the runs. The default is a new
+#                     temporary directory. A run that is given the directory
+#                     of an earlier run takes up where that run stopped, so
+#                     give a new directory after a change to the plugin.
+#   MPLUS_TEST_EDITOR the Vim or Neovim that formats, vim by default.
 
 set -euo pipefail
 
-# --- Configuration ---
-REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-TEST_DIR="$REPO_DIR/test"
-ORIGINAL_DIR="$TEST_DIR/original"
-FORMATTED_DIR="$TEST_DIR/formatted"
-MPLUS="/d/Env/scoop/global/apps/mplus9-win/9.0/mplus.exe"
-TIMEOUT_SEC=5
+TEST_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_DIR="$(dirname "$TEST_DIR")"
+# shellcheck source=test/mplus-common.sh
+source "$TEST_DIR/mplus-common.sh"
 
 MODE="${1:-partial}"
 if [[ "$MODE" != "partial" && "$MODE" != "full" ]]; then
@@ -19,122 +40,162 @@ if [[ "$MODE" != "partial" && "$MODE" != "full" ]]; then
     exit 1
 fi
 
-# --- Verify prerequisites ---
-if [[ ! -x "$MPLUS" ]]; then
-    echo "ERROR: Mplus executable not found at $MPLUS"
-    exit 1
+if ! find_mplus; then
+    echo "SKIP: Mplus was not found. Set MPLUS to the Mplus executable."
+    exit 0
 fi
 
-if [[ ! -d "$ORIGINAL_DIR" ]]; then
-    echo "ERROR: Original test files not found at $ORIGINAL_DIR"
+EXAMPLES="${MPLUS_EXAMPLES:-$TEST_DIR/original}"
+EDITOR_BIN="${MPLUS_TEST_EDITOR:-vim}"
+if ! command -v "$EDITOR_BIN" >/dev/null 2>&1; then
+    echo "ERROR: the editor $EDITOR_BIN was not found"
     exit 1
 fi
+if [[ "$(basename "$EDITOR_BIN")" == *nvim* ]]; then
+    EDITOR_ARGS=(--headless -u NONE -i NONE)
+else
+    EDITOR_ARGS=(-N -u NONE -i NONE -es)
+fi
 
-# --- Step 1: Clean and recreate formatted/ ---
-rm -rf "$FORMATTED_DIR"
-mkdir -p "$FORMATTED_DIR"
-
-# --- Step 2: Copy all .inp and .dat from original/ to formatted/ ---
-cp "$ORIGINAL_DIR"/*.inp "$FORMATTED_DIR/" 2>/dev/null || true
-cp "$ORIGINAL_DIR"/*.dat "$FORMATTED_DIR/" 2>/dev/null || true
-cp "$ORIGINAL_DIR"/*.gh5 "$FORMATTED_DIR/" 2>/dev/null || true
-
-# --- Step 3: Select .inp files based on mode ---
-cd "$FORMATTED_DIR"
-
-select_files() (
-    # Run in subshell with relaxed error handling to avoid SIGPIPE issues
-    set +e +o pipefail
-    if [[ "$MODE" == "full" ]]; then
-        printf '%s\n' *.inp | sort -V
+# A native Windows editor needs Windows paths.
+native_path() {
+    if command -v cygpath >/dev/null 2>&1; then
+        cygpath -m "$1"
     else
-        # Partial: first 10 per chapter prefix (ex3, ex4, ..., ex12, mcex3, ..., mcex12)
-        for prefix in ex3 ex4 ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 \
-                      mcex3 mcex4 mcex5 mcex6 mcex7 mcex8 mcex9 mcex10 mcex11 mcex12; do
-            for f in ${prefix}.*.inp ${prefix}[a-z]*.inp; do
-                [[ -f "$f" ]] && echo "$f"
-            done | sort -V | head -10
-        done | sort -V | uniq
+        printf '%s\n' "$1"
     fi
-)
+}
 
-mapfile -t FILES < <(select_files)
+# The inputs in the order of their numbers. A chapter is a directory and
+# the start of a name up to its first dot (ex3, mcex3).
+mapfile -t FILES < <(find "$EXAMPLES" -name '*.inp' 2>/dev/null | sort -V |
+    awk -F/ -v mode="$MODE" '{
+        chapter = $NF
+        sub(/\..*/, "", chapter)
+        if (mode == "full" || ++count[substr($0, 1, length($0) - length($NF)) chapter] <= 10)
+            print
+    }')
 TOTAL=${#FILES[@]}
-
 if [[ $TOTAL -eq 0 ]]; then
-    echo "ERROR: No .inp files selected"
+    echo "ERROR: no *.inp files were found in $EXAMPLES"
     exit 1
 fi
 
-echo "Mode: $MODE"
-echo "Files to test: $TOTAL"
-echo "---"
-
-# --- Log file ---
+WORK="${MPLUS_TEST_DIR:-$(mktemp -d)}"
+mkdir -p "$WORK/original" "$WORK/formatted"
 LOGFILE="$TEST_DIR/results-$(date +%Y%m%d-%H%M%S).log"
+
+report() {
+    echo "$1"
+    echo "$1" >>"$LOGFILE"
+}
+
+report "Mplus: $MPLUS"
+report "Mode: $MODE, $TOTAL inputs from $EXAMPLES"
+report "Runs: $WORK"
+report "---"
+
+# Copy the input $1 into the directory $2, with the data that it needs. A
+# file of the directory of the input is needed when the input names it, or
+# when a file that is already taken names it, as the list of the data sets
+# of a Monte Carlo study does.
+stage() {
+    local source file name before=0
+    source="$(dirname "$1")"
+    mkdir -p "$2"
+    cp "$1" "$2/"
+    for file in "$source"/*; do
+        case "$file" in *.[iI][nN][pP] | *.[oO][uU][tT]) continue ;; esac
+        if [[ -f "$file" ]]; then
+            printf '%s\n' "${file##*/}"
+        fi
+    done >"$WORK/names.txt"
+    while [[ "$(find "$2" -type f | wc -l)" -ne $before ]]; do
+        before="$(find "$2" -type f | wc -l)"
+        awk 'FILENAME == ARGV[1] { names[tolower($0)] = $0; next }
+            {
+                line = tolower($0)
+                for (name in names)
+                    if (index(line, name)) {
+                        print names[name]
+                        delete names[name]
+                    }
+            }' "$WORK/names.txt" "$2"/* |
+            while IFS= read -r name; do
+                cp -n "$source/$name" "$2/"
+            done
+    done
+}
+
+# Run the input $1 in a directory of its own below $WORK/$2 and print the
+# status of the run. With "formatted" as $2 the input is formatted first.
+# The status is kept in a file, and a run that has one is not made again.
+run_example() {
+    local name dir
+    name="$(basename "$1" .inp)"
+    dir="$WORK/$2/$name"
+    if [[ ! -f "$dir/status" ]]; then
+        stage "$1" "$dir"
+        if [[ "$2" == formatted ]]; then
+            "$EDITOR_BIN" "${EDITOR_ARGS[@]}" \
+                --cmd "let &runtimepath = '$(native_path "$REPO_DIR"),' . \$VIMRUNTIME" \
+                --cmd 'filetype plugin indent on' \
+                -c 'setfiletype mplus-inp' -c 'normal gggqG' -c 'wq!' \
+                "$(native_path "$dir/$name.inp")" </dev/null >/dev/null 2>&1 || true
+        fi
+        run_mplus "$dir" "$name.inp" >"$dir/status.tmp"
+        mv "$dir/status.tmp" "$dir/status"
+    fi
+    cat "$dir/status"
+}
+
+# Print the messages about the input from the Mplus output $1, which stand
+# between the echoed input and the summary of the analysis.
+messages() {
+    below_echo "$1" | sed '/^SUMMARY OF ANALYSIS/,$d'
+}
 
 PASS=0
 FAIL=0
 ERRORS=()
-
-# --- Step 4: Process each file ---
-for file in "${FILES[@]}"; do
-    # 4a. Format via headless vim
-    vim -es \
-        -u "$REPO_DIR/test/test-vimrc.vim" \
-        --cmd "set rtp^=$REPO_DIR" \
-        "$FORMATTED_DIR/$file" \
-        -c "normal gggqG" \
-        -c "wq!" 2>/dev/null
-
-    # 4b. Run Mplus (short timeout: syntax errors appear instantly;
-    #     timeout means estimation started, i.e. syntax was valid)
-    cd "$FORMATTED_DIR"
-    MPLUS_EXIT=0
-    timeout "$TIMEOUT_SEC" "$MPLUS" "$(cygpath -w "$FORMATTED_DIR/$file")" >/dev/null 2>&1 || MPLUS_EXIT=$?
-
-    # 4c. Check result
-    OUTFILE="${file%.inp}.out"
-    if [[ $MPLUS_EXIT -eq 124 ]]; then
-        # Timeout = Mplus started estimation = syntax OK
-        echo "[PASS] $file (timeout)"
-        echo "[PASS] $file (timeout)" >> "$LOGFILE"
-        PASS=$((PASS + 1))
-    elif [[ -f "$FORMATTED_DIR/$OUTFILE" ]]; then
-        # Check for errors in the output file
-        if grep -q '\*\*\* ERROR\|TERMINATED ABNORMALLY' "$FORMATTED_DIR/$OUTFILE" 2>/dev/null; then
-            ERRMSG=$(grep -m1 '\*\*\* ERROR\|TERMINATED ABNORMALLY' "$FORMATTED_DIR/$OUTFILE" 2>/dev/null)
-            echo "[FAIL] $file — $ERRMSG"
-            echo "[FAIL] $file — $ERRMSG" >> "$LOGFILE"
-            FAIL=$((FAIL + 1))
-            ERRORS+=("$file")
-        else
-            echo "[PASS] $file"
-            echo "[PASS] $file" >> "$LOGFILE"
-            PASS=$((PASS + 1))
+for input in "${FILES[@]}"; do
+    name="$(basename "$input" .inp)"
+    original="$(run_example "$input" original)"
+    formatted="$(run_example "$input" formatted)"
+    out_original="$WORK/original/$name/$name.out"
+    out_formatted="$WORK/formatted/$name/$name.out"
+    note=""
+    problem=""
+    if [[ "$original" != "$formatted" ]]; then
+        problem="exit status $original as written, $formatted when formatted"
+    elif [[ ! -f "$out_original" || ! -f "$out_formatted" ]]; then
+        problem="no output file"
+    elif [[ "$original" == timeout ]]; then
+        note=" (over the time limit, messages compared)"
+        if ! diff -q <(messages "$out_original") <(messages "$out_formatted") >/dev/null; then
+            problem="the messages about the input differ"
         fi
+    elif ! diff -q <(below_echo "$out_original") <(below_echo "$out_formatted") >/dev/null; then
+        problem="the output differs (compare $name/$name.out in original/ and formatted/)"
+    fi
+
+    if [[ -z "$problem" ]]; then
+        report "[PASS] $name$note"
+        PASS=$((PASS + 1))
     else
-        echo "[FAIL] $file — no .out file produced"
-        echo "[FAIL] $file — no .out file produced" >> "$LOGFILE"
+        report "[FAIL] $name: $problem"
         FAIL=$((FAIL + 1))
-        ERRORS+=("$file")
+        ERRORS+=("$name")
     fi
 done
 
-# --- Summary ---
-echo "---"
-echo "Summary: $PASS/$TOTAL passed, $FAIL/$TOTAL failed"
-echo "---" >> "$LOGFILE"
-echo "Summary: $PASS/$TOTAL passed, $FAIL/$TOTAL failed" >> "$LOGFILE"
-
+report "---"
+report "Summary: $PASS/$TOTAL passed, $FAIL/$TOTAL failed"
 if [[ ${#ERRORS[@]} -gt 0 ]]; then
-    echo ""
-    echo "Failed files:"
-    echo "" >> "$LOGFILE"
-    echo "Failed files:" >> "$LOGFILE"
-    for f in "${ERRORS[@]}"; do
-        echo "  $f"
-        echo "  $f" >> "$LOGFILE"
+    report ""
+    report "Failed inputs:"
+    for name in "${ERRORS[@]}"; do
+        report "  $name"
     done
 fi
 
