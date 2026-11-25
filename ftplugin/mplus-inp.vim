@@ -18,8 +18,14 @@ endif
 
 command! -buffer Mout execute 'vsp ' . fnameescape(expand('%:r') . '.out') <bar> wincmd p
 
+"" The second argument of shellescape() also escapes !, %, and #, which :!
+"" would otherwise expand inside a file name.
 if has('win32')
-  command! -buffer Mrun execute '!start "" ' . shellescape(g:mplus_executable) . ' ' . shellescape(expand('%'))
+  "" Vim runs the program itself and takes the first argument as the program,
+  "" so an empty window title makes it start nothing. Neovim passes the line
+  "" to cmd.exe, whose start reads the first quoted argument as the title.
+  command! -buffer Mrun execute '!start ' . (has('nvim') ? '"" ' : '')
+      \ . shellescape(g:mplus_executable, 1) . ' ' . shellescape(expand('%'), 1)
 else
-  command! -buffer Mrun execute '!' . shellescape(g:mplus_executable) . ' ' . shellescape(expand('%')) . ' &'
+  command! -buffer Mrun execute '!' . shellescape(g:mplus_executable, 1) . ' ' . shellescape(expand('%'), 1) . ' &'
 endif
