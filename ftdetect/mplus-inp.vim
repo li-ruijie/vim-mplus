@@ -1,4 +1,6 @@
-autocmd BufRead,BufNewFile *.mdg set filetype=mplus-inp
+" Neither Vim nor Neovim has a rule for *.mdg, the diagram input of Mplus.
+" setfiletype keeps a type that an earlier rule of another plugin has set.
+autocmd BufRead,BufNewFile *.mdg setfiletype mplus-inp
 
 " Other programs write their input under *.inp as well (Abaqus, ORCA, CP2K),
 " so a file with content is taken as Mplus input only when its first line of

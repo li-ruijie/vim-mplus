@@ -70,7 +70,8 @@ plugin does not recognise, set the filetype by hand: >vim
 
     :setfiletype mplus-inp
 <
-A .mdg file is always mplus-inp.
+A .mdg file is mplus-inp whatever it holds, unless another plugin has set
+a filetype for it first.
 
 ==============================================================================
 4. SYNTAX HIGHLIGHTING                                     *vim-mplus-syntax*

@@ -4,7 +4,7 @@ source <sfile>:p:h/common.vim
 
 " A rule of another plugin that is registered before the rules of vim-mplus.
 augroup filetypedetect
-    autocmd BufRead,BufNewFile claimed.inp,claimed.out setfiletype claimed
+    autocmd BufRead,BufNewFile claimed.inp,claimed.out,claimed.mdg setfiletype claimed
 augroup END
 filetype plugin on
 
@@ -95,6 +95,7 @@ endfunction
 function! Test_type_set_by_another_rule_is_kept() abort
     call assert_equal('claimed', s:Detect('claimed.inp', ['TITLE: x']))
     call assert_equal('claimed', s:Detect('claimed.out', ['Mplus VERSION 8.8']))
+    call assert_equal('claimed', s:Detect('claimed.mdg', ['anything']))
 endfunction
 
 function! Test_mout_opens_a_missing_output_as_mplus_output() abort
@@ -110,6 +111,8 @@ endfunction
 
 function! Test_mdg() abort
     call assert_equal('mplus-inp', s:Detect('case.mdg', ['anything']))
+    call assert_equal('mplus-inp', s:Detect('empty.mdg', []))
+    call assert_equal('mplus-inp', s:TypeOf(s:dir . '/missing.mdg'))
 endfunction
 
 function! Test_examples() abort
