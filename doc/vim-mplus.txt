@@ -49,6 +49,29 @@ The plugin registers two filetypes:
     *mplus-inp*    .inp and .mdg files (Mplus input / diagrammer)
     *mplus-out*    .out files (Mplus output)
 
+Other programs use the .inp and .out extensions as well, so the plugin
+looks at the content of these files before it sets a filetype:
+
+    - A new .inp file, or one that holds only blank lines, is mplus-inp.
+    - Any other .inp file is mplus-inp when its first line of code is an
+      Mplus command header, that is one of TITLE, DATA, VARIABLE, DEFINE,
+      ANALYSIS, MODEL, OUTPUT, SAVEDATA, PLOT, and MONTECARLO followed by
+      a colon. The header may be in any case, may be shortened to four or
+      more letters ("anal:"), and may carry a second word after DATA or
+      MODEL ("MODEL INDIRECT:"). Blank lines, comment lines, and block
+      comments above it are passed over, and it must lie within the first
+      500 lines.
+    - A .out file is mplus-out when one of its first ten lines starts with
+      "Mplus VERSION" or is "MUTHEN & MUTHEN", as Mplus output does. A new
+      .out file gets no filetype.
+
+A filetype that another plugin has already set is kept. For a file that the
+plugin does not recognise, set the filetype by hand: >vim
+
+    :setfiletype mplus-inp
+<
+A .mdg file is always mplus-inp.
+
 ==============================================================================
 4. SYNTAX HIGHLIGHTING                                     *vim-mplus-syntax*
 

@@ -38,6 +38,21 @@ TITLE sections and comments are left alone (whitespace cleanup only).
 The formatter also sets `fileformat=unix` and `fileencoding=utf-8` to avoid
 encoding issues across platforms.
 
+### File type detection
+
+Other programs also use the `.inp` and `.out` extensions, so the plugin
+reads the file before it sets a filetype:
+
+- A new or blank `.inp` file is `mplus-inp`. A `.inp` file with content is
+  `mplus-inp` when its first line of code is an Mplus command header such as
+  `TITLE:`, `anal:`, or `MODEL INDIRECT:`. Comments and blank lines above the
+  header are allowed.
+- A `.out` file is `mplus-out` when it starts as Mplus output does, with the
+  lines `Mplus VERSION ...` and `MUTHEN & MUTHEN`.
+- A filetype that another plugin has already set is kept.
+
+For any other file, run `:setfiletype mplus-inp` or `:setfiletype mplus-out`.
+
 ## Installation
 
 [vim-plug](https://github.com/junegunn/vim-plug):
