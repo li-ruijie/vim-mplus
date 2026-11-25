@@ -53,34 +53,69 @@ function! s:FoldStarts() abort
     return uniq(map(range(1, line('$')), 'foldclosed(v:val)'))
 endfunction
 
-function! Test_title_ends_only_at_a_command_name_and_a_colon() abort
+function! Test_title_ends_at_a_header() abort
+    " A command name, alone or with one more word, and a colon start a
+    " section, in a TITLE as anywhere else.
     call s:Buffer('mplus-inp', [
         \ 'TITLE: a study of growth',
-        \ '  model comparison: two groups',
-        \ '  Data imputation: twenty data sets',
+        \ '  Step 2: more text',
+        \ '  model with covariates: two groups',
+        \ '  Model comparison: two groups',
+        \ '  more text',
         \ 'DATA:',
         \ '  FILE = x.dat;',
         \ 'data imputation:',
         \ '  IMPUTE = y1;',
-        \ 'MODEL:',
-        \ '  f BY y1;',
-        \ 'Model male:',
-        \ '  f BY y1;',
-        \ '  anal:',
+        \ 'Variable names:',
+        \ '  x',
+        \ 'title notes:',
+        \ '  x',
+        \ '  anal :',
         \ '    TYPE = BASIC;'])
-    call assert_equal([1, 4, 6, 8, 10, 12], s:FoldStarts())
+    call assert_equal([1, 4, 6, 8, 10, 12, 14], s:FoldStarts())
     call assert_equal(['mplusTitle'], s:LineGroups(2))
     call assert_equal(['mplusTitle'], s:LineGroups(3))
-    call assert_equal('mplusSection', synIDattr(synID(6, 1, 1), 'name'))
-    call assert_equal('mplusSection', synIDattr(synID(10, 1, 1), 'name'))
-    call assert_equal('mplusSection', synIDattr(synID(12, 3, 1), 'name'))
+    for [l:lnum, l:col] in [[4, 3], [8, 1], [10, 1], [12, 1], [14, 3]]
+        call assert_equal('mplusSection', synIDattr(synID(l:lnum, l:col, 1), 'name'), l:lnum)
+    endfor
 endfunction
 
 function! Test_section_name_in_full_or_shortened() abort
     call s:Buffer('mplus-inp', ['MODEL:', '  f BY y1;', 'modeling: x;',
-        \ 'database: y;', 'VARIABLE names: z;', 'anal:', '  TYPE = BASIC;',
+        \ 'database: y;', 'models x: z;', 'plo: z;', 'anal:', '  TYPE = BASIC;',
         \ 'OUTPUT :', '  TECH1;'])
-    call assert_equal([1, 6, 8], s:FoldStarts())
+    call assert_equal([1, 7, 9], s:FoldStarts())
+endfunction
+
+function! Test_echoed_headers() abort
+    " The input echoed in an output has the headers of the input.
+    call s:Buffer('mplus-out', [
+        \ 'Mplus VERSION 9.1.1',
+        \ 'MUTHEN & MUTHEN',
+        \ '11/25/2026  10:30 AM',
+        \ '',
+        \ 'INPUT INSTRUCTIONS',
+        \ '',
+        \ '  TITLE: a study',
+        \ '  Step 2: more text',
+        \ '  Model comparison: two groups',
+        \ '  data: file is x.dat;',
+        \ '  Data imputation: impute = y1;',
+        \ '  anal : type = basic;',
+        \ '  MODEL male:',
+        \ '    f BY y1;',
+        \ '  models: x',
+        \ '',
+        \ 'INPUT READING TERMINATED NORMALLY'])
+    for [l:lnum, l:header] in [[7, 'TITLE:'], [9, 'Model comparison:'], [10, 'data:'],
+        \ [11, 'Data imputation:'], [12, 'anal :'], [13, 'MODEL male:']]
+        call assert_equal('mplusSection', synIDattr(synID(l:lnum, 3, 1), 'name'), l:header)
+        call assert_equal('mplusSection',
+            \ synIDattr(synID(l:lnum, 2 + strlen(l:header), 1), 'name'), l:header)
+    endfor
+    for l:lnum in [8, 14, 15]
+        call assert_notequal('mplusSection', synIDattr(synID(l:lnum, 5, 1), 'name'), l:lnum)
+    endfor
 endfunction
 
 function! Test_timestamp_is_a_header() abort

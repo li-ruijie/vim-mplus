@@ -12,11 +12,10 @@ syn match mplusComment "!.*$"
 "" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
 syn match mplusSection "%[^%]\+%"
 
-"" Echoed input section headers (2-space indent or flexible)
-syn match mplusSection
-    \ "^\s*\(TITLE\|VARIABLE\|DEFINE\|ANALYSIS\|OUTPUT\|SAVEDATA\|PLOT\|MONTECARLO\):"
-syn match mplusSection
-    \ "^\s*\(DATA\|MODEL\)\(\s\+[^: \t]\+\)\?:"
+"" Section headers of the echoed input, which follow the rule of
+"" autoload/mplus/section.vim. A header is a command name in any case, in
+"" full or shortened, alone or with one more word, and a colon.
+execute 'syn match mplusSection "\c^\s*' . mplus#section#Pattern() . '"'
 
 "" Timestamp header (e.g., 01/15/2026  10:30 AM)
 syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"

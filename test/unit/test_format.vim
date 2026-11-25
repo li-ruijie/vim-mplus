@@ -94,24 +94,30 @@ function! Test_section_is_read_from_above_a_range() abort
     call assert_equal('    ESTIMATOR = ML;', getline(2))
 endfunction
 
-function! Test_title_keeps_a_line_with_a_colon() abort
-    " Inside a TITLE a command name with a second word does not start a
-    " section, and neither does a colon after any other word.
+function! Test_title_ends_at_a_header() abort
+    " Mplus ends a title at a command name, alone or with one more word,
+    " and a colon. A semicolon does not end a title, and neither does a
+    " colon after anything else.
     call assert_equal([
         \ 'TITLE:',
-        \ '    a study of growth',
-        \ '    model comparison: two groups;',
-        \ '    Data imputation: twenty data sets',
-        \ '    Model 1: the data and the model without a colon',
+        \ '    a study of growth; in two parts',
         \ '    Step 2: titles: more text',
+        \ '    the model: two groups',
+        \ '    model with covariates: two groups',
+        \ '    models: two groups',
+        \ '    tit: x',
+        \ 'MODEL COMPARISON:',
+        \ '    TWO GROUPS;',
         \ 'DATA:',
         \ '    FILE = x.dat;'],
         \ s:Format([
-        \ 'TITLE: a study of growth',
-        \ '  model comparison: two groups;',
-        \ '  Data imputation: twenty data sets',
-        \ 'Model 1: the data and the model without a colon',
+        \ 'TITLE: a study of growth; in two parts',
         \ 'Step 2: titles: more text',
+        \ '  the model: two groups',
+        \ '  model with covariates: two groups',
+        \ 'models: two groups',
+        \ 'tit: x',
+        \ '  Model comparison: two groups;',
         \ 'data: file is x.dat;']))
 endfunction
 
@@ -125,40 +131,76 @@ function! Test_title_ends_at_a_command_name_and_a_colon() abort
     endfor
 endfunction
 
-function! Test_second_word_after_data_and_model() abort
+function! Test_second_word_that_mplus_reads() abort
+    " After MODEL in full any word is read, as a subcommand or as the label
+    " of a group or class. After DATA the full name of a subcommand is read.
     call assert_equal([
         \ 'DATA:',
         \ '    FILE = x.dat;',
         \ 'DATA IMPUTATION:',
         \ '    IMPUTE = Y1;',
+        \ 'DATA MISSING:',
+        \ '    NAMES = Y1;',
         \ 'MODEL:',
         \ '    F BY Y1;',
         \ 'MODEL INDIRECT:',
         \ '    Y IND X;',
+        \ 'MODEL CONSTRAINT:',
+        \ '    NEW(B);',
         \ 'MODEL MALE:',
-        \ '    F BY Y1;',
-        \ '    OUTPUT STUFF: TECH1;'],
+        \ '    F BY Y1;'],
         \ s:Format([
         \ 'data: file is x.dat;',
         \ 'data imputation: impu = y1;',
+        \ "Data \tMissing : names = y1;",
         \ 'model: f by y1;',
-        \ 'mode indirect: y ind x;',
-        \ 'Model male: f by y1;',
-        \ 'output stuff: tech1;']))
+        \ 'model indirect: y ind x;',
+        \ '  MODEL  constraint :',
+        \ 'new(b);',
+        \ 'Model male: f by y1;']))
 endfunction
 
-function! Test_title_is_read_from_above_a_range() abort
+function! Test_header_that_mplus_does_not_read_is_kept() abort
+    " Mplus passes over the section under a shortened command name with a
+    " second word, under a second word after any command but DATA and
+    " MODEL, and under DATA with a shortened subcommand name. It stops at
+    " DATA with any other word. Writing MODE INDIRECT: as MODEL INDIRECT:
+    " would turn text that Mplus skips into statements that it reads, so
+    " the header and the lines below it stay as they are.
+    for l:header in ['mode indirect:', 'Mode male:', 'Variable names:',
+        \ 'data impu:', 'data notes:', 'title notes:', 'outp x :', 'save y:']
+        call assert_equal([
+            \ 'MODEL:',
+            \ '    F BY Y1;',
+            \ l:header . ' y ind x;',
+            \ '    esti = ml;',
+            \ 'OUTPUT:',
+            \ '    TECH1;'],
+            \ s:Format([
+            \ 'model: f by y1;',
+            \ '  ' . l:header . ' y ind x;',
+            \ 'esti = ml;',
+            \ 'output: tech1;']), l:header)
+    endfor
+endfunction
+
+function! Test_header_is_read_from_above_a_range() abort
     enew!
-    call setline(1, ['TITLE: a study', '  data imputation: twenty sets', '  impu = y1;',
-        \ 'DATA:', '  file is x.dat;', 'DATA IMPUTATION:', '  impu = y1;'])
+    call setline(1, ['TITLE: a study', '  step 2: twenty sets', '  impu = y1;',
+        \ 'DATA:', '  file is x.dat;', 'DATA IMPUTATION:', '  impu = y1;',
+        \ 'data impu:', '  impu = y1;', 'MODEL male:', '  f by y1;'])
     set filetype=mplus-inp
+    11normal gqq
+    call assert_equal('    F BY Y1;', getline(11))
+    9normal gqq
+    call assert_equal('    impu = y1;', getline(9))
     7normal gqq
     call assert_equal('    IMPUTE = Y1;', getline(7))
     3normal gqq
     call assert_equal('  impu = y1;', getline(3))
     2normal gqq
-    call assert_equal('    data imputation: twenty sets', getline(2))
-    call assert_equal(7, line('$'))
+    call assert_equal('    step 2: twenty sets', getline(2))
+    call assert_equal(11, line('$'))
 endfunction
 
 function! Test_whole_input() abort

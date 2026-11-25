@@ -32,10 +32,10 @@ mplus-inp.vim                    mplus-out.vim
      ▼
 mplus-inp.vim adds:          mplus-out.vim defines:
   mplusFold regions            mplusComment  (! comments)
-  matchgroup=mplusSection      mplusSection  (%labels%, indented headers)
+  matchgroup=mplusSection      mplusSection  (%labels%, echoed headers)
   ^TITLE:  (contains mplusTitle) mplusHeader (timestamp + all-caps lines
                                               + mixed-case syn matches)
-  ^(DATA|MODEL)(\s\S+)?:      mplusFold     (between all-caps headers
+  ^(SECTION)(\s\S+)?:         mplusFold     (between all-caps headers
                                               + mixed-case fit headers)
                                \C^\s*\u[A-Z 0-9/,&():.*%=-]+$
 ```
@@ -63,10 +63,10 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 
 Input files take the header pattern from `mplus#section#Pattern()` in
 `autoload/mplus/section.vim`, and a header may be indented. Output files match
-the echoed headers with their 2-space indent.
-Compound headers (`MODEL X:`, `DATA X:`) are matched via `\s\+[^: \t]\+`. Inside a
-TITLE they are title text, and only a command name directly followed by a colon
-ends the title.
+the headers of the echoed input with the same pattern.
+A header is a command name followed by a colon at once or after one more word
+(`\s\+[^: \t]\+`), which is where Mplus 9.1.1 starts a section. The rule is the
+same inside a TITLE, so `Model comparison: two groups` ends a title.
 Abbreviated section names are matched from four letters on with `\%[]`
 (e.g., `ANAL\%[YSIS]`), so `ANAL:` is a header and `ANALYSES:` is not.
 Class/level labels (`%OVERALL%`, `%c#1%`, `%BETWEEN subject%`) are also
@@ -671,10 +671,8 @@ highlighted as mplusSection in the base file.
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header  │
 │ \C^\s*\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
 │ Mixed-case fit headers (output)         │ Header  │
-│ ^\s*(SECTION)\s*:  (input)              │ Section │
-│ ^\s*(DATA|MODEL)(\s[^: \t]+)?\s*:       │ Section │
-│   (input, one word only inside a TITLE) │         │
-│ ^  (SECTION):  (output, 2-space indent) │ Section │
+│ ^\s*(SECTION)(\s+[^: \t]+)?\s*:         │ Section │
+│   (input, and the input in an output)   │         │
 │ %[^%]+%  (class/level labels)           │ Section │
 │ -?(\d+\.?\d*|\.\d+)([ED][-+]?\d+)?      │ Number  │
 │   no word character on either side (y1) │         │

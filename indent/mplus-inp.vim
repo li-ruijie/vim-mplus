@@ -29,7 +29,7 @@ function! GetMplusInpIndent()
     let ind = indent(lnum)
 
     "" Section headers always go to column 0. mplus#section#Starts() holds
-    "" the rule for a header, which is narrower inside a TITLE.
+    "" the rule for a header.
     if mplus#section#Starts(v:lnum)
         return 0
     endif

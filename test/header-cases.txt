@@ -1,0 +1,146 @@
+# What Mplus 9.1.1 makes of a line in a TITLE, by the text before its colon.
+#
+# Each case is "reading|text". The text is the start of the line up to its
+# colon, with \t for a tab. The readings are:
+#
+#   text      the line is title text, and no section starts
+#   command   a section starts, and Mplus reads its statements
+#   skipped   a section starts, and Mplus passes over it without a message
+#   rejected  Mplus stops with "Unknown command"
+#
+# test/mplus-rules.sh puts every case into an input and checks the reading
+# against Mplus. test/unit/test_section.vim checks the same cases against
+# mplus#section#Parse(), which has to tell "text" from the rest, and
+# "command" from "skipped" and "rejected".
+
+# A command name, in full or shortened to four or more letters
+command|title:
+command|titl:
+command|data:
+command|variable:
+command|vari:
+command|define:
+command|defi:
+command|analysis:
+command|analys:
+command|anal:
+command|model:
+command|mode:
+command|output:
+command|outp:
+command|savedata:
+command|saved:
+command|save:
+command|plot:
+command|montecarlo:
+command|mont:
+
+# Case, indent, and space before the colon do not matter
+command|MODEL:
+command|MoDeL:
+command|Model :
+command|  model:
+command|\tmodel\t:
+
+# A shorter or longer word is no command name
+text|tit:
+text|dat:
+text|var:
+text|def:
+text|ana:
+text|mod:
+text|out:
+text|sav:
+text|plo:
+text|mon:
+text|datas:
+text|models:
+text|modeling:
+text|analyses:
+text|plots:
+
+# The name has to start the line
+text|the model:
+text|- model:
+text|(model:
+text|first part; model:
+
+# MODEL in full takes any second word
+command|model indirect:
+command|model constraint:
+command|model constraints:
+command|model test:
+command|model priors:
+command|model cons:
+command|model indi:
+command|model male:
+command|model comparison:
+command|MODEL COMPARISON:
+command|Model Comparison:
+command|model\tcomparison:
+command|model comparison :
+command|model 1:
+command|model x-1:
+command|model a.b:
+command|model a,b:
+command|model (a):
+command|model %a%:
+
+# DATA takes the full name of a subcommand
+command|data imputation:
+command|DATA Imputation:
+command|Data \tMissing :
+command|data missing:
+command|data twopart:
+command|data widetolong:
+command|data longtowide:
+command|data survival:
+command|data cohort:
+
+# DATA with a shortened subcommand name
+skipped|data impu:
+skipped|data imputa:
+skipped|DATA MISS:
+skipped|data twop:
+skipped|data wide:
+skipped|data long:
+skipped|data surv:
+skipped|data coho:
+
+# DATA with any other word
+rejected|data notes:
+rejected|DATA NOTES:
+rejected|data ab:
+rejected|data 1:
+rejected|data x-1:
+rejected|data imputations:
+rejected|data cohorts:
+
+# A shortened MODEL, or any other command, with a second word
+skipped|mode indirect:
+skipped|MODE Indirect:
+skipped|mode constraint:
+skipped|mode test:
+skipped|mode male:
+skipped|mode 1:
+skipped|title notes:
+skipped|variable names:
+skipped|Variable Names:
+skipped|vari names:
+skipped|define notes:
+skipped|analysis notes:
+skipped|output notes:
+skipped|outp notes:
+skipped|savedata notes:
+skipped|save notes:
+skipped|plot notes:
+skipped|PLOT x:
+skipped|montecarlo notes:
+
+# Two words need a command name first, and a third word is one too many
+text|dat imputation:
+text|datas x:
+text|models x:
+text|modelx y:
+text|model a b:
+text|model with covariates:

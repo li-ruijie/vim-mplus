@@ -36,10 +36,12 @@ with `gggqG`) into a canonical style:
 - **Normalise whitespace** — tabs → 4 spaces, trailing whitespace removed.
 - **Re-indent** — section headers at column 0, body at one `shiftwidth`.
 
-TITLE sections and comments are left alone (whitespace cleanup only). Inside
-a TITLE only a command name directly followed by a colon (`DATA:`, `anal:`)
-starts the next section, so a title line such as
-`model comparison: two groups` stays title text.
+TITLE sections and comments are left alone (whitespace cleanup only). A
+title ends where Mplus ends it, at a line that begins with a command name
+followed by a colon at once or after one more word (`DATA:`, `anal:`,
+`Model comparison:`). A header that Mplus does not read, such as
+`mode indirect:`, is left as written together with its section, since
+Mplus passes over that section and would read it under `MODEL INDIRECT:`.
 The formatter also sets `fileformat=unix` and `fileencoding=utf-8` to avoid
 encoding issues across platforms.
 

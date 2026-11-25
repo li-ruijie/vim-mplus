@@ -35,10 +35,6 @@ let s:keywords = {
     \     'WITHIN': 5}
 \ }
 
-" Section names in full. An input file may shorten each to four letters.
-let s:headers = ['TITLE', 'DATA', 'VARIABLE', 'DEFINE', 'ANALYSIS', 'MODEL',
-    \ 'OUTPUT', 'SAVEDATA', 'PLOT', 'MONTECARLO']
-
 " Sections whose statements start with an option name. MODEL and DEFINE
 " statements start with a variable name, and TITLE holds free text.
 let s:option_sections = ['DATA', 'VARIABLE', 'ANALYSIS', 'SAVEDATA', 'PLOT',
@@ -66,26 +62,15 @@ function! s:Expand(word, section) abort
     return a:word
 endfunction
 
-" Return the full section name that a:word names or abbreviates, or ''.
-function! s:HeaderName(word) abort
-    let l:word = toupper(a:word)
-    for l:name in s:headers
-        if l:word ==# l:name || (strlen(l:word) >= 4 && stridx(l:name, l:word) == 0)
-            return l:name
-        endif
-    endfor
-    return ''
-endfunction
-
-" Parse line a:lnum, whose text is a:line, as a section header. Return []
-" when no section starts there, which mplus#section#Starts() decides, else
-" [name, subtype, content], where content is the text after the colon.
-function! s:ParseHeader(lnum, line) abort
-    if !mplus#section#Starts(a:lnum)
-        return []
-    endif
-    let l:m = matchlist(a:line, '^\s*\(\a\+\)\%(\s\+\([^: \t]\+\)\)\?\s*:\s*\(.*\)$')
-    return [s:HeaderName(l:m[1]), toupper(l:m[2]), l:m[3]]
+" Enter in a:state the section that starts with a:header, which is a result
+" of mplus#section#Parse(). The lines of a TITLE are free text. So are the
+" lines under a header that Mplus does not read, since it passes over them.
+function! s:Enter(state, header) abort
+    let a:state.section = a:header[0]
+    let a:state.subtype = a:header[1]
+    let a:state.free = a:header[0] ==# 'TITLE' || !a:header[3]
+    let a:state.at_start = 1
+    let a:state.verbatim = 0
 endfunction
 
 " Return whether the value of option a:name is a file name in the section
@@ -116,13 +101,14 @@ function! s:CodeOnly(line) abort
 endfunction
 
 " Describe the text above line a:lnum: the section it belongs to, whether it
-" is TITLE text, whether it is inside a block comment, and whether a new
+" is free text, whether it is inside a block comment, and whether a new
 " statement starts on a:lnum.
 function! s:StateBefore(lnum) abort
-    let l:state = {'section': '', 'subtype': '', 'in_title': 0, 'in_block': 0,
+    let l:state = {'section': '', 'subtype': '', 'free': 0, 'in_block': 0,
         \ 'at_start': 1, 'verbatim': 0}
     let l:have_code = 0
     let l:have_block = 0
+    let l:at_start = 1
     let l:lnum = a:lnum - 1
     while l:lnum >= 1
         let l:line = getline(l:lnum)
@@ -134,18 +120,17 @@ function! s:StateBefore(lnum) abort
         if l:line =~# '^\s*\%(!.*\)\?$'
             continue
         endif
-        let l:header = s:ParseHeader(l:lnum + 1, l:line)
+        let l:header = mplus#section#Parse(l:line)
         if !l:have_code
-            let l:state.at_start = !empty(l:header) || s:CodeOnly(l:line) =~# ';\s*$'
+            let l:at_start = !empty(l:header) || s:CodeOnly(l:line) =~# ';\s*$'
             let l:have_code = 1
         endif
         if !empty(l:header)
-            let l:state.section = l:header[0]
-            let l:state.subtype = l:header[1]
-            let l:state.in_title = l:header[0] ==# 'TITLE'
+            call s:Enter(l:state, l:header)
             break
         endif
     endwhile
+    let l:state.at_start = l:at_start
     return l:state
 endfunction
 
@@ -217,8 +202,8 @@ function! mplus#format#Format() abort
     setlocal fileencoding=utf-8 nobomb endofline
     setlocal fileformat=unix
 
-    " The range may start anywhere, so take the section, the TITLE and block
-    " comment state, and the statement state from the lines above it.
+    " The range may start anywhere, so take the section, the free text and
+    " block comment state, and the statement state from the lines above it.
     let l:state = s:StateBefore(l:start)
 
     let l:lnum = l:start
@@ -242,28 +227,31 @@ function! mplus#format#Format() abort
             continue
         endif
 
-        " Section header, also abbreviated (ANAL:) or compound (MODEL
-        " INDIRECT:). The name is written in full and any content after
-        " the colon moves to a line of its own.
-        let l:header = s:ParseHeader(l:lnum, l:line)
+        " Section header, also abbreviated (ANAL:) or with a second word
+        " (MODEL INDIRECT:). The name is written in full and any content
+        " after the colon moves to a line of its own. A header that Mplus
+        " does not read (MODE INDIRECT:) stays as written, since the full
+        " name would make Mplus read the section.
+        let l:header = mplus#section#Parse(l:line)
         if !empty(l:header)
-            let l:state.section = l:header[0]
-            let l:state.subtype = l:header[1]
-            let l:state.in_title = l:header[0] ==# 'TITLE'
-            let l:state.at_start = 1
-            let l:state.verbatim = 0
-            call setline(l:lnum, l:header[0]
-                \ . (l:header[1] ==# '' ? '' : ' ' . l:header[1]) . ':')
-            if l:header[2] !=# ''
-                call append(l:lnum, '  ' . l:header[2])
-                let l:end += 1
+            call s:Enter(l:state, l:header)
+            if !l:header[3]
+                call setline(l:lnum, l:line)
+            else
+                call setline(l:lnum, l:header[0]
+                    \ . (l:header[1] ==# '' ? '' : ' ' . l:header[1]) . ':')
+                if l:header[2] !=# ''
+                    call append(l:lnum, '  ' . l:header[2])
+                    let l:end += 1
+                endif
             endif
             let l:lnum += 1
             continue
         endif
 
-        " TITLE body: free-form text, kept as written
-        call setline(l:lnum, l:state.in_title ? l:line : s:FormatCode(l:line, l:state))
+        " Free text, which is a TITLE or a section that Mplus passes over,
+        " is kept as written.
+        call setline(l:lnum, l:state.free ? l:line : s:FormatCode(l:line, l:state))
         let l:lnum += 1
     endwhile
 

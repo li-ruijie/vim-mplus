@@ -134,32 +134,58 @@ Both filetypes use 'foldmethod'=syntax (set in ftplugin files).
 
 Input files ~
 Each section (TITLE:, DATA:, VARIABLE:, MODEL:, etc.) is a separate fold.
-Compound headers such as MODEL CONSTRAINT: and DATA IMPUTATION: are
-recognised as fold boundaries.
+Headers with a second word, such as MODEL CONSTRAINT: and DATA IMPUTATION:,
+are fold boundaries as well.
 
 Where a section starts ~
                                                          *vim-mplus-sections*
-Folding, indentation, and the formatter share one rule. A section starts
-on a line that begins with a command name and a colon. The names are
-TITLE, DATA, VARIABLE, DEFINE, ANALYSIS, MODEL, OUTPUT, SAVEDATA, PLOT, and
-MONTECARLO, in any case, in full or shortened to four or more letters, and
-the line may be indented. DATA and MODEL may carry a second word before
-the colon ("DATA IMPUTATION:", "MODEL INDIRECT:", "MODEL male:").
+Folding, indentation, the formatter, and the highlighting of the input
+echoed in an output file share one rule, which follows what Mplus 9.1.1
+does with an input. A section starts on a line whose first word is a
+command name, followed by a colon either at once or after one more word.
+The names are TITLE, DATA, VARIABLE, DEFINE, ANALYSIS, MODEL, OUTPUT,
+SAVEDATA, PLOT, and MONTECARLO, in any case, in full or shortened to four
+or more letters. The line may be indented, and spaces may stand before the
+colon.
 
-Inside a TITLE the second word is not accepted. Only a command name
-directly followed by a colon ends the title ("DATA:", "anal:"). The Mplus
-user's guide says that a title "can contain any letters and symbols except
-the words used as Mplus commands when they are followed by a colon", so
-these lines of a title are kept as title text:
+The rule is the same inside a TITLE. A semicolon does not end a title, and
+these lines are title text:
 
-    model comparison: two groups
-    Data imputation: twenty data sets
     Step 2: the model with covariates
+    the model: two groups
+    model with covariates: two groups
+    models: two groups
 
-The guide does not say how Mplus reads a line such as "MODEL word:" inside
-a title, and the plugin takes it as text. For the same reason a DATA or
-MODEL command with a second word that comes straight after a title, with
-no other command between them, is shown and formatted as title text.
+These lines end a title, since Mplus reads each as a command:
+
+    Model comparison: two groups
+    data: one file
+    Variable names: a list
+
+What Mplus does with a section depends on its header:
+
+    anal:               The command, here ANALYSIS.
+    MODEL word:         With MODEL in full, a MODEL subcommand (INDIRECT,
+                        CONSTRAINT, TEST, PRIORS, and so on, with the name
+                        in full), or else the model of the group or class
+                        with that label.
+    DATA IMPUTATION:    A DATA subcommand, with its name in full
+                        (IMPUTATION, MISSING, TWOPART, WIDETOLONG,
+                        LONGTOWIDE, SURVIVAL, COHORT).
+    DATA notes:         An error, "Unknown command".
+    data impu:          Nothing. With a shortened subcommand name Mplus
+                        passes over the lines up to the next header and
+                        gives no message.
+    mode indirect:      Nothing, in the same way. This holds for a
+    variable names:     shortened MODEL with a second word, and for a
+                        second word after any command but DATA and MODEL.
+
+The formatter leaves a header of the last three kinds as written, with the
+lines below it, since the full name ("MODEL INDIRECT:") would make Mplus
+read a section that it passed over before.
+
+test/mplus-rules.sh checks the rule against an installed Mplus, with the
+cases of test/header-cases.txt.
 
 Output files ~
 Folds span between all-caps headers (e.g., MODEL FIT INFORMATION,
@@ -194,13 +220,16 @@ selected range:
 
     - Replaces tabs with 4 spaces and strips trailing whitespace.
     - Preserves TITLE body lines (free-form text, whitespace cleanup only).
-      A title line may hold a colon, and it ends the title only when it
-      begins with a command name directly followed by a colon. See
-      |vim-mplus-sections|.
+      A title line may hold a colon. It ends the title when it begins with
+      a command name that is followed by a colon at once or after one more
+      word, as it does for Mplus. See |vim-mplus-sections|.
     - Preserves comment lines and block comments (whitespace cleanup only).
     - Splits section headers onto their own line (e.g.,
       "DATA: FILE IS ..." becomes "DATA:" followed by "  FILE IS ...") and
       writes an abbreviated header in full ("ANAL:" becomes "ANALYSIS:").
+    - Preserves a header that Mplus does not read, such as
+      "mode indirect:", and the lines of its section (whitespace cleanup
+      only). See |vim-mplus-sections|.
     - Uppercases all code (Mplus is case-insensitive; standard convention).
       Quoted strings and file names keep their spelling, since a file name
       is case-sensitive outside Windows.

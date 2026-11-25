@@ -1,51 +1,76 @@
-" Where a section of an Mplus input starts. The syntax file, the indent
-" file, and the formatter all take the rule from this file.
+" Where a section of an Mplus input starts. The syntax files, the indent
+" file, and the formatter all take the rule from this file. The rule was
+" found by running inputs through Mplus 9.1.1, and test/mplus-rules.sh runs
+" them again.
 "
-" A section starts on a line that begins with a command name and a colon.
-" The names are TITLE, DATA, VARIABLE, DEFINE, ANALYSIS, MODEL, OUTPUT,
-" SAVEDATA, PLOT, and MONTECARLO, in any case, in full or shortened to four
-" or more letters. DATA and MODEL may carry a second word before the colon
-" (DATA IMPUTATION:, MODEL INDIRECT:, MODEL male:).
+" A section starts on a line whose first word is a command name, followed by
+" a colon either at once or after one more word. The names are TITLE, DATA,
+" VARIABLE, DEFINE, ANALYSIS, MODEL, OUTPUT, SAVEDATA, PLOT, and MONTECARLO,
+" in any case, in full or shortened to four or more letters. Spaces and tabs
+" may stand before the first word, between the words, and before the colon.
+" The rule is the same inside a TITLE, so a title line such as "Model
+" comparison: two groups" ends the title. A semicolon does not end a title.
 "
-" Inside a TITLE the second word is not accepted, so that only a command
-" name directly followed by a colon ends the title. The user's guide says
-" that a title "can contain any letters and symbols except the words used as
-" Mplus commands when they are followed by a colon", which makes the line
-" "model comparison: two groups" title text. The guide does not say how
-" Mplus reads "MODEL word:" inside a title. Taking it as text is the choice
-" that leaves the title alone, and a DATA or MODEL command with a second
-" word that directly follows a title is then taken as title text as well.
+" No section starts where three words stand before the colon ("model with
+" covariates: x"), where the first word is no command name ("models: x",
+" "plo: x"), or where the name does not start the line ("the model: x").
 "
-" ftdetect/mplus-inp.vim repeats the first paragraph for the first line of
-" a file, since it has to work before the plugin is on the runtimepath.
+" What Mplus does with the section depends on the header.
+"
+"   One word                 the command (anal: is ANALYSIS:)
+"   MODEL in full, a word    MODEL CONSTRAINT, INDIRECT, TEST, PRIORS, and
+"                            so on when the word is that name in full, and
+"                            else the model of the group or class with that
+"                            label
+"   DATA, a subcommand       DATA IMPUTATION, MISSING, TWOPART, WIDETOLONG,
+"                            LONGTOWIDE, SURVIVAL, or COHORT, with the name
+"                            in full
+"   DATA, another word       an error ("Unknown command"), or nothing at
+"                            all when the word shortens a subcommand name
+"   Any other pair           nothing at all
+"
+" "Nothing at all" means that Mplus passes over every line up to the next
+" header without a message. That holds for "mode indirect:", for "variable
+" names:", and for "data impu:". mplus#section#Parse() reports such a header
+" as not read, and the formatter then leaves the section as it is.
+"
+" ftdetect/mplus-inp.vim has its own pattern for the first line of a file,
+" since it has to work before the plugin is on the runtimepath.
+
+let s:commands = ['TITLE', 'DATA', 'VARIABLE', 'DEFINE', 'ANALYSIS', 'MODEL',
+    \ 'OUTPUT', 'SAVEDATA', 'PLOT', 'MONTECARLO']
+let s:data_commands = ['IMPUTATION', 'MISSING', 'TWOPART', 'WIDETOLONG',
+    \ 'LONGTOWIDE', 'SURVIVAL', 'COHORT']
 
 let s:names = 'TITL\%[E]\|DATA\|VARI\%[ABLE]\|DEFI\%[NE]\|ANAL\%[YSIS]\|MODE\%[L]'
     \ . '\|OUTP\%[UT]\|SAVE\%[DATA]\|PLOT\|MONT\%[ECARLO]'
-let s:second = '\%(DATA\|MODE\%[L]\)\s\+[^: \t]\+'
+let s:header = '\%(' . s:names . '\)\%(\s\+[^: \t]\+\)\=\s*:'
+let s:parts = '\c^\s*\(' . s:names . '\)\%(\s\+\([^: \t]\+\)\)\=\s*:\s*\(.*\)$'
 
 " Return the pattern of a section header, to be matched without regard to
-" case after the indent of a line. With a:in_title set it is the narrower
-" pattern for a line inside a TITLE.
-function! mplus#section#Pattern(in_title) abort
-    return '\%(' . s:names . (a:in_title ? '' : '\|' . s:second) . '\)\s*:'
+" case after the indent of a line.
+function! mplus#section#Pattern() abort
+    return s:header
 endfunction
 
-let s:plain = '^\s*' . mplus#section#Pattern(1)
-let s:any = '^\s*' . mplus#section#Pattern(0)
-
-" Return whether a section starts on line a:lnum of the current buffer. A
-" header with a second word starts one unless it stands in a TITLE, which
-" is so when the nearest header above it without a second word is TITLE.
+" Return whether a section starts on line a:lnum of the current buffer.
 function! mplus#section#Starts(lnum) abort
-    let l:line = getline(a:lnum)
-    if l:line =~? s:plain
-        return 1
-    elseif l:line !~? s:any
-        return 0
+    return getline(a:lnum) =~? '^\s*' . s:header
+endfunction
+
+" Take a:line apart as a section header. Return [] when no section starts
+" there, else [name, word, rest, read]. The name is the command name in
+" full and in capitals, the word is the second word in capitals or '', the
+" rest is the text after the colon, and read tells whether Mplus reads the
+" section.
+function! mplus#section#Parse(line) abort
+    let l:m = matchlist(a:line, s:parts)
+    if empty(l:m)
+        return []
     endif
-    let l:lnum = a:lnum - 1
-    while l:lnum >= 1 && getline(l:lnum) !~? s:plain
-        let l:lnum -= 1
-    endwhile
-    return getline(l:lnum) !~? '^\s*TITL\%[E]\s*:'
+    let l:first = toupper(l:m[1])
+    let l:word = toupper(l:m[2])
+    let l:read = l:word ==# '' || l:first ==# 'MODEL'
+        \ || (l:first ==# 'DATA' && index(s:data_commands, l:word) >= 0)
+    return [s:commands[match(s:commands, '^' . l:first)], l:word, l:m[3], l:read]
 endfunction
