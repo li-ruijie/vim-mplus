@@ -62,6 +62,8 @@ function! Test_inp_of_another_program() abort
         \ ['Some notes kept under this extension.'],
         \ ['&CONTROL', 'TITLE: this is not the first line of code'],
         \ ['! only a comment'],
+        \ ['', '! B3LYP def2-SVP', '  ! Opt', ''],
+        \ ['!* a block comment', 'and no command after it', '*!'],
         \ ['!* an open block comment', 'TITLE: inside the comment'],
         \ ['TITLES: x'], ['TIT: x'], ['DAT: x'], ['MODELS: x'],
         \ ['VARIABLE NAMES: x'], ['TITLE without a colon'], ['[TITLE]'],

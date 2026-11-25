@@ -6,6 +6,13 @@ autocmd BufRead,BufNewFile *.mdg setfiletype mplus-inp
 " so a file with content is taken as Mplus input only when its first line of
 " code is a command header such as TITLE:, anal:, or MODEL INDIRECT:. A new
 " or blank file is taken as Mplus input.
+"
+" A file that holds only comments is not taken. A line that starts with !
+" is a keyword line in ORCA input and a comment in CP2K input, so such a
+" file says nothing about the program it is for, and setfiletype would keep
+" the type from a later rule of a plugin for one of those programs. Mplus
+" does not run such a file either. It gets its type when a command is added
+" and it is read again, or from :setfiletype mplus-inp.
 autocmd BufNewFile *.inp setfiletype mplus-inp
 autocmd BufRead *.inp if s:IsMplusInput() | setfiletype mplus-inp | endif
 

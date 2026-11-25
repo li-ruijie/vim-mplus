@@ -61,6 +61,9 @@ looks at the content of these files before it sets a filetype:
       MODEL ("MODEL INDIRECT:"). Blank lines, comment lines, and block
       comments above it are passed over, and it must lie within the first
       500 lines.
+    - A .inp file that holds only comments gets no filetype. A line that
+      starts with "!" is a keyword line in ORCA input and a comment in
+      CP2K input, so such a file does not show which program it is for.
     - A .out file is mplus-out when one of its first ten lines starts with
       "Mplus VERSION" or is "MUTHEN & MUTHEN", as Mplus output does. A new
       .out file gets no filetype.
