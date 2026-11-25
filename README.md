@@ -22,12 +22,17 @@ with `gggqG`) into a canonical style:
 - **Uppercase all code** — Mplus convention. Quoted strings and file names
   keep their spelling.
 - **Expand abbreviations** — e.g. `ANAL:` → `ANALYSIS:`, `ESTI =` →
-  `ESTIMATOR =`. Only unambiguous 4+ character abbreviations are expanded,
-  and only where Mplus reads a keyword: section headers, the option name
-  that starts a statement, and the `OUTPUT` list. An abbreviation is read as
-  an option of the section it stands in, so `ESTI =` becomes `ESTIMATOR =`
-  in `ANALYSIS` and `ESTIMATES =` in `SAVEDATA`. Variable names are left
-  alone, so `CLUSTER = clus;` does not become `CLUSTER = CLUSTER;`.
+  `ESTIMATOR =`. An abbreviation of four or more characters is expanded to
+  the option that Mplus reads it as, and only where Mplus reads a keyword:
+  section headers, the option name that starts a statement, and the
+  `OUTPUT` list. An abbreviation is read as an option of the section it
+  stands in, so `ESTI =` becomes `ESTIMATOR =` in `ANALYSIS` and
+  `ESTIMATES =` in `SAVEDATA`. Where two options start with the same four
+  letters, Mplus takes one of them (`INTE` is `INTEGRATION`, and
+  `INTERACTIVE` needs `INTER`). An `OUTPUT` option has one short form
+  (`SAMP`, `RES`, `MOD`, `CINT`), and a shortening that Mplus rejects, such
+  as `MODI`, is left as written. Variable names are left alone, so
+  `CLUSTER = clus;` does not become `CLUSTER = CLUSTER;`.
 - **Split section headers** — `DATA: FILE = ex.dat;` becomes two lines
   (`DATA:` on its own line, body indented below) so each section is delimited
   and folds correctly.

@@ -2,38 +2,44 @@
 " usage: setlocal formatexpr=mplus#format#Format()
 
 " Keywords that are written in full, by the section that reads them. The
-" number is the length of the shortest abbreviation that is expanded, which
-" is four letters or more. A larger number keeps a short form as written,
-" such as PARA, which also starts PARALLEL, and INTE, which starts both
-" INTEGRATION and INTERACTIVE.
+" number is the length of the shortest abbreviation that Mplus 9.1.1 reads
+" as the keyword. That is four letters, also where a second option of the
+" section starts with the same four. PARA is PARAMETERIZATION, and PARALLEL
+" needs five letters. INTE is INTEGRATION, and INTERACTIVE needs five,
+" which is why it has a 5 here.
 "
 " An abbreviation is looked up in the table of its own section only, since
 " the same letters name different options in different sections. ESTI is
 " ESTIMATOR in ANALYSIS and ESTIMATES in SAVEDATA, and STAR is STARTS in
 " ANALYSIS and STARTING in MONTECARLO. DATA includes the options of its
-" subcommands (DATA IMPUTATION, DATA WIDETOLONG), and OUTPUT includes the
-" settings that follow an option in parentheses.
+" subcommands (DATA IMPUTATION, DATA WIDETOLONG).
 let s:keywords = {
-    \ 'DATA': {'IDVARIABLE': 4, 'IMPUTE': 4, 'LISTWISE': 5, 'NGROUPS': 4,
+    \ 'DATA': {'IDVARIABLE': 4, 'IMPUTE': 4, 'LISTWISE': 4, 'NGROUPS': 4,
     \     'NOBSERVATIONS': 4, 'VARIANCES': 4},
     \ 'VARIABLE': {'AUXILIARY': 4, 'BETWEEN': 4, 'CATEGORICAL': 4,
-    \     'CENSORED': 4, 'CENTERING': 7, 'CLASSES': 4, 'CLUSTER': 4,
+    \     'CENSORED': 4, 'CENTERING': 4, 'CLASSES': 4, 'CLUSTER': 4,
     \     'COUNT': 4, 'GROUPING': 4, 'IDVARIABLE': 4, 'KNOWNCLASS': 4,
     \     'MISSING': 4, 'NOMINAL': 4, 'STRATIFICATION': 4,
-    \     'USEOBSERVATIONS': 4, 'USEVARIABLES': 4, 'WEIGHT': 4, 'WITHIN': 5},
+    \     'USEOBSERVATIONS': 4, 'USEVARIABLES': 4, 'WEIGHT': 4, 'WITHIN': 4},
     \ 'ANALYSIS': {'ADAPTIVE': 4, 'ALGORITHM': 4, 'BITERATIONS': 4,
     \     'BOOTSTRAP': 4, 'CHAINS': 4, 'CONVERGENCE': 4, 'DISTRIBUTION': 4,
-    \     'ESTIMATOR': 4, 'INFORMATION': 5, 'INTEGRATION': 5, 'INTERACTIVE': 5,
+    \     'ESTIMATOR': 4, 'INFORMATION': 4, 'INTEGRATION': 4, 'INTERACTIVE': 5,
     \     'ITERATIONS': 4,
-    \     'PARAMETERIZATION': 5, 'PROCESSORS': 4, 'STARTS': 4, 'VARIANCE': 4},
-    \ 'OUTPUT': {'BOOTSTRAP': 4, 'CINTERVAL': 5, 'CLUSTER': 4, 'COUNT': 4,
-    \     'MODINDICES': 4, 'RESIDUAL': 4, 'SAMPSTAT': 4},
+    \     'PARAMETERIZATION': 4, 'PROCESSORS': 4, 'STARTS': 4, 'VARIANCE': 4},
     \ 'SAVEDATA': {'ESTIMATES': 4, 'MISSFLAG': 4, 'SAMPLE': 4},
     \ 'MONTECARLO': {'AUXILIARY': 4, 'BETWEEN': 4, 'CATEGORICAL': 4,
     \     'CENSORED': 4, 'CLASSES': 4, 'COUNT': 4, 'MISSING': 4,
     \     'NGROUPS': 4, 'NOBSERVATIONS': 4, 'NOMINAL': 4, 'STARTING': 4,
-    \     'WITHIN': 5}
+    \     'WITHIN': 4}
 \ }
+
+" Short forms in the OUTPUT list, with the settings that follow an option
+" in parentheses. Mplus takes an OUTPUT option in full or in the one short
+" form given here, and it rejects any other shortening (RESI, MODI, CINTE),
+" which therefore stays as written.
+let s:output_forms = {'SAMP': 'SAMPSTAT', 'RES': 'RESIDUAL',
+    \ 'MOD': 'MODINDICES', 'CINT': 'CINTERVAL', 'BOOT': 'BOOTSTRAP',
+    \ 'CLUS': 'CLUSTER'}
 
 " Sections whose statements start with an option name. MODEL and DEFINE
 " statements start with a variable name, and TITLE holds free text.
@@ -145,7 +151,7 @@ function! s:FormatText(text, state) abort
     endif
     if a:state.section ==# 'OUTPUT'
         return substitute(toupper(a:text), '\<\a\w*\>',
-            \ '\=s:Expand(submatch(0), "OUTPUT")', 'g')
+            \ '\=get(s:output_forms, submatch(0), submatch(0))', 'g')
     endif
     if a:text !~# '\S'
         return a:text

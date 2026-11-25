@@ -38,7 +38,8 @@ endfunction
 
 function! Test_other_abbreviations_depend_on_the_section() abort
     for [l:header, l:statement, l:expected] in [
-        \ ['OUTPUT:', 'samp resi modi;', 'SAMPSTAT RESIDUAL MODINDICES;'],
+        \ ['OUTPUT:', 'samp res mod cint;', 'SAMPSTAT RESIDUAL MODINDICES CINTERVAL;'],
+        \ ['OUTPUT:', 'cint (boot) stdyx (clus);', 'CINTERVAL (BOOTSTRAP) STDYX (CLUSTER);'],
         \ ['SAVEDATA:', 'samp is Sample.dat;', 'SAMPLE = Sample.dat;'],
         \ ['VARIABLE:', 'miss are all (-99);', 'MISSING = ALL (-99);'],
         \ ['MONTECARLO:', 'miss = y1-y4;', 'MISSING = Y1-Y4;'],
@@ -73,15 +74,34 @@ function! Test_abbreviation_of_another_section_is_kept() abort
     endfor
 endfunction
 
-function! Test_ambiguous_abbreviation_is_kept() abort
-    " INTE starts INTEGRATION and also INTERACTIVE, which names a file.
-    for [l:statement, l:expected] in [
-        \ ['inte = 15;', 'INTE = 15;'],
-        \ ['integ = montecarlo;', 'INTEGRATION = MONTECARLO;'],
-        \ ['inter = Control.dat;', 'INTERACTIVE = Control.dat;'],
-        \ ['interactive = Control.dat;', 'INTERACTIVE = Control.dat;']]
-        call assert_equal(l:expected, s:Statement('ANALYSIS:', l:statement), l:statement)
+function! Test_four_letters_that_start_two_options() abort
+    " Mplus reads INTE as INTEGRATION and takes INTERACTIVE, which names a
+    " file, from five letters on. PARA is PARAMETERIZATION, although
+    " PARALLEL starts with the same letters.
+    for [l:header, l:statement, l:expected] in [
+        \ ['ANALYSIS:', 'inte = 15;', 'INTEGRATION = 15;'],
+        \ ['ANALYSIS:', 'integ = montecarlo;', 'INTEGRATION = MONTECARLO;'],
+        \ ['ANALYSIS:', 'inter = Control.dat;', 'INTERACTIVE = Control.dat;'],
+        \ ['ANALYSIS:', 'interactive = Control.dat;', 'INTERACTIVE = Control.dat;'],
+        \ ['ANALYSIS:', 'para = theta;', 'PARAMETERIZATION = THETA;'],
+        \ ['ANALYSIS:', 'paral = 50;', 'PARAL = 50;'],
+        \ ['ANALYSIS:', 'info = expected;', 'INFORMATION = EXPECTED;'],
+        \ ['DATA:', 'list = on;', 'LISTWISE = ON;'],
+        \ ['VARIABLE:', 'with = x;', 'WITHIN = X;'],
+        \ ['MONTECARLO:', 'with = x;', 'WITHIN = X;'],
+        \ ['VARIABLE:', 'cent = grandmean (x);', 'CENTERING = GRANDMEAN (X);']]
+        call assert_equal(l:expected, s:Statement(l:header, l:statement),
+            \ l:header . ' ' . l:statement)
     endfor
+endfunction
+
+function! Test_output_option_has_one_short_form() abort
+    " Mplus takes an OUTPUT option in full or in one short form, and it
+    " rejects every other shortening. A rejected word is not written as an
+    " option that Mplus accepts.
+    call assert_equal('RESI MODI CINTE SAMPS;', s:Statement('OUTPUT:', 'resi modi cinte samps;'))
+    call assert_equal('CINTERVAL (BOOTS) CROSSTABS (COUN);',
+        \ s:Statement('OUTPUT:', 'cinterval (boots) crosstabs (coun);'))
 endfunction
 
 function! Test_section_is_read_from_above_a_range() abort

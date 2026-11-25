@@ -246,6 +246,14 @@ selected range:
       ANALYSIS and STARTING in MONTECARLO, and "SAMP" becomes SAMPSTAT in
       OUTPUT and SAMPLE in SAVEDATA. An abbreviation that belongs to no
       option of its section is left as written.
+    - Expands an abbreviation as Mplus 9.1.1 reads it. Four letters are
+      enough, also where two options of a section start with the same
+      four. "INTE" is INTEGRATION, and INTERACTIVE needs "INTER". "PARA"
+      is PARAMETERIZATION, and PARALLEL needs "PARAL".
+    - Expands an OUTPUT option from its one short form ("SAMP", "RES",
+      "MOD", "CINT", and "BOOT" and "CLUS" in parentheses). Mplus rejects
+      any other shortening of an OUTPUT option, such as "RESI" or "MODI",
+      and the formatter leaves it as written.
     - Re-indents using 'indentexpr'.
 
 The section and statement that a range belongs to are read from the lines
