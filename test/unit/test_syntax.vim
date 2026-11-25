@@ -142,6 +142,46 @@ function! Test_echoed_headers() abort
     endfor
 endfunction
 
+function! Test_echoed_header_in_capitals() abort
+    " A line in capitals starts a fold in an output. An echoed header on
+    " such a line is shown as the other echoed headers are.
+    call s:Buffer('mplus-out', [
+        \ 'Mplus VERSION 9.1.1',
+        \ 'MUTHEN & MUTHEN',
+        \ '11/25/2026  10:30 AM',
+        \ '',
+        \ 'INPUT INSTRUCTIONS',
+        \ '',
+        \ '  TITLE: a study',
+        \ '  ANALYSIS:',
+        \ '    TYPE = TWOLEVEL;',
+        \ '  MODEL:      %WITHIN%',
+        \ '    f BY y1;',
+        \ '  MODEL POPULATION:',
+        \ '    f BY y1;',
+        \ '  OUTPUT: TECH1;',
+        \ '',
+        \ 'INPUT READING TERMINATED NORMALLY',
+        \ '',
+        \ 'MODEL RESULTS',
+        \ '',
+        \ '    F BY Y1',
+        \ 'TECHNICAL 1 OUTPUT:',
+        \ '    x'])
+    call assert_equal(['mplusSection'], s:LineGroups(8))
+    call assert_equal(['mplusSection', 'mplusFold', 'mplusSection'], s:LineGroups(10))
+    call assert_equal(['mplusSection'], s:LineGroups(12))
+    call assert_equal(['mplusSection', 'mplusFold'], s:LineGroups(14))
+    call assert_equal(['mplusHeader'], s:LineGroups(5))
+    call assert_equal(['mplusHeader'], s:LineGroups(16))
+    call assert_equal(['mplusHeader'], s:LineGroups(18))
+    call assert_equal(['mplusHeader'], s:LineGroups(21))
+    " The folds are those of the lines in capitals. Lines 1 and 20 are in
+    " no closed fold, the first as it is not in capitals and the other as
+    " its fold has one line.
+    call assert_equal([-1, 2, 5, 8, 10, 12, 16, 18, -1, 21], s:FoldStarts())
+endfunction
+
 function! Test_timestamp_is_a_header() abort
     " Output has its own syntax file, which defines no numbers.
     call s:Buffer('mplus-out', ['Mplus VERSION 8.8', 'MUTHEN & MUTHEN',

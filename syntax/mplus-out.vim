@@ -31,10 +31,21 @@ syn match mplusHeader "^\s*Weighted Root Mean Square Residual.*$"
 
 "" All-caps section headers (includes &, parentheses, colon, dot, star, percent, equals)
 "" Also includes specific mixed-case headers commonly found in Model Fit Information
-syn region mplusFold matchgroup=mplusHeader
-    \ start="\C^\s*\u[A-Z 0-9/,&():.*%=-]\+$\|^\s*\(Loglikelihood\|Information Criteria\|Chi-Square Test of Model Fit.*\|RMSEA.*\|SRMR.*\|WRMR.*\|Weighted Root Mean Square Residual.*\)\s*$"
-    \ end="\C^\ze\s*\u[A-Z 0-9/,&():.*%=-]\+$\|^\ze\s*\(Loglikelihood\|Information Criteria\|Chi-Square Test of Model Fit.*\|RMSEA.*\|SRMR.*\|WRMR.*\|Weighted Root Mean Square Residual.*\)\s*$"
-    \ fold keepend contains=mplusComment,mplusHeader,mplusSection
+let s:caps = '\s*\u[A-Z 0-9/,&():.*%=-]\+$'
+let s:mixed = '\s*\(Loglikelihood\|Information Criteria\|Chi-Square Test of Model Fit.*'
+    \ . '\|RMSEA.*\|SRMR.*\|WRMR.*\|Weighted Root Mean Square Residual.*\)\s*$'
+let s:fold_end = 'end="\C^\ze' . s:caps . '\|^\ze' . s:mixed . '"'
+    \ . ' fold keepend contains=mplusComment,mplusHeader,mplusSection'
+execute 'syn region mplusFold matchgroup=mplusHeader'
+    \ 'start="\C^' . s:caps . '\|^' . s:mixed . '"' s:fold_end
+
+"" A header of the echoed input that stands in capitals, alone or before
+"" other text in capitals ("  MODEL:", "  MODEL:  %WITHIN%"), is an all-caps
+"" line as well. This region is defined later and therefore wins there. It
+"" starts the same fold and shows the header as mplusSection, like the
+"" echoed headers that have other text after them.
+execute 'syn region mplusFold matchgroup=mplusSection'
+    \ 'start="\C^\%(' . s:caps . '\)\@=\s*' . mplus#section#Pattern() . '"' s:fold_end
 
 "" Highlight links
 highlight link mplusSection Include

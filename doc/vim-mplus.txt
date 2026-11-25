@@ -195,7 +195,9 @@ Output files ~
 Folds span between all-caps headers (e.g., MODEL FIT INFORMATION,
 STANDARDIZED MODEL RESULTS) and specific mixed-case headers from
 model fit output (Loglikelihood, Information Criteria, Chi-Square
-Test of Model Fit, RMSEA, SRMR, WRMR).
+Test of Model Fit, RMSEA, SRMR, WRMR). The headers of the input that Mplus
+echoes at the top are shown as |mplusSection|, also where a header in
+capitals ("  MODEL:") starts a fold as every line in capitals does.
 
 ==============================================================================
 6. INDENTATION                                         *vim-mplus-indentation*
