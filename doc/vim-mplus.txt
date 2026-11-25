@@ -183,6 +183,12 @@ selected range:
       every word of the OUTPUT list. Variable names are never expanded, so
       "CLUSTER = clus;" stays as it is, and MODEL and DEFINE sections are
       only uppercased.
+    - Reads an abbreviation as an option of the section it stands in, since
+      the same letters can name different options. "ESTI" becomes ESTIMATOR
+      in ANALYSIS and ESTIMATES in SAVEDATA, "STAR" becomes STARTS in
+      ANALYSIS and STARTING in MONTECARLO, and "SAMP" becomes SAMPSTAT in
+      OUTPUT and SAMPLE in SAVEDATA. An abbreviation that belongs to no
+      option of its section is left as written.
     - Re-indents using 'indentexpr'.
 
 The section and statement that a range belongs to are read from the lines

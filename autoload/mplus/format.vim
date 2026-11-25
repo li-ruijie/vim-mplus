@@ -1,108 +1,36 @@
 " Mplus formatting function
 " usage: setlocal formatexpr=mplus#format#Format()
 
-" Abbreviation dictionary: abbreviated form -> full keyword
-" Only unambiguous 4+ char abbreviations; dangerous/identity entries removed
-let s:abbrevs = {
-    \ 'ANAL': 'ANALYSIS', 'ANALY': 'ANALYSIS', 'ANALYS': 'ANALYSIS',
-    \ 'VARI': 'VARIABLE', 'VARIA': 'VARIABLE', 'VARIAB': 'VARIABLE', 'VARIABL': 'VARIABLE',
-    \ 'DEFI': 'DEFINE', 'DEFIN': 'DEFINE',
-    \ 'OUTP': 'OUTPUT', 'OUTPU': 'OUTPUT',
-    \ 'SAVED': 'SAVEDATA', 'SAVEDA': 'SAVEDATA', 'SAVEDAT': 'SAVEDATA',
-    \ 'MONT': 'MONTECARLO', 'MONTE': 'MONTECARLO', 'MONTEC': 'MONTECARLO',
-    \ 'MONTECA': 'MONTECARLO', 'MONTECAR': 'MONTECARLO', 'MONTECARL': 'MONTECARLO',
-    \ 'TITL': 'TITLE',
-    \ 'ESTI': 'ESTIMATOR', 'ESTIM': 'ESTIMATOR', 'ESTIMA': 'ESTIMATOR',
-    \ 'ESTIMAT': 'ESTIMATOR', 'ESTIMATO': 'ESTIMATOR',
-    \ 'DIST': 'DISTRIBUTION', 'DISTR': 'DISTRIBUTION', 'DISTRI': 'DISTRIBUTION',
-    \ 'DISTRIB': 'DISTRIBUTION', 'DISTRIBU': 'DISTRIBUTION', 'DISTRIBUT': 'DISTRIBUTION',
-    \ 'DISTRIBUTI': 'DISTRIBUTION', 'DISTRIBUTIO': 'DISTRIBUTION',
-    \ 'PARAM': 'PARAMETERIZATION', 'PARAME': 'PARAMETERIZATION',
-    \ 'PARAMET': 'PARAMETERIZATION', 'PARAMETE': 'PARAMETERIZATION',
-    \ 'PARAMETER': 'PARAMETERIZATION', 'PARAMETERI': 'PARAMETERIZATION',
-    \ 'PARAMETERIZ': 'PARAMETERIZATION', 'PARAMETERIZA': 'PARAMETERIZATION',
-    \ 'PARAMETERIZAT': 'PARAMETERIZATION', 'PARAMETERIZATI': 'PARAMETERIZATION',
-    \ 'PARAMETERIZATIO': 'PARAMETERIZATION',
-    \ 'ALGO': 'ALGORITHM', 'ALGOR': 'ALGORITHM', 'ALGORI': 'ALGORITHM',
-    \ 'ALGORIT': 'ALGORITHM', 'ALGORITH': 'ALGORITHM',
-    \ 'INTE': 'INTEGRATION', 'INTEG': 'INTEGRATION', 'INTEGR': 'INTEGRATION',
-    \ 'INTEGRA': 'INTEGRATION', 'INTEGRAT': 'INTEGRATION',
-    \ 'INTEGRATI': 'INTEGRATION', 'INTEGRATIO': 'INTEGRATION',
-    \ 'ITER': 'ITERATIONS', 'ITERA': 'ITERATIONS', 'ITERAT': 'ITERATIONS',
-    \ 'ITERATI': 'ITERATIONS', 'ITERATIO': 'ITERATIONS', 'ITERATION': 'ITERATIONS',
-    \ 'CONV': 'CONVERGENCE', 'CONVE': 'CONVERGENCE', 'CONVER': 'CONVERGENCE',
-    \ 'CONVERG': 'CONVERGENCE', 'CONVERGE': 'CONVERGENCE',
-    \ 'CONVERGEN': 'CONVERGENCE', 'CONVERGENC': 'CONVERGENCE',
-    \ 'BOOT': 'BOOTSTRAP', 'BOOTS': 'BOOTSTRAP', 'BOOTST': 'BOOTSTRAP',
-    \ 'BOOTSTR': 'BOOTSTRAP', 'BOOTSTRA': 'BOOTSTRAP',
-    \ 'PROC': 'PROCESSORS', 'PROCE': 'PROCESSORS', 'PROCES': 'PROCESSORS',
-    \ 'PROCESS': 'PROCESSORS', 'PROCESSO': 'PROCESSORS', 'PROCESSOR': 'PROCESSORS',
-    \ 'STAR': 'STARTS', 'START': 'STARTS',
-    \ 'ADAP': 'ADAPTIVE', 'ADAPT': 'ADAPTIVE', 'ADAPTI': 'ADAPTIVE',
-    \ 'ADAPTIV': 'ADAPTIVE',
-    \ 'INFOR': 'INFORMATION', 'INFORM': 'INFORMATION', 'INFORMA': 'INFORMATION',
-    \ 'INFORMAT': 'INFORMATION', 'INFORMATI': 'INFORMATION',
-    \ 'INFORMATIO': 'INFORMATION',
-    \ 'BITE': 'BITERATIONS', 'BITER': 'BITERATIONS', 'BITERA': 'BITERATIONS',
-    \ 'BITERAT': 'BITERATIONS', 'BITERATI': 'BITERATIONS',
-    \ 'BITERATIO': 'BITERATIONS', 'BITERATION': 'BITERATIONS',
-    \ 'CHAI': 'CHAINS', 'CHAIN': 'CHAINS',
-    \ 'USEV': 'USEVARIABLES', 'USEVA': 'USEVARIABLES',
-    \ 'USEVAR': 'USEVARIABLES', 'USEVARI': 'USEVARIABLES',
-    \ 'USEVARIA': 'USEVARIABLES', 'USEVARIAB': 'USEVARIABLES',
-    \ 'USEVARIABL': 'USEVARIABLES', 'USEVARIABLE': 'USEVARIABLES',
-    \ 'USEO': 'USEOBSERVATIONS', 'USEOB': 'USEOBSERVATIONS',
-    \ 'USEOBS': 'USEOBSERVATIONS', 'USEOBSE': 'USEOBSERVATIONS',
-    \ 'USEOBSER': 'USEOBSERVATIONS', 'USEOBSERV': 'USEOBSERVATIONS',
-    \ 'USEOBSERVA': 'USEOBSERVATIONS', 'USEOBSERVAT': 'USEOBSERVATIONS',
-    \ 'USEOBSERVATI': 'USEOBSERVATIONS', 'USEOBSERVATIO': 'USEOBSERVATIONS',
-    \ 'MISS': 'MISSING', 'MISSI': 'MISSING', 'MISSIN': 'MISSING',
-    \ 'CENTERI': 'CENTERING', 'CENTERIN': 'CENTERING',
-    \ 'CLUS': 'CLUSTER', 'CLUST': 'CLUSTER', 'CLUSTE': 'CLUSTER',
-    \ 'STRA': 'STRATIFICATION', 'STRAT': 'STRATIFICATION',
-    \ 'STRATI': 'STRATIFICATION', 'STRATIF': 'STRATIFICATION',
-    \ 'STRATIFI': 'STRATIFICATION', 'STRATIFIC': 'STRATIFICATION',
-    \ 'STRATIFICA': 'STRATIFICATION', 'STRATIFICAT': 'STRATIFICATION',
-    \ 'STRATIFICATI': 'STRATIFICATION', 'STRATIFICATIO': 'STRATIFICATION',
-    \ 'WEIG': 'WEIGHT', 'WEIGH': 'WEIGHT',
-    \ 'IDVA': 'IDVARIABLE', 'IDVAR': 'IDVARIABLE', 'IDVARI': 'IDVARIABLE',
-    \ 'IDVARIA': 'IDVARIABLE', 'IDVARIAB': 'IDVARIABLE',
-    \ 'IDVARIABL': 'IDVARIABLE',
-    \ 'GROU': 'GROUPING', 'GROUP': 'GROUPING', 'GROUPI': 'GROUPING',
-    \ 'GROUPIN': 'GROUPING',
-    \ 'CENS': 'CENSORED', 'CENSO': 'CENSORED', 'CENSOR': 'CENSORED',
-    \ 'CENSORE': 'CENSORED',
-    \ 'CATE': 'CATEGORICAL', 'CATEG': 'CATEGORICAL', 'CATEGO': 'CATEGORICAL',
-    \ 'CATEGOR': 'CATEGORICAL', 'CATEGORI': 'CATEGORICAL',
-    \ 'CATEGORIC': 'CATEGORICAL', 'CATEGORICA': 'CATEGORICAL',
-    \ 'NOMI': 'NOMINAL', 'NOMIN': 'NOMINAL', 'NOMINA': 'NOMINAL',
-    \ 'COUN': 'COUNT',
-    \ 'AUXI': 'AUXILIARY', 'AUXIL': 'AUXILIARY', 'AUXILI': 'AUXILIARY',
-    \ 'AUXILIA': 'AUXILIARY', 'AUXILIAR': 'AUXILIARY',
-    \ 'CLAS': 'CLASSES', 'CLASS': 'CLASSES', 'CLASSE': 'CLASSES',
-    \ 'KNOW': 'KNOWNCLASS', 'KNOWN': 'KNOWNCLASS', 'KNOWNC': 'KNOWNCLASS',
-    \ 'KNOWNCL': 'KNOWNCLASS', 'KNOWNCLA': 'KNOWNCLASS',
-    \ 'KNOWNCLAS': 'KNOWNCLASS',
-    \ 'WITHI': 'WITHIN',
-    \ 'BETW': 'BETWEEN', 'BETWE': 'BETWEEN', 'BETWEE': 'BETWEEN',
-    \ 'IMPU': 'IMPUTATION', 'IMPUT': 'IMPUTATION', 'IMPUTA': 'IMPUTATION',
-    \ 'IMPUTAT': 'IMPUTATION', 'IMPUTATI': 'IMPUTATION',
-    \ 'IMPUTATIO': 'IMPUTATION',
-    \ 'NOBS': 'NOBSERVATIONS', 'NOBSE': 'NOBSERVATIONS',
-    \ 'NOBSER': 'NOBSERVATIONS', 'NOBSERV': 'NOBSERVATIONS',
-    \ 'NOBSERVA': 'NOBSERVATIONS', 'NOBSERVAT': 'NOBSERVATIONS',
-    \ 'NOBSERVATI': 'NOBSERVATIONS', 'NOBSERVATIO': 'NOBSERVATIONS',
-    \ 'NGRO': 'NGROUPS', 'NGROU': 'NGROUPS', 'NGROUP': 'NGROUPS',
-    \ 'LISTW': 'LISTWISE', 'LISTWI': 'LISTWISE', 'LISTWIS': 'LISTWISE',
-    \ 'SAMP': 'SAMPSTAT', 'SAMPS': 'SAMPSTAT', 'SAMPST': 'SAMPSTAT',
-    \ 'SAMPSTA': 'SAMPSTAT',
-    \ 'RESI': 'RESIDUAL', 'RESID': 'RESIDUAL', 'RESIDU': 'RESIDUAL',
-    \ 'RESIDUA': 'RESIDUAL',
-    \ 'MODI': 'MODINDICES', 'MODIN': 'MODINDICES', 'MODIND': 'MODINDICES',
-    \ 'MODINDI': 'MODINDICES', 'MODINDIC': 'MODINDICES',
-    \ 'MODINDICE': 'MODINDICES',
-    \ 'CINTE': 'CINTERVAL', 'CINTER': 'CINTERVAL', 'CINTERV': 'CINTERVAL',
-    \ 'CINTERVA': 'CINTERVAL'
+" Keywords that are written in full, by the section that reads them. The
+" number is the length of the shortest abbreviation that is expanded, which
+" is four letters or more. A larger number keeps a short form as written,
+" such as PARA, which also starts PARALLEL.
+"
+" An abbreviation is looked up in the table of its own section only, since
+" the same letters name different options in different sections. ESTI is
+" ESTIMATOR in ANALYSIS and ESTIMATES in SAVEDATA, and STAR is STARTS in
+" ANALYSIS and STARTING in MONTECARLO. DATA includes the options of its
+" subcommands (DATA IMPUTATION, DATA WIDETOLONG), and OUTPUT includes the
+" settings that follow an option in parentheses.
+let s:keywords = {
+    \ 'DATA': {'IDVARIABLE': 4, 'IMPUTE': 4, 'LISTWISE': 5, 'NGROUPS': 4,
+    \     'NOBSERVATIONS': 4, 'VARIANCES': 4},
+    \ 'VARIABLE': {'AUXILIARY': 4, 'BETWEEN': 4, 'CATEGORICAL': 4,
+    \     'CENSORED': 4, 'CENTERING': 7, 'CLASSES': 4, 'CLUSTER': 4,
+    \     'COUNT': 4, 'GROUPING': 4, 'IDVARIABLE': 4, 'KNOWNCLASS': 4,
+    \     'MISSING': 4, 'NOMINAL': 4, 'STRATIFICATION': 4,
+    \     'USEOBSERVATIONS': 4, 'USEVARIABLES': 4, 'WEIGHT': 4, 'WITHIN': 5},
+    \ 'ANALYSIS': {'ADAPTIVE': 4, 'ALGORITHM': 4, 'BITERATIONS': 4,
+    \     'BOOTSTRAP': 4, 'CHAINS': 4, 'CONVERGENCE': 4, 'DISTRIBUTION': 4,
+    \     'ESTIMATOR': 4, 'INFORMATION': 5, 'INTEGRATION': 4, 'ITERATIONS': 4,
+    \     'PARAMETERIZATION': 5, 'PROCESSORS': 4, 'STARTS': 4, 'VARIANCE': 4},
+    \ 'OUTPUT': {'BOOTSTRAP': 4, 'CINTERVAL': 5, 'CLUSTER': 4, 'COUNT': 4,
+    \     'MODINDICES': 4, 'RESIDUAL': 4, 'SAMPSTAT': 4},
+    \ 'SAVEDATA': {'ESTIMATES': 4, 'MISSFLAG': 4, 'SAMPLE': 4},
+    \ 'MONTECARLO': {'AUXILIARY': 4, 'BETWEEN': 4, 'CATEGORICAL': 4,
+    \     'CENSORED': 4, 'CLASSES': 4, 'COUNT': 4, 'MISSING': 4,
+    \     'NGROUPS': 4, 'NOBSERVATIONS': 4, 'NOMINAL': 4, 'STARTING': 4,
+    \     'WITHIN': 5}
 \ }
 
 " Section names in full. An input file may shorten each to four letters.
@@ -124,6 +52,17 @@ let s:file_options = ['FILE', 'SAMPLE', 'COVARIANCE', 'SIGBETWEEN', 'SWMATRIX',
 " Pieces of a code line: a quoted string, a statement end, a comment, or a
 " run of anything else.
 let s:piece_re = '"[^"]*"\?\|''[^'']*''\?\|;\|!.*$\|[^"'';!]\+'
+
+" Return the keyword of section a:section that the uppercase a:word names or
+" abbreviates. Any other word is returned as it is.
+function! s:Expand(word, section) abort
+    for [l:keyword, l:shortest] in items(get(s:keywords, a:section, {}))
+        if strlen(a:word) >= l:shortest && stridx(l:keyword, a:word) == 0
+            return l:keyword
+        endif
+    endfor
+    return a:word
+endfunction
 
 " Return the full section name that a:word names or abbreviates, or ''.
 function! s:HeaderName(word) abort
@@ -219,7 +158,7 @@ function! s:FormatText(text, state) abort
     endif
     if a:state.section ==# 'OUTPUT'
         return substitute(toupper(a:text), '\<\a\w*\>',
-            \ '\=get(s:abbrevs, submatch(0), submatch(0))', 'g')
+            \ '\=s:Expand(submatch(0), "OUTPUT")', 'g')
     endif
     if a:text !~# '\S'
         return a:text
@@ -235,8 +174,7 @@ function! s:FormatText(text, state) abort
     if empty(l:m)
         return toupper(a:text)
     endif
-    let l:name = toupper(l:m[2])
-    let l:name = get(s:abbrevs, l:name, l:name)
+    let l:name = s:Expand(toupper(l:m[2]), a:state.section)
     let a:state.verbatim = s:IsFileOption(l:name, a:state)
     return l:m[1] . l:name . toupper(l:m[3]) . '='
         \ . (a:state.verbatim ? l:m[4] : toupper(l:m[4]))

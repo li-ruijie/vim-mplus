@@ -6,7 +6,7 @@
 " runtimepath, so that the configuration of the user cannot change a result.
 let s:repo = expand('<sfile>:p:h:h:h')
 let &runtimepath = escape(s:repo, ',') . ',' . escape($VIMRUNTIME, ',')
-set noswapfile nomore
+set noswapfile nomore hidden
 
 " Lines for the log that are not failures, such as a skipped check.
 let g:test_notes = []

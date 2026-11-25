@@ -24,7 +24,9 @@ with `gggqG`) into a canonical style:
 - **Expand abbreviations** — e.g. `ANAL:` → `ANALYSIS:`, `ESTI =` →
   `ESTIMATOR =`. Only unambiguous 4+ character abbreviations are expanded,
   and only where Mplus reads a keyword: section headers, the option name
-  that starts a statement, and the `OUTPUT` list. Variable names are left
+  that starts a statement, and the `OUTPUT` list. An abbreviation is read as
+  an option of the section it stands in, so `ESTI =` becomes `ESTIMATOR =`
+  in `ANALYSIS` and `ESTIMATES =` in `SAVEDATA`. Variable names are left
   alone, so `CLUSTER = clus;` does not become `CLUSTER = CLUSTER;`.
 - **Split section headers** — `DATA: FILE = ex.dat;` becomes two lines
   (`DATA:` on its own line, body indented below) so each section is delimited
