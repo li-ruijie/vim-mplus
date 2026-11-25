@@ -1,7 +1,7 @@
 *vim-mplus.txt*  Syntax, folding, and tools for Mplus statistical software
 
 Author:  Li Ruijie
-License: GPL-3.0
+License: AGPL-3.0
 URL:     https://github.com/li-ruijie/vim-mplus
 
 ==============================================================================
