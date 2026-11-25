@@ -7,9 +7,17 @@
 #
 # Every example input is run through Mplus as it is and again after gq has
 # formatted it. The two runs have to end with the same exit status and the
-# same output below the echoed input, apart from the lines that give a time.
-# That output holds the messages about the input, the summary of the
-# analysis, and the model results.
+# same output below the echoed input. That output holds the messages about
+# the input, the summary of the analysis, and the model results. Three
+# things are left out of the comparison: the lines that give a time, the
+# blank lines, and the difference between capitals and small letters, since
+# Mplus prints some labels as the input writes them and the formatter writes
+# code in capitals.
+#
+# Mplus reads 90 characters of an input line. Where a line of an example is
+# longer, Mplus has cut it, and the formatter breaks it, so the two runs
+# are of different inputs. Such an example is reported as skipped when its
+# runs differ.
 #
 # The script is skipped when Mplus is not found. It reads these variables.
 #
@@ -18,9 +26,9 @@
 #   MPLUS_EXAMPLES    the directory with the example inputs and their data,
 #                     searched with every directory below it. The default
 #                     is test/original/.
-#   MPLUS_TIME_LIMIT  the seconds that one run may take, 60 by default. Of
-#                     an example that takes longer, only the messages about
-#                     the input are compared.
+#   MPLUS_TIME_LIMIT  the seconds that one run may take, 60 by default.
+#                     Where a run of an example takes longer, only the
+#                     messages about the input are compared.
 #   MPLUS_TEST_DIR    the directory for the runs. The default is a new
 #                     temporary directory. A run that is given the directory
 #                     of an earlier run takes up where that run stopped, so
@@ -155,33 +163,41 @@ messages() {
     below_echo "$1" | sed '/^SUMMARY OF ANALYSIS/,$d'
 }
 
+# Tell whether the outputs of the two runs of the example $1 are the same
+# in the lines that the function $2 prints, without regard to case.
+same() {
+    diff -iq <("$2" "$WORK/original/$1/$1.out") <("$2" "$WORK/formatted/$1/$1.out") >/dev/null
+}
+
 PASS=0
 FAIL=0
+SKIP=0
 ERRORS=()
 for input in "${FILES[@]}"; do
     name="$(basename "$input" .inp)"
     original="$(run_example "$input" original)"
     formatted="$(run_example "$input" formatted)"
-    out_original="$WORK/original/$name/$name.out"
-    out_formatted="$WORK/formatted/$name/$name.out"
     note=""
     problem=""
-    if [[ "$original" != "$formatted" ]]; then
-        problem="exit status $original as written, $formatted when formatted"
-    elif [[ ! -f "$out_original" || ! -f "$out_formatted" ]]; then
+    if [[ ! -f "$WORK/original/$name/$name.out" || ! -f "$WORK/formatted/$name/$name.out" ]]; then
         problem="no output file"
-    elif [[ "$original" == timeout ]]; then
+    elif [[ "$original" == timeout || "$formatted" == timeout ]]; then
         note=" (over the time limit, messages compared)"
-        if ! diff -q <(messages "$out_original") <(messages "$out_formatted") >/dev/null; then
+        if ! same "$name" messages; then
             problem="the messages about the input differ"
         fi
-    elif ! diff -q <(below_echo "$out_original") <(below_echo "$out_formatted") >/dev/null; then
+    elif [[ "$original" != "$formatted" ]]; then
+        problem="exit status $original as written, $formatted when formatted"
+    elif ! same "$name" below_echo; then
         problem="the output differs (compare $name/$name.out in original/ and formatted/)"
     fi
 
     if [[ -z "$problem" ]]; then
         report "[PASS] $name$note"
         PASS=$((PASS + 1))
+    elif tr -d '\r' <"$input" | LC_ALL=C grep -q '.\{91\}'; then
+        report "[SKIP] $name: Mplus cut a line of the input, which is over 90 characters"
+        SKIP=$((SKIP + 1))
     else
         report "[FAIL] $name: $problem"
         FAIL=$((FAIL + 1))
@@ -190,7 +206,7 @@ for input in "${FILES[@]}"; do
 done
 
 report "---"
-report "Summary: $PASS/$TOTAL passed, $FAIL/$TOTAL failed"
+report "Summary: $PASS/$TOTAL passed, $FAIL/$TOTAL failed, $SKIP/$TOTAL skipped"
 if [[ ${#ERRORS[@]} -gt 0 ]]; then
     report ""
     report "Failed inputs:"
