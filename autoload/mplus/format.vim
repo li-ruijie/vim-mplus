@@ -77,15 +77,15 @@ function! s:HeaderName(word) abort
     return ''
 endfunction
 
-" Parse a:line as a section header. Return [] for any other line, else
+" Parse line a:lnum, whose text is a:line, as a section header. Return []
+" when no section starts there, which mplus#section#Starts() decides, else
 " [name, subtype, content], where content is the text after the colon.
-function! s:ParseHeader(line) abort
-    let l:m = matchlist(a:line, '^\s*\(\a\+\)\%(\s\+\([^: \t]\+\)\)\?\s*:\s*\(.*\)$')
-    if empty(l:m)
+function! s:ParseHeader(lnum, line) abort
+    if !mplus#section#Starts(a:lnum)
         return []
     endif
-    let l:name = s:HeaderName(l:m[1])
-    return l:name ==# '' ? [] : [l:name, toupper(l:m[2]), l:m[3]]
+    let l:m = matchlist(a:line, '^\s*\(\a\+\)\%(\s\+\([^: \t]\+\)\)\?\s*:\s*\(.*\)$')
+    return [s:HeaderName(l:m[1]), toupper(l:m[2]), l:m[3]]
 endfunction
 
 " Return whether the value of option a:name is a file name in the section
@@ -134,7 +134,7 @@ function! s:StateBefore(lnum) abort
         if l:line =~# '^\s*\%(!.*\)\?$'
             continue
         endif
-        let l:header = s:ParseHeader(l:line)
+        let l:header = s:ParseHeader(l:lnum + 1, l:line)
         if !l:have_code
             let l:state.at_start = !empty(l:header) || s:CodeOnly(l:line) =~# ';\s*$'
             let l:have_code = 1
@@ -245,7 +245,7 @@ function! mplus#format#Format() abort
         " Section header, also abbreviated (ANAL:) or compound (MODEL
         " INDIRECT:). The name is written in full and any content after
         " the colon moves to a line of its own.
-        let l:header = s:ParseHeader(l:line)
+        let l:header = s:ParseHeader(l:lnum, l:line)
         if !empty(l:header)
             let l:state.section = l:header[0]
             let l:state.subtype = l:header[1]

@@ -61,9 +61,14 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 
 ## Section Headers (mplusSection)
 
-Input files match at column 1; output files match with 2-space indent.
-Compound headers (`MODEL X:`, `DATA X:`) are matched via `\(\s\+[^: \t]\+\)\?`.
-Abbreviated section names are matched with `\w*` (e.g., `ANAL:` matches `ANALYSIS:`).
+Input files take the header pattern from `mplus#section#Pattern()` in
+`autoload/mplus/section.vim`, and a header may be indented. Output files match
+the echoed headers with their 2-space indent.
+Compound headers (`MODEL X:`, `DATA X:`) are matched via `\s\+[^: \t]\+`. Inside a
+TITLE they are title text, and only a command name directly followed by a colon
+ends the title.
+Abbreviated section names are matched from four letters on with `\%[]`
+(e.g., `ANAL\%[YSIS]`), so `ANAL:` is a header and `ANALYSES:` is not.
 Class/level labels (`%OVERALL%`, `%c#1%`, `%BETWEEN subject%`) are also
 highlighted as mplusSection in the base file.
 
@@ -666,8 +671,9 @@ highlighted as mplusSection in the base file.
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header  │
 │ \C^\s*\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
 │ Mixed-case fit headers (output)         │ Header  │
-│ ^(SECTION):  (input, column 1)          │ Section │
-│ ^(DATA|MODEL)(\s[^: \t]+)?:  (input)    │ Section │
+│ ^\s*(SECTION)\s*:  (input)              │ Section │
+│ ^\s*(DATA|MODEL)(\s[^: \t]+)?\s*:       │ Section │
+│   (input, one word only inside a TITLE) │         │
 │ ^  (SECTION):  (output, 2-space indent) │ Section │
 │ %[^%]+%  (class/level labels)           │ Section │
 │ -?(\d+\.?\d*|\.\d+)([ED][-+]?\d+)?      │ Number  │

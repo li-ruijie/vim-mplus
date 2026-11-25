@@ -28,19 +28,14 @@ function! GetMplusInpIndent()
     let prev_line = getline(lnum)
     let ind = indent(lnum)
 
-    "" Section headers always go to column 0
-    if line =~? '^\s*\(TITL\w*\|VARI\w*\|DEFI\w*\|ANAL\w*\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\)\s*:'
-        return 0
-    endif
-    if line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+[^: \t]\+\)\?\s*:'
+    "" Section headers always go to column 0. mplus#section#Starts() holds
+    "" the rule for a header, which is narrower inside a TITLE.
+    if mplus#section#Starts(v:lnum)
         return 0
     endif
 
     "" If previous line was a section header, indent one level
-    if prev_line =~? '^\s*\(TITL\w*\|VARI\w*\|DEFI\w*\|ANAL\w*\|OUTP\w*\|SAVE\w*\|PLOT\w*\|MONT\w*\)\s*:'
-        return shiftwidth()
-    endif
-    if prev_line =~? '^\s*\(DATA\w*\|MODE\w*\)\(\s\+[^: \t]\+\)\?\s*:'
+    if mplus#section#Starts(lnum)
         return shiftwidth()
     endif
 

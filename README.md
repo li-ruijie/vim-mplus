@@ -36,7 +36,10 @@ with `gggqG`) into a canonical style:
 - **Normalise whitespace** — tabs → 4 spaces, trailing whitespace removed.
 - **Re-indent** — section headers at column 0, body at one `shiftwidth`.
 
-TITLE sections and comments are left alone (whitespace cleanup only).
+TITLE sections and comments are left alone (whitespace cleanup only). Inside
+a TITLE only a command name directly followed by a colon (`DATA:`, `anal:`)
+starts the next section, so a title line such as
+`model comparison: two groups` stays title text.
 The formatter also sets `fileformat=unix` and `fileencoding=utf-8` to avoid
 encoding issues across platforms.
 

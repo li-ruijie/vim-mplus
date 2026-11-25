@@ -94,6 +94,73 @@ function! Test_section_is_read_from_above_a_range() abort
     call assert_equal('    ESTIMATOR = ML;', getline(2))
 endfunction
 
+function! Test_title_keeps_a_line_with_a_colon() abort
+    " Inside a TITLE a command name with a second word does not start a
+    " section, and neither does a colon after any other word.
+    call assert_equal([
+        \ 'TITLE:',
+        \ '    a study of growth',
+        \ '    model comparison: two groups;',
+        \ '    Data imputation: twenty data sets',
+        \ '    Model 1: the data and the model without a colon',
+        \ '    Step 2: titles: more text',
+        \ 'DATA:',
+        \ '    FILE = x.dat;'],
+        \ s:Format([
+        \ 'TITLE: a study of growth',
+        \ '  model comparison: two groups;',
+        \ '  Data imputation: twenty data sets',
+        \ 'Model 1: the data and the model without a colon',
+        \ 'Step 2: titles: more text',
+        \ 'data: file is x.dat;']))
+endfunction
+
+function! Test_title_ends_at_a_command_name_and_a_colon() abort
+    for [l:line, l:header] in [['anal: type = basic;', 'ANALYSIS:'],
+        \ ['Analysis : type = basic;', 'ANALYSIS:'],
+        \ ['  model: type = basic;', 'MODEL:'],
+        \ ['title: type = basic;', 'TITLE:']]
+        call assert_equal(l:header, s:Format(['TITLE: first', '  more text', l:line])[3],
+            \ l:line)
+    endfor
+endfunction
+
+function! Test_second_word_after_data_and_model() abort
+    call assert_equal([
+        \ 'DATA:',
+        \ '    FILE = x.dat;',
+        \ 'DATA IMPUTATION:',
+        \ '    IMPUTE = Y1;',
+        \ 'MODEL:',
+        \ '    F BY Y1;',
+        \ 'MODEL INDIRECT:',
+        \ '    Y IND X;',
+        \ 'MODEL MALE:',
+        \ '    F BY Y1;',
+        \ '    OUTPUT STUFF: TECH1;'],
+        \ s:Format([
+        \ 'data: file is x.dat;',
+        \ 'data imputation: impu = y1;',
+        \ 'model: f by y1;',
+        \ 'mode indirect: y ind x;',
+        \ 'Model male: f by y1;',
+        \ 'output stuff: tech1;']))
+endfunction
+
+function! Test_title_is_read_from_above_a_range() abort
+    enew!
+    call setline(1, ['TITLE: a study', '  data imputation: twenty sets', '  impu = y1;',
+        \ 'DATA:', '  file is x.dat;', 'DATA IMPUTATION:', '  impu = y1;'])
+    set filetype=mplus-inp
+    7normal gqq
+    call assert_equal('    IMPUTE = Y1;', getline(7))
+    3normal gqq
+    call assert_equal('  impu = y1;', getline(3))
+    2normal gqq
+    call assert_equal('    data imputation: twenty sets', getline(2))
+    call assert_equal(7, line('$'))
+endfunction
+
 function! Test_whole_input() abort
     call assert_equal([
         \ 'TITLE:',

@@ -32,6 +32,57 @@ function! s:Numbers(line) abort
     return l:found
 endfunction
 
+" Show a:lines in a buffer of type a:filetype.
+function! s:Buffer(filetype, lines) abort
+    enew!
+    call setline(1, a:lines)
+    execute 'set filetype=' . a:filetype
+    syntax sync fromstart
+endfunction
+
+" Return the syntax groups along line a:lnum, each run of one group once.
+function! s:LineGroups(lnum) abort
+    return uniq(map(range(1, col([a:lnum, '$']) - 1),
+        \ 'synIDattr(synID(a:lnum, v:val, 1), "name")'))
+endfunction
+
+" Return the first line of every fold of the buffer.
+function! s:FoldStarts() abort
+    setlocal foldminlines=0
+    normal! zM
+    return uniq(map(range(1, line('$')), 'foldclosed(v:val)'))
+endfunction
+
+function! Test_title_ends_only_at_a_command_name_and_a_colon() abort
+    call s:Buffer('mplus-inp', [
+        \ 'TITLE: a study of growth',
+        \ '  model comparison: two groups',
+        \ '  Data imputation: twenty data sets',
+        \ 'DATA:',
+        \ '  FILE = x.dat;',
+        \ 'data imputation:',
+        \ '  IMPUTE = y1;',
+        \ 'MODEL:',
+        \ '  f BY y1;',
+        \ 'Model male:',
+        \ '  f BY y1;',
+        \ '  anal:',
+        \ '    TYPE = BASIC;'])
+    call assert_equal([1, 4, 6, 8, 10, 12], s:FoldStarts())
+    call assert_equal(['mplusTitle'], s:LineGroups(2))
+    call assert_equal(['mplusTitle'], s:LineGroups(3))
+    call assert_equal('mplusSection', synIDattr(synID(6, 1, 1), 'name'))
+    call assert_equal('mplusSection', synIDattr(synID(10, 1, 1), 'name'))
+    call assert_equal('mplusSection', synIDattr(synID(12, 3, 1), 'name'))
+endfunction
+
+function! Test_section_name_in_full_or_shortened() abort
+    call s:Buffer('mplus-inp', ['MODEL:', '  f BY y1;', 'modeling: x;',
+        \ 'database: y;', 'VARIABLE names: z;', 'anal:', '  TYPE = BASIC;',
+        \ 'OUTPUT :', '  TECH1;'])
+    call assert_equal([1, 6, 8], s:FoldStarts())
+endfunction
+
 function! Test_digits_in_names_are_not_numbers() abort
     for l:line in ['y1 ON x1 x2a;', 'f BY u11-u14 y10;', 'x_1 WITH var2b;',
         \ 'FILE IS ex3.1.dat;', 'FILE = 2level.dat;', 'TECH1 TECH14 H1SE;',
