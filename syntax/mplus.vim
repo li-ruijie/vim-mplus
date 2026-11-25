@@ -20,9 +20,6 @@ syn region mplusTitle matchgroup=mplusStatement start="^\s*\(TITLE\|TITL\)\>\s*:
 syn region mplusString start=+"+ end=+"+
 syn region mplusString start=+'+ end=+'+
 
-"" Timestamp header (e.g., 01/15/2026  10:30  AM)
-syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
-
 "" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
 syn match mplusSection "%[^%]\+%"
 
@@ -51,6 +48,10 @@ syn match mplusModel "<"
 "" and one that follows a name, a number, or a closing bracket is an operator
 "" (y1-y4, a-1). Defined after the operators so that the signed form wins.
 syn match mplusNumber "\%([0-9A-Za-z_.)\]]\@1<!-\|[0-9A-Za-z_.]\@1<!\)\%(\d\+\.\=\d*\|\.\d\+\)\%([ED][-+]\=\d\+\)\=\w\@!"
+
+"" Timestamp header (e.g., 01/15/2026  10:30  AM). Defined after the numbers,
+"" since both start at the first digit of the line and the later item wins.
+syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
 
 
 syn match   mplusStatement "\<DATA\>"

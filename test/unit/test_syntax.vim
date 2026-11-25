@@ -1,4 +1,4 @@
-" Tests for syntax highlighting of Mplus input.
+" Tests for syntax highlighting and folding of Mplus input and output.
 
 source <sfile>:p:h/common.vim
 
@@ -81,6 +81,29 @@ function! Test_section_name_in_full_or_shortened() abort
         \ 'database: y;', 'VARIABLE names: z;', 'anal:', '  TYPE = BASIC;',
         \ 'OUTPUT :', '  TECH1;'])
     call assert_equal([1, 6, 8], s:FoldStarts())
+endfunction
+
+function! Test_timestamp_is_a_header() abort
+    " Output has its own syntax file, which defines no numbers.
+    call s:Buffer('mplus-out', ['Mplus VERSION 8.8', 'MUTHEN & MUTHEN',
+        \ '04/10/2017   4:39 AM', '', 'INPUT INSTRUCTIONS', '', '11/25/2026  10:30  PM'])
+    call assert_equal(['mplusHeader'], s:LineGroups(3))
+    call assert_equal(['mplusHeader'], s:LineGroups(7))
+    " The rules for input define the same line, which starts as a number does.
+    call s:Buffer('mplus-inp', ['MODEL:', '04/10/2017   4:39 AM', '11/25/2026  10:30  PM',
+        \ '  x = 04/10;'])
+    call assert_equal(['mplusHeader'], s:LineGroups(2))
+    call assert_equal(['mplusHeader'], s:LineGroups(3))
+    call assert_equal(['04', '10'], s:Numbers('  x = 04/10;'))
+endfunction
+
+function! Test_examples() abort
+    for l:file in ExampleFiles('out')
+        execute 'edit' fnameescape(l:file)
+        syntax sync fromstart
+        call assert_equal(['mplusHeader'], s:LineGroups(3), l:file)
+        bwipeout!
+    endfor
 endfunction
 
 function! Test_digits_in_names_are_not_numbers() abort
