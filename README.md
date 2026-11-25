@@ -40,6 +40,9 @@ with `gggqG`) into a canonical style:
   interchangeable in Mplus; `=` is shorter and more common.
 - **Normalise whitespace** — tabs → 4 spaces, trailing whitespace removed.
 - **Re-indent** — section headers at column 0, body at one `shiftwidth`.
+- **Break long lines** — Mplus reads the first 90 characters of an input
+  line and drops the rest, so a title or code line that is longer after
+  formatting is broken at white space.
 
 TITLE sections and comments are left alone (whitespace cleanup only). A
 title ends where Mplus ends it, at a line that begins with a command name

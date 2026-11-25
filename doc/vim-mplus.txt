@@ -264,6 +264,12 @@ selected range:
       any other shortening of an OUTPUT option, such as "RESI" or "MODI",
       and the formatter leaves it as written.
     - Re-indents using 'indentexpr'.
+    - Breaks a line that is longer than 90 characters after these steps.
+      Mplus reads the first 90 characters of an input line and drops the
+      rest, so a line that grows past that length would lose its end. The
+      break is at white space, in the text of a TITLE and in code outside
+      quoted strings. A line that is too long only by its comment is left
+      alone, and so are comment lines.
 
 The section and statement that a range belongs to are read from the lines
 above it, so formatting part of a file gives the same result as formatting

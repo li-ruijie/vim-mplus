@@ -203,6 +203,66 @@ function! s:FormatCode(line, state) abort
     endwhile
 endfunction
 
+" Mplus reads the first 90 characters of an input line and drops the rest,
+" with a warning at most. A tab counts as one character.
+let s:width = 90
+
+" Return the index of the white space at which line a:lnum has to be broken
+" so that Mplus reads all of it, or -1 for a line that stays whole.
+"
+" A line is broken when the part that Mplus has to read is longer than
+" s:width, which is the text of a TITLE or code without its comment. The
+" break is at the last white space that leaves a first part of s:width
+" characters or fewer. In code it is outside quoted strings. The text after
+" the break must not look like a section header or a comment, since on a
+" line of its own Mplus would read it as one.
+"
+" A comment, a header, and a section that Mplus passes over are not broken.
+" Neither is a line without a place for a break.
+function! s:BreakIndex(lnum) abort
+    let l:line = getline(a:lnum)
+    if strlen(l:line) <= s:width || l:line =~# '^\s*!'
+        \ || !empty(mplus#section#Parse(l:line))
+        return -1
+    endif
+    let l:state = s:StateBefore(a:lnum)
+    let l:title = l:state.free && l:state.section ==# 'TITLE'
+    if l:state.in_block || (l:state.free && !l:title)
+        return -1
+    endif
+    " Look for the last place for a break, and for the end of the text that
+    " Mplus has to read.
+    let l:best = -1
+    let l:end = 0
+    let l:pos = 0
+    while 1
+        let [l:piece, l:start, l:pos] = matchstrpos(l:line, l:title ? '.\+' : s:piece_re, l:pos)
+        if l:start < 0 || (!l:title && l:piece[0] ==# '!')
+            break
+        endif
+        let l:end = l:pos
+        if !l:title && l:piece =~# '^["'']'
+            continue
+        endif
+        let l:at = 0
+        while 1
+            let [l:space, l:from, l:at] = matchstrpos(l:piece, '\s\+', l:at)
+            if l:from < 0
+                break
+            endif
+            let l:rest = l:line[l:start + l:at :]
+            if l:start + l:from > 0 && l:start + l:from <= s:width && l:rest !~# '^!'
+                \ && empty(mplus#section#Parse(l:rest))
+                let l:best = l:start + l:from
+            endif
+        endwhile
+    endwhile
+    if strlen(substitute(l:line[: l:end - 1], '\s\+$', '', '')) <= s:width
+        return -1
+    endif
+    return l:best
+endfunction
+
 function! mplus#format#Format() abort
     if mode() =~# '[iR]'
         return 1
@@ -271,6 +331,21 @@ function! mplus#format#Format() abort
 
     " Re-indent the range using indentexpr
     execute l:start . ',' . l:end . 'normal! =='
+
+    " Break the lines that are now too long for Mplus. The rest of a line
+    " gets the indent that indentexpr gives it, and is looked at in turn.
+    let l:lnum = l:start
+    while l:lnum <= l:end
+        let l:at = s:BreakIndex(l:lnum)
+        if l:at >= 0
+            let l:line = getline(l:lnum)
+            call setline(l:lnum, l:line[: l:at - 1])
+            call append(l:lnum, substitute(l:line[l:at :], '^\s\+', '', ''))
+            execute (l:lnum + 1) . 'normal! =='
+            let l:end += 1
+        endif
+        let l:lnum += 1
+    endwhile
 
     return 0
 endfunction

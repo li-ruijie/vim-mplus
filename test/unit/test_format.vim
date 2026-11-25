@@ -252,6 +252,63 @@ function! Test_header_is_read_from_above_a_range() abort
     call assert_equal(11, line('$'))
 endfunction
 
+" Return the words of a:lines in one string, without regard to case.
+function! s:Words(lines) abort
+    return toupper(join(split(join(a:lines)), ' '))
+endfunction
+
+function! Test_line_that_formatting_makes_too_long_is_broken() abort
+    " Mplus reads 90 characters of a line. These lines have 90 or fewer
+    " with their tabs, and more once the indent is four spaces and the
+    " abbreviation is written in full.
+    let l:names = "\t\tuseo = " . join(map(range(1, 7), '"x" . v:val . " eq 1"'), ' or ') . '; ! c'
+    let l:model = "\tf BY " . join(map(range(101, 116), '"y" . v:val')) . ' yy;'
+    call assert_true(strlen(l:names) <= 90 && strlen(l:model) <= 90)
+    let l:lines = s:Format(['VARIABLE:', l:names, 'MODEL:', l:model])
+    call assert_equal(6, len(l:lines))
+    call assert_equal([], filter(copy(l:lines), 'strlen(v:val) > 90'))
+    call assert_equal(s:Words(['VARIABLE:', substitute(l:names, 'useo', 'USEOBSERVATIONS', ''),
+        \ 'MODEL:', l:model]), s:Words(l:lines))
+    call assert_match('^    USEOBSERVATIONS = X1 EQ 1 OR ', l:lines[1])
+    call assert_match('^    \S.*; ! c$', l:lines[2])
+    call assert_match('^    F BY Y101 .* Y11\d$', l:lines[4])
+    call assert_match('^    \S*YY;$', l:lines[5])
+endfunction
+
+function! Test_title_line_that_is_too_long_is_broken() abort
+    let l:text = join(map(range(1, 24), '"word" . v:val'))
+    let l:lines = s:Format(['TITLE: ' . l:text, 'DATA:', '  FILE = x.dat;'])
+    call assert_equal(5, len(l:lines))
+    call assert_equal([], filter(copy(l:lines), 'strlen(v:val) > 90'))
+    call assert_equal('TITLE: ' . toupper(l:text) . ' DATA: FILE = X.DAT;', s:Words(l:lines))
+    " No break makes a command or a comment of the text that follows it.
+    let l:start = repeat('t', 80)
+    for l:tail in ['the model: two groups compared', 'yes ! and no', 'a data set: one more']
+        let l:lines = s:Format(['TITLE:', l:start . ' ' . l:tail, 'DATA:'])
+        call assert_equal(4, len(l:lines), l:tail)
+        call assert_equal([], mplus#section#Parse(l:lines[2]), l:tail)
+        call assert_notmatch('^\s*!', l:lines[2], l:tail)
+        call assert_equal(toupper('TITLE: ' . l:start . ' ' . l:tail . ' DATA:'), s:Words(l:lines))
+    endfor
+endfunction
+
+function! Test_long_line_that_is_not_broken() abort
+    " A comment loses nothing that Mplus reads, a quoted string has to
+    " stay whole, and a section that Mplus passes over stays as written.
+    let l:long = repeat('c', 95)
+    for l:lines in [
+        \ ['MODEL:', '    ! ' . l:long . ' and more'],
+        \ ['MODEL:', '    F BY Y1; ! ' . l:long . ' and more'],
+        \ ['MODEL:', '    !* ' . l:long . ' and more', '    *!'],
+        \ ['mode indirect:', '    ' . l:long . ' and more;'],
+        \ ['MODEL:', '    ' . toupper(l:long) . ';']]
+        call assert_equal(l:lines, s:Format(l:lines))
+    endfor
+    " The break comes before a string that does not fit.
+    call assert_equal(['DATA:', '    FILE =', '    "' . repeat('c', 80) . ' and more.dat";'],
+        \ s:Format(['DATA:', '    FILE = "' . repeat('c', 80) . ' and more.dat";']))
+endfunction
+
 function! Test_whole_input() abort
     call assert_equal([
         \ 'TITLE:',
