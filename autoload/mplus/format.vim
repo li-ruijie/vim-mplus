@@ -4,7 +4,8 @@
 " Keywords that are written in full, by the section that reads them. The
 " number is the length of the shortest abbreviation that is expanded, which
 " is four letters or more. A larger number keeps a short form as written,
-" such as PARA, which also starts PARALLEL.
+" such as PARA, which also starts PARALLEL, and INTE, which starts both
+" INTEGRATION and INTERACTIVE.
 "
 " An abbreviation is looked up in the table of its own section only, since
 " the same letters name different options in different sections. ESTI is
@@ -22,7 +23,8 @@ let s:keywords = {
     \     'USEOBSERVATIONS': 4, 'USEVARIABLES': 4, 'WEIGHT': 4, 'WITHIN': 5},
     \ 'ANALYSIS': {'ADAPTIVE': 4, 'ALGORITHM': 4, 'BITERATIONS': 4,
     \     'BOOTSTRAP': 4, 'CHAINS': 4, 'CONVERGENCE': 4, 'DISTRIBUTION': 4,
-    \     'ESTIMATOR': 4, 'INFORMATION': 5, 'INTEGRATION': 4, 'ITERATIONS': 4,
+    \     'ESTIMATOR': 4, 'INFORMATION': 5, 'INTEGRATION': 5, 'INTERACTIVE': 5,
+    \     'ITERATIONS': 4,
     \     'PARAMETERIZATION': 5, 'PROCESSORS': 4, 'STARTS': 4, 'VARIANCE': 4},
     \ 'OUTPUT': {'BOOTSTRAP': 4, 'CINTERVAL': 5, 'CLUSTER': 4, 'COUNT': 4,
     \     'MODINDICES': 4, 'RESIDUAL': 4, 'SAMPSTAT': 4},
@@ -47,7 +49,7 @@ let s:file_options = ['FILE', 'SAMPLE', 'COVARIANCE', 'SIGBETWEEN', 'SWMATRIX',
     \ 'RESULTS', 'STDRESULTS', 'STDDISTRIBUTION', 'ESTIMATES', 'DIFFTEST',
     \ 'TECH3', 'TECH4', 'KAPLANMEIER', 'BASEHAZARD', 'ESTBASELINE', 'RESPONSE',
     \ 'MULTIPLIER', 'BPARAMETERS', 'RANKING', 'H5RESULTS', 'MFILE',
-    \ 'LRESPONSES', 'POPULATION', 'COVERAGE', 'STARTING']
+    \ 'LRESPONSES', 'POPULATION', 'COVERAGE', 'STARTING', 'INTERACTIVE']
 
 " Pieces of a code line: a quoted string, a statement end, a comment, or a
 " run of anything else.

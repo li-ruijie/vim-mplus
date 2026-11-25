@@ -73,6 +73,17 @@ function! Test_abbreviation_of_another_section_is_kept() abort
     endfor
 endfunction
 
+function! Test_ambiguous_abbreviation_is_kept() abort
+    " INTE starts INTEGRATION and also INTERACTIVE, which names a file.
+    for [l:statement, l:expected] in [
+        \ ['inte = 15;', 'INTE = 15;'],
+        \ ['integ = montecarlo;', 'INTEGRATION = MONTECARLO;'],
+        \ ['inter = Control.dat;', 'INTERACTIVE = Control.dat;'],
+        \ ['interactive = Control.dat;', 'INTERACTIVE = Control.dat;']]
+        call assert_equal(l:expected, s:Statement('ANALYSIS:', l:statement), l:statement)
+    endfor
+endfunction
+
 function! Test_section_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['ANALYSIS:', '    esti = ml;', 'SAVEDATA:', '    esti = e.dat;'])
