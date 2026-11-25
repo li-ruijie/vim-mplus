@@ -19,15 +19,18 @@ written by different people, or pasted from different sources, can look
 inconsistent. The `gq` formatter normalises a selection (or the whole file
 with `gggqG`) into a canonical style:
 
-- **Uppercase all code** — Mplus convention; makes keywords stand out from
-  variable names.
-- **Expand abbreviations** — e.g. `ANAL:` → `ANALYSIS:`, `ESTI` →
-  `ESTIMATOR`. Only unambiguous 4+ character abbreviations are expanded.
+- **Uppercase all code** — Mplus convention. Quoted strings and file names
+  keep their spelling.
+- **Expand abbreviations** — e.g. `ANAL:` → `ANALYSIS:`, `ESTI =` →
+  `ESTIMATOR =`. Only unambiguous 4+ character abbreviations are expanded,
+  and only where Mplus reads a keyword: section headers, the option name
+  that starts a statement, and the `OUTPUT` list. Variable names are left
+  alone, so `CLUSTER = clus;` does not become `CLUSTER = CLUSTER;`.
 - **Split section headers** — `DATA: FILE = ex.dat;` becomes two lines
   (`DATA:` on its own line, body indented below) so each section is delimited
   and folds correctly.
-- **Replace `IS`/`ARE` with `=`** — all three are interchangeable in Mplus;
-  `=` is shorter and more common.
+- **Replace `IS`/`ARE` with `=`** after an option name — all three are
+  interchangeable in Mplus; `=` is shorter and more common.
 - **Normalise whitespace** — tabs → 4 spaces, trailing whitespace removed.
 - **Re-indent** — section headers at column 0, body at one `shiftwidth`.
 

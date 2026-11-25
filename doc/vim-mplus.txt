@@ -142,13 +142,25 @@ selected range:
 
     - Replaces tabs with 4 spaces and strips trailing whitespace.
     - Preserves TITLE body lines (free-form text, whitespace cleanup only).
-    - Preserves comment lines (whitespace cleanup only).
+    - Preserves comment lines and block comments (whitespace cleanup only).
     - Splits section headers onto their own line (e.g.,
-      "DATA: FILE IS ..." becomes "DATA:" followed by "  FILE IS ...").
+      "DATA: FILE IS ..." becomes "DATA:" followed by "  FILE IS ...") and
+      writes an abbreviated header in full ("ANAL:" becomes "ANALYSIS:").
     - Uppercases all code (Mplus is case-insensitive; standard convention).
-    - Replaces IS/ARE connectors with =.
-    - Expands keyword abbreviations to their full forms.
+      Quoted strings and file names keep their spelling, since a file name
+      is case-sensitive outside Windows.
+    - Replaces the IS/ARE connector after an option name with =.
+    - Expands a keyword abbreviation to its full form where Mplus reads a
+      keyword: the option name that starts a statement in the DATA,
+      VARIABLE, ANALYSIS, SAVEDATA, PLOT, and MONTECARLO sections, and
+      every word of the OUTPUT list. Variable names are never expanded, so
+      "CLUSTER = clus;" stays as it is, and MODEL and DEFINE sections are
+      only uppercased.
     - Re-indents using 'indentexpr'.
+
+The section and statement that a range belongs to are read from the lines
+above it, so formatting part of a file gives the same result as formatting
+all of it.
 
 The formatter also sets buffer-wide: 'fileformat'=unix,
 'fileencoding'=utf-8, 'nobomb', 'endofline'.
