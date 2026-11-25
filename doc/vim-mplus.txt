@@ -232,7 +232,10 @@ selected range:
       only). See |vim-mplus-sections|.
     - Uppercases all code (Mplus is case-insensitive; standard convention).
       Quoted strings and file names keep their spelling, since a file name
-      is case-sensitive outside Windows.
+      is case-sensitive outside Windows. The options that take a file name
+      are known by section. BASEHAZARD names a file in SAVEDATA and is ON
+      or OFF in ANALYSIS, so "basehazard = on;" becomes "BASEHAZARD = ON;"
+      there.
     - Replaces the IS/ARE connector after an option name with =.
     - Expands a keyword abbreviation to its full form where Mplus reads a
       keyword: the option name that starts a statement in the DATA,

@@ -104,6 +104,35 @@ function! Test_output_option_has_one_short_form() abort
         \ s:Statement('OUTPUT:', 'cinterval (boots) crosstabs (coun);'))
 endfunction
 
+function! Test_file_option_depends_on_the_section() abort
+    " A file name keeps its spelling. The same option name takes a file in
+    " one section and a setting, a number, or variable names in another.
+    for [l:header, l:statement, l:expected] in [
+        \ ['SAVEDATA:', 'basehazard = Base.dat;', 'BASEHAZARD = Base.dat;'],
+        \ ['ANALYSIS:', 'basehazard = on;', 'BASEHAZARD = ON;'],
+        \ ['MONTECARLO:', 'coverage = Cov.dat;', 'COVERAGE = Cov.dat;'],
+        \ ['ANALYSIS:', 'coverage = .1e-1;', 'COVERAGE = .1E-1;'],
+        \ ['MONTECARLO:', 'save = Rep*.dat;', 'SAVE = Rep*.dat;'],
+        \ ['DATA IMPUTATION:', 'save = Imp*.dat;', 'SAVE = Imp*.dat;'],
+        \ ['SAVEDATA:', 'save = fscores;', 'SAVE = FSCORES;'],
+        \ ['SAVEDATA:', 'lresponses = u1 u2;', 'LRESPONSES = U1 U2;'],
+        \ ['SAVEDATA:', 'resu are Res.dat;', 'RESU = Res.dat;'],
+        \ ['MONTECARLO:', 'results = Res.dat;', 'RESULTS = Res.dat;'],
+        \ ['DATA:', 'file is Data.dat;', 'FILE = Data.dat;'],
+        \ ['DATA:', 'swmatrix = Sw.dat;', 'SWMATRIX = Sw.dat;'],
+        \ ['SAVEDATA:', 'swmatrix = Sw.dat;', 'SWMATRIX = Sw.dat;'],
+        \ ['SAVEDATA:', 'h5results = Res.h5;', 'H5RESULTS = Res.h5;'],
+        \ ['ANALYSIS:', 'difftest = Deriv.dat;', 'DIFFTEST = Deriv.dat;'],
+        \ ['ANALYSIS:', 'mult = Mult.dat;', 'MULT = Mult.dat;'],
+        \ ['MONTECARLO:', 'population = Pop.dat;', 'POPULATION = Pop.dat;'],
+        \ ['MONTECARLO:', 'star = Start.dat;', 'STARTING = Start.dat;'],
+        \ ['MONTECARLO:', 'repsave = all;', 'REPSAVE = ALL;'],
+        \ ['VARIABLE:', 'names are y1 Results;', 'NAMES = Y1 RESULTS;']]
+        call assert_equal(l:expected, s:Statement(l:header, l:statement),
+            \ l:header . ' ' . l:statement)
+    endfor
+endfunction
+
 function! Test_section_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['ANALYSIS:', '    esti = ml;', 'SAVEDATA:', '    esti = e.dat;'])

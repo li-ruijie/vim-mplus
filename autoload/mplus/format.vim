@@ -46,12 +46,24 @@ let s:output_forms = {'SAMP': 'SAMPSTAT', 'RES': 'RESIDUAL',
 let s:option_sections = ['DATA', 'VARIABLE', 'ANALYSIS', 'SAVEDATA', 'PLOT',
     \ 'MONTECARLO']
 
-" Options whose value is a file name, which is kept exactly as written.
-let s:file_options = ['FILE', 'SAMPLE', 'COVARIANCE', 'SIGBETWEEN', 'SWMATRIX',
-    \ 'RESULTS', 'STDRESULTS', 'STDDISTRIBUTION', 'ESTIMATES', 'DIFFTEST',
-    \ 'TECH3', 'TECH4', 'KAPLANMEIER', 'BASEHAZARD', 'ESTBASELINE', 'RESPONSE',
-    \ 'MULTIPLIER', 'BPARAMETERS', 'RANKING', 'H5RESULTS', 'MFILE',
-    \ 'LRESPONSES', 'POPULATION', 'COVERAGE', 'STARTING', 'INTERACTIVE']
+" Options whose value is a file name, which is kept exactly as written, by
+" the section that reads them. The same name can take a file in one section
+" and something else in another. BASEHAZARD names a file in SAVEDATA and is
+" ON or OFF in ANALYSIS, COVERAGE names a file in MONTECARLO and is a number
+" in ANALYSIS, and SAVE names files in DATA IMPUTATION and in MONTECARLO and
+" takes a setting such as FSCORES in SAVEDATA. The lists follow chapter 20
+" of the user's guide and runs of Mplus 9.1.1.
+let s:file_options = {
+    \ 'DATA': ['FILE', 'SWMATRIX', 'SAVE'],
+    \ 'ANALYSIS': ['DIFFTEST', 'MULTIPLIER', 'INTERACTIVE'],
+    \ 'SAVEDATA': ['FILE', 'SAMPLE', 'COVARIANCE', 'SIGBETWEEN', 'SWMATRIX',
+    \     'RESULTS', 'STDRESULTS', 'STDDISTRIBUTION', 'ESTIMATES', 'DIFFTEST',
+    \     'TECH3', 'TECH4', 'KAPLANMEIER', 'BASEHAZARD', 'ESTBASELINE',
+    \     'RESPONSE', 'MULTIPLIER', 'BPARAMETERS', 'RANKING', 'H5RESULTS',
+    \     'MFILE'],
+    \ 'MONTECARLO': ['POPULATION', 'COVERAGE', 'STARTING', 'SAVE', 'RESULTS',
+    \     'BPARAMETERS']
+\ }
 
 " Pieces of a code line: a quoted string, a statement end, a comment, or a
 " run of anything else.
@@ -73,20 +85,16 @@ endfunction
 " lines under a header that Mplus does not read, since it passes over them.
 function! s:Enter(state, header) abort
     let a:state.section = a:header[0]
-    let a:state.subtype = a:header[1]
     let a:state.free = a:header[0] ==# 'TITLE' || !a:header[3]
     let a:state.at_start = 1
     let a:state.verbatim = 0
 endfunction
 
-" Return whether the value of option a:name is a file name in the section
-" described by a:state. An abbreviated name counts when it is a prefix.
-function! s:IsFileOption(name, state) abort
-    if a:name ==# 'SAVE'
-        return a:state.section ==# 'MONTECARLO' || a:state.subtype ==# 'IMPUTATION'
-    endif
-    for l:option in s:file_options
-        if a:name ==# l:option || (strlen(a:name) >= 4 && stridx(l:option, a:name) == 0)
+" Return whether the value of option a:name is a file name in section
+" a:section. A name that is shortened to four or more letters counts.
+function! s:IsFileOption(name, section) abort
+    for l:option in get(s:file_options, a:section, [])
+        if strlen(a:name) >= 4 && stridx(l:option, a:name) == 0
             return 1
         endif
     endfor
@@ -110,8 +118,8 @@ endfunction
 " is free text, whether it is inside a block comment, and whether a new
 " statement starts on a:lnum.
 function! s:StateBefore(lnum) abort
-    let l:state = {'section': '', 'subtype': '', 'free': 0, 'in_block': 0,
-        \ 'at_start': 1, 'verbatim': 0}
+    let l:state = {'section': '', 'free': 0, 'in_block': 0, 'at_start': 1,
+        \ 'verbatim': 0}
     let l:have_code = 0
     let l:have_block = 0
     let l:at_start = 1
@@ -168,7 +176,7 @@ function! s:FormatText(text, state) abort
         return toupper(a:text)
     endif
     let l:name = s:Expand(toupper(l:m[2]), a:state.section)
-    let a:state.verbatim = s:IsFileOption(l:name, a:state)
+    let a:state.verbatim = s:IsFileOption(l:name, a:state.section)
     return l:m[1] . l:name . toupper(l:m[3]) . '='
         \ . (a:state.verbatim ? l:m[4] : toupper(l:m[4]))
 endfunction
