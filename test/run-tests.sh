@@ -8,11 +8,12 @@
 # Every example input is run through Mplus as it is and again after gq has
 # formatted it. The two runs have to end with the same exit status and the
 # same output below the echoed input. That output holds the messages about
-# the input, the summary of the analysis, and the model results. Three
+# the input, the summary of the analysis, and the model results. Four
 # things are left out of the comparison: the lines that give a time, the
-# blank lines, and the difference between capitals and small letters, since
-# Mplus prints some labels as the input writes them and the formatter writes
-# code in capitals.
+# blank lines, the amount of white space, and the difference between
+# capitals and small letters. Mplus prints the title and some labels as the
+# input writes them, and the formatter turns a tab into four spaces and
+# writes code in capitals.
 #
 # Mplus reads 90 characters of an input line. Where a line of an example is
 # longer, Mplus has cut it, and the formatter breaks it, so the two runs
@@ -135,23 +136,33 @@ stage() {
     done
 }
 
+# Format the input $1 in place with gq. The editor leaves with an error
+# when the formatter of the plugin is not set or fails.
+format_input() {
+    "$EDITOR_BIN" "${EDITOR_ARGS[@]}" \
+        --cmd "let &runtimepath = '$(native_path "$REPO_DIR"),' . \$VIMRUNTIME" \
+        --cmd 'filetype plugin indent on' \
+        -c 'setfiletype mplus-inp' \
+        -c 'if &formatexpr !~# "^mplus#format#" | cquit | endif' \
+        -c 'try | execute "normal gggqG" | catch | cquit | endtry' \
+        -c 'wq!' "$(native_path "$1")" </dev/null >/dev/null 2>&1
+}
+
 # Run the input $1 in a directory of its own below $WORK/$2 and print the
-# status of the run. With "formatted" as $2 the input is formatted first.
-# The status is kept in a file, and a run that has one is not made again.
+# status of the run. With "formatted" as $2 the input is formatted first,
+# and the status is "unformatted" when that fails. The status is kept in a
+# file, and a run that has one is not made again.
 run_example() {
     local name dir
     name="$(basename "$1" .inp)"
     dir="$WORK/$2/$name"
     if [[ ! -f "$dir/status" ]]; then
         stage "$1" "$dir"
-        if [[ "$2" == formatted ]]; then
-            "$EDITOR_BIN" "${EDITOR_ARGS[@]}" \
-                --cmd "let &runtimepath = '$(native_path "$REPO_DIR"),' . \$VIMRUNTIME" \
-                --cmd 'filetype plugin indent on' \
-                -c 'setfiletype mplus-inp' -c 'normal gggqG' -c 'wq!' \
-                "$(native_path "$dir/$name.inp")" </dev/null >/dev/null 2>&1 || true
+        if [[ "$2" == formatted ]] && ! format_input "$dir/$name.inp"; then
+            echo unformatted >"$dir/status.tmp"
+        else
+            run_mplus "$dir" "$name.inp" >"$dir/status.tmp"
         fi
-        run_mplus "$dir" "$name.inp" >"$dir/status.tmp"
         mv "$dir/status.tmp" "$dir/status"
     fi
     cat "$dir/status"
@@ -164,9 +175,10 @@ messages() {
 }
 
 # Tell whether the outputs of the two runs of the example $1 are the same
-# in the lines that the function $2 prints, without regard to case.
+# in the lines that the function $2 prints, without regard to case and to
+# the amount of white space.
 same() {
-    diff -iq <("$2" "$WORK/original/$1/$1.out") <("$2" "$WORK/formatted/$1/$1.out") >/dev/null
+    diff -ibq <("$2" "$WORK/original/$1/$1.out") <("$2" "$WORK/formatted/$1/$1.out") >/dev/null
 }
 
 PASS=0
@@ -179,7 +191,9 @@ for input in "${FILES[@]}"; do
     formatted="$(run_example "$input" formatted)"
     note=""
     problem=""
-    if [[ ! -f "$WORK/original/$name/$name.out" || ! -f "$WORK/formatted/$name/$name.out" ]]; then
+    if [[ "$formatted" == unformatted ]]; then
+        problem="the editor did not format the input"
+    elif [[ ! -f "$WORK/original/$name/$name.out" || ! -f "$WORK/formatted/$name/$name.out" ]]; then
         problem="no output file"
     elif [[ "$original" == timeout || "$formatted" == timeout ]]; then
         note=" (over the time limit, messages compared)"
