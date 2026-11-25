@@ -26,10 +26,6 @@ syn match mplusHeader "^\d\{2}\/\d\{2}\/\d\{4}\s\+\d\+:\d\+\s\+.M$"
 "" Class/level labels (%OVERALL%, %c#1%, %BETWEEN subject%, etc.)
 syn match mplusSection "%[^%]\+%"
 
-"" Numbers: integers, floats, scientific notation (1.5E-3, 0.100D-05)
-syn match mplusNumber "-\?\d\+\.\?\d*\([EDed][-+]\?\d\+\)\?"
-syn match mplusNumber "-\?\.\d\+\([EDed][-+]\?\d\+\)\?"
-
 "" Parameter operators: * (start value/free), @ (fix value)
 syn match mplusModel "\*"
 syn match mplusModel "@"
@@ -47,6 +43,14 @@ syn match mplusModel "-"
 syn match mplusModel "/"
 syn match mplusModel ">"
 syn match mplusModel "<"
+
+"" Numbers: integers, decimals, scientific notation (1.5E-3, 0.100D-05).
+"" A number does not touch a word character on either side or a decimal
+"" point on its left, so the digits of a name (y1, x2a, ex3.1.dat) are left
+"" alone. A minus that starts a value is part of the number (@-1, (-99)),
+"" and one that follows a name, a number, or a closing bracket is an operator
+"" (y1-y4, a-1). Defined after the operators so that the signed form wins.
+syn match mplusNumber "\%([0-9A-Za-z_.)\]]\@1<!-\|[0-9A-Za-z_.]\@1<!\)\%(\d\+\.\=\d*\|\.\d\+\)\%([ED][-+]\=\d\+\)\=\w\@!"
 
 
 syn match   mplusStatement "\<DATA\>"

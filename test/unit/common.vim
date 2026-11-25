@@ -2,8 +2,10 @@
 " Mplus. A test file sources this file, defines functions named Test_*, and
 " ends with a call to RunTests(). test/run-unit-tests.sh runs them all.
 
+" Only the plugin and the files shipped with the editor are on the
+" runtimepath, so that the configuration of the user cannot change a result.
 let s:repo = expand('<sfile>:p:h:h:h')
-let &runtimepath = escape(s:repo, ',') . ',' . &runtimepath
+let &runtimepath = escape(s:repo, ',') . ',' . escape($VIMRUNTIME, ',')
 set noswapfile nomore
 
 " Lines for the log that are not failures, such as a skipped check.

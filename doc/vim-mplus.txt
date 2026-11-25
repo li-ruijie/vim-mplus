@@ -102,6 +102,10 @@ Highlight groups:~
 
     *mplusNumber*      Links to |hl-Number|
                      Integers, floats, and scientific notation (1.5E-3, 0.100D-05).
+                     A digit inside a name (y1, x2a, ex3.1.dat) is not a
+                     number. A minus that starts a value is part of the
+                     number (@-1, *-.5), and a minus after a name or a
+                     number is an operator (y1-y4).
 
     *mplusSection*     Links to |hl-Include|
                      Section headers (TITLE:, MODEL CONSTRAINT:, etc.)

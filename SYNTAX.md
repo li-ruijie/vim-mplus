@@ -670,8 +670,9 @@ highlighted as mplusSection in the base file.
 │ ^(DATA|MODEL)(\s[^: \t]+)?:  (input)    │ Section │
 │ ^  (SECTION):  (output, 2-space indent) │ Section │
 │ %[^%]+%  (class/level labels)           │ Section │
-│ -?\d+\.?\d*([EDed][-+]?\d+)?            │ Number  │
-│ -?.\d+([EDed][-+]?\d+)?                 │ Number  │
+│ -?(\d+\.?\d*|\.\d+)([ED][-+]?\d+)?      │ Number  │
+│   no word character on either side (y1) │         │
+│   - only where a value starts (@-1)     │         │
 │ * (start value), @ (fix value)          │ Model   │
 │ \<ON\> (model operator by default)      │ Model   │
 │ \%(=\s*\)\@<=\<ON\> (setting value)     │ Command │
