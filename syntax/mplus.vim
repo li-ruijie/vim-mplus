@@ -15,8 +15,14 @@ syn match mplusStatement "\<\(SAVED\|SAVEDA\|SAVEDAT\|SAVEDATA\)\>"
 syn match mplusStatement "\<PLOT\>"
 syn match mplusStatement "\<\(MONT\|MONTE\|MONTEC\|MONTECA\|MONTECAR\|MONTECARL\|MONTECARLO\)\>"
 
-"" Safe regions to prevent keyword matching in free text
-syn region mplusTitle matchgroup=mplusStatement start="^\s*\(TITLE\|TITL\)\>\s*:\?" end=";" contains=mplusComment
+"" Safe regions to prevent keyword matching in free text. The body of a
+"" TITLE starts after the TITLE header and runs to the next section header,
+"" by the rule of autoload/mplus/section.vim. A semicolon does not end a
+"" title, and a line that begins with a variable called title starts none.
+execute 'syn region mplusTitle matchgroup=mplusStatement'
+    \ 'start="^\s*TITL\%[E]\s*:"'
+    \ 'end="^\ze\s*' . mplus#section#Pattern() . '"'
+    \ 'contains=mplusComment'
 syn region mplusString start=+"+ end=+"+
 syn region mplusString start=+'+ end=+'+
 

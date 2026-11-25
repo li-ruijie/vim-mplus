@@ -17,7 +17,7 @@ mplus-inp.vim                    mplus-out.vim
   mplus.vim (shared)
 ┌─────────────────┐
 │ case ignore     │
-│ mplusTitle      │  ◄── TITLE body (to ;), no keywords
+│ mplusTitle      │  ◄── TITLE body (to the next header)
 │ mplusString     │  ◄── "…" and '…' quoted strings
 │ mplusStatement  │
 │ mplusCommand    │
@@ -682,7 +682,7 @@ highlighted as mplusSection in the base file.
 │ \%(=\s*\)\@<=\<ON\> (setting value)     │ Command │
 │ !.*$                                    │ Comment │
 │ ^\s*!\*...\*! (block comment, @Spell)   │ Comment │
-│ ^TITLE\> ... ;  (TITLE body region)     │ Title   │
+│ ^\s*TITLE: to the next section header   │ Title   │
 │ "…" and '…' (quoted strings)            │ String  │
 └─────────────────────────────────────────┴─────────┘
 ```

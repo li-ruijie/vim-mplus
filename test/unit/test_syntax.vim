@@ -80,6 +80,30 @@ function! Test_title_ends_at_a_header() abort
     endfor
 endfunction
 
+function! Test_title_text() abort
+    " A semicolon does not end a title, and the word title at the start of
+    " a line starts one only as a TITLE header.
+    call s:Buffer('mplus-inp', [
+        \ 'TITLE: a study; in two parts',
+        \ '  second line; with more',
+        \ '  third line',
+        \ 'DATA:',
+        \ '  FILE = x.dat;',
+        \ 'MODEL:',
+        \ '  title ON x;',
+        \ '  y ON title;',
+        \ 'title notes: passed over by Mplus',
+        \ '  f BY y1;'])
+    call assert_equal(['mplusStatement', 'mplusTitle'], s:LineGroups(1))
+    call assert_equal(['mplusTitle'], s:LineGroups(2))
+    call assert_equal(['mplusTitle'], s:LineGroups(3))
+    for l:lnum in [5, 7, 8, 9, 10]
+        call assert_equal(-1, index(s:LineGroups(l:lnum), 'mplusTitle'), l:lnum)
+    endfor
+    call assert_equal('mplusModel', synIDattr(synID(7, 9, 1), 'name'))
+    call assert_equal([1, 4, 6, 9], s:FoldStarts())
+endfunction
+
 function! Test_section_name_in_full_or_shortened() abort
     call s:Buffer('mplus-inp', ['MODEL:', '  f BY y1;', 'modeling: x;',
         \ 'database: y;', 'models x: z;', 'plo: z;', 'anal:', '  TYPE = BASIC;',
