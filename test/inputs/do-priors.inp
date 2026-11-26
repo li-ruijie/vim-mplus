@@ -1,0 +1,19 @@
+TITLE:	DO statements over lines in MODEL PRIORS
+DATA:	FILE IS do.dat;
+VARIABLE:	NAMES ARE y1 y2 x1 x2;
+ANALYSIS:	esti = bayes; bite = (500); bseed = 1;
+	proc = 1;
+MODEL:
+y1 on x1 (p11)
+x2 (p12);
+y2 on x1 (p21)
+x2 (p22);
+MODEL PRIORS:
+do (1, 2)
+p#1 ~
+n(0, 10);
+do ($, 1, 2) ! a note; with a semicolon
+do (#, 2, 2)
+p$# ~ n(0,
+5);
+OUTPUT:	tech1;

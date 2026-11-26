@@ -1,0 +1,31 @@
+TITLE:	DO statements over lines in DEFINE, MODEL CONSTRAINT, and MODEL TEST
+DATA:	FILE IS do.dat;
+VARIABLE:	NAMES ARE y1 y2 x1 x2;
+	usev = d1 d2 e11 e12 e21 e22;
+DEFINE:
+do (1, 2)
+d# = y# -
+x#;
+do ($, 1, 2) ! a note; with a semicolon
+do (#, 1, 2)
+e$# = y$ *
+x#;
+MODEL:
+d1 on e11 (p11)
+e12 (p12);
+d2 on e21 (p21)
+e22 (p22);
+MODEL CONSTRAINT:
+new(r1 r2 s11 s12 s21 s22);
+do (1, 2)
+r# = p#1 +
+p#2;
+do ($, 1, 2)
+! a comment line; with a semicolon
+do (#, 1, 2)
+s$# = p$# * ! the factor; then the term
+2;
+MODEL TEST:
+do (1, 2) ! one test; for each equation
+0 = p#1 -
+p#2;
