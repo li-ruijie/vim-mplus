@@ -1,0 +1,220 @@
+Mplus VERSION 9.1.1
+MUTHEN & MUTHEN
+11/26/2026   7:39 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: one factor of four binary items
+  DATA: FILE IS lca.dat;
+  VARIABLE: NAMES ARE u1-u4;
+    CATEGORICAL ARE u1-u4;
+  ANALYSIS: TYPE = EFA 1 1;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+one factor of four binary items
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         300
+
+Number of dependent variables                                    4
+Number of independent variables                                  0
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Binary and ordered categorical (ordinal)
+   U1          U2          U3          U4
+
+
+Estimator                                                    WLSMV
+Rotation                                                    GEOMIN
+Row standardization                                    CORRELATION
+Type of rotation                                           OBLIQUE
+Epsilon value                                                   NA
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Optimization Specifications for the Exploratory Factor Analysis
+Rotation Algorithm
+  Number of random starts                                       30
+  Maximum number of iterations                               10000
+  Derivative convergence criterion                       0.100D-04
+Link                                                        PROBIT
+
+Input data file(s)
+  lca.dat
+
+Input data format  FREE
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    U1
+      Category 1    0.577          173.000
+      Category 2    0.423          127.000
+    U2
+      Category 1    0.433          130.000
+      Category 2    0.567          170.000
+    U3
+      Category 1    0.563          169.000
+      Category 2    0.437          131.000
+    U4
+      Category 1    0.547          164.000
+      Category 2    0.453          136.000
+
+
+     WARNING:  THE BIVARIATE TABLE OF U2 AND U1 HAS AN EMPTY CELL.
+
+
+     WARNING:  IN EXPLORATORY FACTOR ANALYSIS WITH 1 FACTOR(S)
+     NEGATIVE RESIDUAL VARIANCE FOUND FOR VARIABLE U2.
+
+
+
+
+RESULTS FOR EXPLORATORY FACTOR ANALYSIS
+
+
+           EIGENVALUES FOR SAMPLE CORRELATION MATRIX
+                  1             2             3             4
+              ________      ________      ________      ________
+                2.642         0.889         0.448         0.021
+
+
+EXPLORATORY FACTOR ANALYSIS WITH 1 FACTOR(S):
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                        4
+
+Chi-Square Test of Model Fit
+
+          Value                              0.595*
+          Degrees of Freedom                     2
+          P-Value                           0.7426
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.000
+          90 Percent C.I.                    0.000  0.079
+          Probability RMSEA <= .05           0.865
+
+CFI/TLI
+
+          CFI                                1.000
+          TLI                                1.000
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           1198.884
+          Degrees of Freedom                     6
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.016
+
+
+
+MINIMUM ROTATION FUNCTION VALUE       2.46809
+
+
+
+           GEOMIN ROTATED LOADINGS (* significant at 5% level)
+                  1
+              ________
+ U1             0.960*
+ U2             1.017*
+ U3             0.660*
+ U4             0.278*
+
+
+           GEOMIN FACTOR CORRELATIONS (* significant at 5% level)
+                  1
+              ________
+      1         1.000
+
+
+           ESTIMATED RESIDUAL VARIANCES
+              U1            U2            U3            U4
+              ________      ________      ________      ________
+                0.079        -0.034         0.564         0.923
+
+
+           S.E. GEOMIN ROTATED LOADINGS
+                  1
+              ________
+ U1             0.038
+ U2             0.039
+ U3             0.058
+ U4             0.081
+
+
+           S.E. GEOMIN FACTOR CORRELATIONS
+                  1
+              ________
+      1         0.000
+
+
+           S.E. ESTIMATED RESIDUAL VARIANCES
+              U1            U2            U3            U4
+              ________      ________      ________      ________
+                0.072         0.080         0.077         0.045
+
+
+           Est./S.E. GEOMIN ROTATED LOADINGS
+                  1
+              ________
+ U1            25.531
+ U2            25.997
+ U3            11.367
+ U4             3.427
+
+
+           Est./S.E. GEOMIN FACTOR CORRELATIONS
+                  1
+              ________
+      1         0.000
+
+
+           Est./S.E. ESTIMATED RESIDUAL VARIANCES
+              U1            U2            U3            U4
+              ________      ________      ________      ________
+                1.096        -0.424         7.358        20.484
+
+
+     Beginning Time:  19:39:04
+        Ending Time:  19:39:04
+       Elapsed Time:  00:00:00
+
+
+Mplus VERSION 9.1.1
+
+
+
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2026 Muthen & Muthen

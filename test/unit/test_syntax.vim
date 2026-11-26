@@ -53,6 +53,13 @@ function! s:FoldStarts() abort
     return uniq(map(range(1, line('$')), 'foldclosed(v:val)'))
 endfunction
 
+" Return the first line of every fold of level a:level.
+function! s:LevelStarts(level) abort
+    setlocal foldminlines=0
+    let &l:foldlevel = a:level - 1
+    return filter(range(1, line('$')), 'foldclosed(v:val) == v:val')
+endfunction
+
 function! Test_title_ends_at_a_header() abort
     " A command name, alone or with one more word, and a colon start a
     " section, in a TITLE as anywhere else.
@@ -143,7 +150,8 @@ function! Test_section_name_in_full_or_shortened() abort
 endfunction
 
 function! Test_echoed_headers() abort
-    " The input echoed in an output has the headers of the input.
+    " The input echoed in an output is highlighted as an input, where the
+    " TITLE header is a statement and the other headers are sections.
     call s:Buffer('mplus-out', [
         \ 'Mplus VERSION 9.1.1',
         \ 'MUTHEN & MUTHEN',
@@ -162,10 +170,12 @@ function! Test_echoed_headers() abort
         \ '  models: x',
         \ '',
         \ 'INPUT READING TERMINATED NORMALLY'])
-    for [l:lnum, l:header] in [[7, 'TITLE:'], [9, 'Model comparison:'], [10, 'data:'],
-        \ [11, 'Data imputation:'], [12, 'anal :'], [13, 'MODEL male:']]
-        call assert_equal('mplusSection', synIDattr(synID(l:lnum, 3, 1), 'name'), l:header)
-        call assert_equal('mplusSection',
+    for [l:lnum, l:header, l:group] in [[7, 'TITLE:', 'mplusStatement'],
+        \ [9, 'Model comparison:', 'mplusSection'], [10, 'data:', 'mplusSection'],
+        \ [11, 'Data imputation:', 'mplusSection'], [12, 'anal :', 'mplusSection'],
+        \ [13, 'MODEL male:', 'mplusSection']]
+        call assert_equal(l:group, synIDattr(synID(l:lnum, 3, 1), 'name'), l:header)
+        call assert_equal(l:group,
             \ synIDattr(synID(l:lnum, 2 + strlen(l:header), 1), 'name'), l:header)
     endfor
     for l:lnum in [8, 14, 15]
@@ -174,8 +184,10 @@ function! Test_echoed_headers() abort
 endfunction
 
 function! Test_echoed_header_in_capitals() abort
-    " A line in capitals starts a fold in an output. An echoed header on
-    " such a line is shown as the other echoed headers are.
+    " A line in capitals at column 0 after an empty line starts a part of an
+    " output. An echoed header on such a line is shown as an input shows it,
+    " and starts a fold of level 2 in the echoed input, unless its section has
+    " only the header line (TITLE here).
     call s:Buffer('mplus-out', [
         \ 'Mplus VERSION 9.1.1',
         \ 'MUTHEN & MUTHEN',
@@ -202,22 +214,25 @@ function! Test_echoed_header_in_capitals() abort
     call assert_equal(['mplusSection'], s:LineGroups(8))
     call assert_equal(['mplusSection', 'mplusFold', 'mplusSection'], s:LineGroups(10))
     call assert_equal(['mplusSection'], s:LineGroups(12))
-    call assert_equal(['mplusSection', 'mplusFold'], s:LineGroups(14))
-    call assert_equal(['mplusHeader'], s:LineGroups(5))
-    call assert_equal(['mplusHeader'], s:LineGroups(16))
-    call assert_equal(['mplusHeader'], s:LineGroups(18))
-    call assert_equal(['mplusHeader'], s:LineGroups(21))
-    " The folds are those of the headers. Line 1 is in no fold, as it is not
-    " in capitals. Line 20 is a result line and stays in the fold of line 18.
-    call assert_equal(['mplusFold'], s:LineGroups(20))
-    call assert_equal([-1, 2, 5, 8, 10, 12, 16, 18, 21], s:FoldStarts())
+    call assert_equal(['mplusSection', 'mplusFold', 'mplusStatement', 'mplusFold'],
+        \ s:LineGroups(14))
+    call assert_equal(['mplusPart'], s:LineGroups(5))
+    call assert_equal(['mplusPart'], s:LineGroups(16))
+    call assert_equal(['mplusPart'], s:LineGroups(18))
+    " The banner is in no fold. Lines 20 and 21 are result lines in the fold
+    " of line 18, as line 21 has no empty line above it.
+    call assert_equal(['mplusPartFold'], s:LineGroups(20))
+    call assert_equal(['mplusPartFold'], s:LineGroups(21))
+    call assert_equal([-1, 5, 16, 18], s:FoldStarts())
+    call assert_equal([8, 10, 12, 14], s:LevelStarts(2))
 endfunction
 
 function! Test_output_headers_and_result_lines() abort
-    " A line in capitals is a header at column 0, where it is indented and
-    " has an empty line above and below it, and where it is the name of the
-    " matrix or table below it (NU, LAMBDA, ESTIMATED RESIDUAL VARIANCES).
-    " Result lines in capitals are no headers and start no fold.
+    " The headers of an output have a group for each of the three levels of
+    " fold: a part (MODEL RESULTS), a sub-header (ON/BY Statements, PARAMETER
+    " SPECIFICATION), and the name of a matrix or table (NU, LAMBDA). The
+    " banner, the printed title, a warning, and the footer have groups of
+    " their own. Result lines in capitals are no headers and start no fold.
     let l:lines = [
         \ 'Mplus VERSION 9.1.1',
         \ 'MUTHEN & MUTHEN',
@@ -286,24 +301,39 @@ function! Test_output_headers_and_result_lines() abort
         \ 'MUTHEN & MUTHEN',
         \ '3463 Stoner Ave.']
     call s:Buffer('mplus-out', l:lines)
-    let l:headers = [2, 3, 5, 12, 16, 18, 33, 36, 39, 45, 52, 60, 65]
+    let l:groups = {1: 'mplusBanner', 2: 'mplusBanner', 3: 'mplusBanner', 5: 'mplusPart',
+        \ 14: 'mplusTitle', 16: 'mplusPart', 18: 'mplusPart', 28: 'mplusSub', 33: 'mplusPart',
+        \ 36: 'mplusSub', 39: 'mplusTable', 45: 'mplusTable', 52: 'mplusTable',
+        \ 57: 'mplusWarning', 58: 'mplusWarning', 60: 'mplusSub', 65: 'mplusFooter',
+        \ 66: 'mplusFooter'}
+    let l:kinds = uniq(sort(values(l:groups)))
     for l:lnum in range(1, len(l:lines))
         if l:lnum == 8
             call assert_equal(['mplusSection'], s:LineGroups(l:lnum))
-        elseif index(l:headers, l:lnum) >= 0
-            call assert_equal(['mplusHeader'], s:LineGroups(l:lnum), l:lines[l:lnum - 1])
-        else
-            call assert_equal(-1, index(s:LineGroups(l:lnum), 'mplusHeader'), l:lines[l:lnum - 1])
+        elseif has_key(l:groups, l:lnum)
+            call assert_equal([l:groups[l:lnum]], s:LineGroups(l:lnum), l:lines[l:lnum - 1])
+        elseif l:lnum < 7 || l:lnum > 10
+            for l:group in s:LineGroups(l:lnum)
+                call assert_equal(-1, index(l:kinds, l:group), l:lines[l:lnum - 1])
+            endfor
         endif
     endfor
-    call assert_equal([-1, 2, 5, 8, 12, 16, 18, 33, 36, 39, 45, 52, 60, 65], s:FoldStarts())
+    " Line 7 is a section of one line, which starts no fold. The message that
+    " ends the reading of the input and the printed title are in no fold.
+    call assert_equal(repeat([0], 4) + repeat([1], 3) + repeat([2], 4) + repeat([0], 4)
+        \ + repeat([1], 12) + repeat([2], 5) + repeat([1], 3) + repeat([2], 3)
+        \ + repeat([3], 21) + repeat([2], 5) + repeat([0], 2),
+        \ map(range(1, len(l:lines)), 'foldlevel(v:val)'))
+    call assert_equal([5, 16, 18, 33], s:LevelStarts(1))
+    call assert_equal([8, 28, 36, 60], s:LevelStarts(2))
+    call assert_equal([39, 45, 52], s:LevelStarts(3))
 endfunction
 
 function! Test_printed_title_is_title_text() abort
     " Mplus prints the title between the messages about the input and the
     " summary of the analysis. It is title text whatever it looks like, and
-    " it stays in the fold of the line above it. The files are outputs of
-    " Mplus 9.1.1, with the lines of the title block given here.
+    " it stands in no fold, as the message above it does. The files are
+    " outputs of Mplus 9.1.1, with the lines of the title block given here.
     for [l:name, l:first, l:last] in [['title-same-line.out', 16, 20],
         \ ['title-plain.out', 17, 22], ['title-three-words.out', 17, 22]]
         execute 'edit' fnameescape(s:data . l:name)
@@ -313,18 +343,19 @@ function! Test_printed_title_is_title_text() abort
         for l:lnum in filter(range(l:first, l:last), 'getline(v:val) =~# "\\S"')
             call assert_equal(['mplusTitle'], s:LineGroups(l:lnum), l:name . ' line ' . l:lnum)
         endfor
-        call assert_equal(['mplusHeader'], s:LineGroups(l:first - 1), l:name)
-        call assert_equal(['mplusHeader'], s:LineGroups(l:last + 1), l:name)
+        call assert_equal([''], s:LineGroups(l:first - 1), l:name)
+        call assert_equal(['mplusPart'], s:LineGroups(l:last + 1), l:name)
         setlocal foldminlines=0
         normal! zM
-        call assert_equal([l:first - 1, l:last + 1],
+        call assert_equal([-1, l:last + 1],
             \ uniq(map(range(l:first - 1, l:last + 1), 'foldclosed(v:val)')), l:name)
         bwipeout!
     endfor
-    " In the echoed input the text on the TITLE: line is no header either.
+    " In the echoed input the text on the TITLE: line is title text, as it is
+    " in an input.
     execute 'edit' fnameescape(s:data . 'title-same-line.out')
     call assert_equal("  TITLE:\tModel comparison: two groups", getline(7))
-    call assert_equal(['mplusSection', 'mplusFold'], s:LineGroups(7))
+    call assert_equal(['mplusStatement', 'mplusTitle'], s:LineGroups(7))
     bwipeout!
 endfunction
 
@@ -334,7 +365,7 @@ function! Test_printed_title_without_summary() abort
     " positive definite, in title-warning.out the sample covariance matrix is
     " singular, and title-interrupted.out is a long Monte Carlo study that
     " was ended after 15 seconds. The title is title text up to its end and
-    " no further, also where it has an empty line in it.
+    " no further, also where it has an empty line in it, and it is in no fold.
     for [l:name, l:first, l:last] in [['title-fatal.out', 22, 26],
         \ ['title-warning.out', 22, 26], ['title-interrupted.out', 23, 27]]
         execute 'edit' fnameescape(s:data . l:name)
@@ -352,7 +383,9 @@ function! Test_printed_title_without_summary() abort
         endfor
         setlocal foldminlines=0
         normal! zM
-        call assert_equal(l:first - 4, foldclosed(l:last), l:name)
+        call assert_equal(repeat([-1], 5), map(range(l:first - 4, l:first), 'foldclosed(v:val)'),
+            \ l:name)
+        call assert_equal(-1, foldclosed(l:last), l:name)
         bwipeout!
     endfor
 endfunction
@@ -380,24 +413,28 @@ function! Test_printed_title_after_warnings() abort
         \ 'SUMMARY OF ANALYSIS',
         \ '',
         \ 'Number of groups                                                 1'])
+    for l:lnum in [10, 11, 12]
+        call assert_equal(['mplusWarning'], s:LineGroups(l:lnum), l:lnum)
+    endfor
     for l:lnum in [15, 16, 17]
         call assert_equal(['mplusTitle'], s:LineGroups(l:lnum), l:lnum)
     endfor
-    call assert_equal(['mplusHeader'], s:LineGroups(19))
+    call assert_equal(['mplusPart'], s:LineGroups(19))
     call assert_equal('', synIDattr(synID(21, 1, 1), 'name') ==# 'mplusTitle' ? 'title' : '')
+    " The warnings and the title are in no fold.
     setlocal foldminlines=0
     normal! zM
-    call assert_equal(foldclosed(12), foldclosed(15))
-    call assert_equal(foldclosed(12), foldclosed(17))
+    call assert_equal(repeat([-1], 8), map(range(10, 17), 'foldclosed(v:val)'))
     call assert_equal(19, foldclosed(19))
 endfunction
 
 function! Test_timestamp_is_a_header() abort
-    " Output has its own syntax file, which defines no numbers.
+    " Output has its own syntax file, which defines no numbers. The timestamp
+    " of the banner is in the banner, and one below it is plain text.
     call s:Buffer('mplus-out', ['Mplus VERSION 8.8', 'MUTHEN & MUTHEN',
         \ '04/10/2017   4:39 AM', '', 'INPUT INSTRUCTIONS', '', '11/25/2026  10:30  PM'])
-    call assert_equal(['mplusHeader'], s:LineGroups(3))
-    call assert_equal(['mplusHeader'], s:LineGroups(7))
+    call assert_equal(['mplusBanner'], s:LineGroups(3))
+    call assert_equal([''], s:LineGroups(7))
     " The rules for input define the same line, which starts as a number does.
     call s:Buffer('mplus-inp', ['MODEL:', '04/10/2017   4:39 AM', '11/25/2026  10:30  PM',
         \ '  x = 04/10;'])
@@ -409,7 +446,7 @@ endfunction
 function! Test_examples() abort
     for l:file in ExampleFiles('out')
         execute 'edit' fnameescape(l:file)
-        call assert_equal(['mplusHeader'], s:LineGroups(3), l:file)
+        call assert_equal(['mplusBanner'], s:LineGroups(3), l:file)
         bwipeout!
     endfor
 endfunction

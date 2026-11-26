@@ -1,0 +1,297 @@
+Mplus VERSION 9.1.1
+MUTHEN & MUTHEN
+11/26/2026   7:37 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: a factor with a covariate
+    and bootstrap draws
+  DATA: FILE IS cfa.dat;
+  VARIABLE: NAMES ARE y1-y3 x;
+  ANALYSIS:
+    BOOTSTRAP = 3;
+  MODEL:
+    f BY y1-y3;
+    f ON x;
+  OUTPUT: TECH1 TECH9 ENTROPY;
+
+
+
+*** ERROR in OUTPUT command
+  ENTROPY option is only available for TYPE=MIXTURE.
+  Request for ENTROPY option is ignored.
+   1 ERROR(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+a factor with a covariate
+and bootstrap draws
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         200
+
+Number of dependent variables                                    3
+Number of independent variables                                  1
+Number of continuous latent variables                            1
+
+Observed dependent variables
+
+  Continuous
+   Y1          Y2          Y3
+
+Observed independent variables
+   X
+
+Continuous latent variables
+   F
+
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Number of bootstrap draws
+    Requested                                                    3
+    Completed                                                    3
+
+Input data file(s)
+  cfa.dat
+
+Input data format  FREE
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     Y1                    0.110      -0.416      -4.382    0.50%      -0.773     -0.113      0.154
+             200.000       1.074       0.949       2.662    0.50%       0.398      1.014
+     Y2                    0.163      -0.295      -3.474    0.50%      -0.741     -0.068      0.230
+             200.000       1.143      -0.029       2.493    0.50%       0.479      1.075
+     Y3                    0.057      -0.111      -2.845    0.50%      -0.884     -0.252      0.075
+             200.000       1.218      -0.219       2.837    0.50%       0.350      1.016
+     X                     0.105       0.087      -2.110    0.50%      -0.820     -0.225      0.146
+             200.000       1.063      -0.223       3.052    0.50%       0.419      0.952
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       10
+
+Loglikelihood
+
+          H0 Value                        -710.396
+          H1 Value                        -708.518
+
+Information Criteria
+
+          Akaike (AIC)                    1440.793
+          Bayesian (BIC)                  1473.776
+          Sample-Size Adjusted BIC        1442.095
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                              3.758
+          Degrees of Freedom                     2
+          P-Value                           0.1528
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.066
+          90 Percent C.I.                    0.000  0.169
+          Probability RMSEA <= .05           0.293
+
+CFI/TLI
+
+          CFI                                0.995
+          TLI                                0.985
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            366.088
+          Degrees of Freedom                     6
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.019
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ F        BY
+    Y1                 1.000      0.000    999.000    999.000
+    Y2                 1.036      0.050     20.821      0.000
+    Y3                 1.047      0.008    135.924      0.000
+
+ F        ON
+    X                  0.368      0.034     10.802      0.000
+
+ Intercepts
+    Y1                 0.072      0.102      0.701      0.483
+    Y2                 0.123      0.062      1.999      0.046
+    Y3                 0.017      0.133      0.125      0.900
+
+ Residual Variances
+    Y1                 0.298      0.046      6.544      0.000
+    Y2                 0.310      0.015     20.922      0.000
+    Y3                 0.367      0.097      3.775      0.000
+    F                  0.632      0.100      6.309      0.000
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              Y1            Y2            Y3            X
+              ________      ________      ________      ________
+                  1             2             3             0
+
+
+           LAMBDA
+              F             X
+              ________      ________
+ Y1                 0             0
+ Y2                 4             0
+ Y3                 5             0
+ X                  0             0
+
+
+           THETA
+              Y1            Y2            Y3            X
+              ________      ________      ________      ________
+ Y1                 6
+ Y2                 0             7
+ Y3                 0             0             8
+ X                  0             0             0             0
+
+
+           ALPHA
+              F             X
+              ________      ________
+                  0             0
+
+
+           BETA
+              F             X
+              ________      ________
+ F                  0             9
+ X                  0             0
+
+
+           PSI
+              F             X
+              ________      ________
+ F                 10
+ X                  0             0
+
+
+     STARTING VALUES
+
+
+           NU
+              Y1            Y2            Y3            X
+              ________      ________      ________      ________
+                0.110         0.163         0.057         0.000
+
+
+           LAMBDA
+              F             X
+              ________      ________
+ Y1             1.000         0.000
+ Y2             1.038         0.000
+ Y3             1.029         0.000
+ X              0.000         1.000
+
+
+           THETA
+              Y1            Y2            Y3            X
+              ________      ________      ________      ________
+ Y1             0.537
+ Y2             0.000         0.571
+ Y3             0.000         0.000         0.609
+ X              0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              F             X
+              ________      ________
+                0.000         0.105
+
+
+           BETA
+              F             X
+              ________      ________
+ F              0.000         0.000
+ X              0.000         0.000
+
+
+           PSI
+              F             X
+              ________      ________
+ F              0.050
+ X              0.000         1.063
+
+
+TECHNICAL 9 OUTPUT
+
+
+
+TECHNICAL 9 FOR BOOTSTRAP DRAWS
+
+     ERRORS DURING ESTIMATION WITH BOOTSTRAP DRAW NUMBER 1 (shown below, if any)
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+     ERRORS DURING ESTIMATION WITH BOOTSTRAP DRAW NUMBER 2 (shown below, if any)
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+     ERRORS DURING ESTIMATION WITH BOOTSTRAP DRAW NUMBER 3 (shown below, if any)
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+     Beginning Time:  19:37:03
+        Ending Time:  19:37:03
+       Elapsed Time:  00:00:00
+
+
+Mplus VERSION 9.1.1
+
+
+
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2026 Muthen & Muthen
