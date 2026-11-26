@@ -70,9 +70,10 @@ TITLE_MARK = re.compile(r"^(?:INPUT READING TERMINATED NORMALLY|\s*\d+ WARNING\(
 MESSAGE = re.compile(r"^\s*(?:THE |The |NOTE:|\*|INPUT READING TERMINATED NORMALLY\s*$)")
 
 # Lines in capitals at column 0 that stand where and as a part header stands, but name a section
-# inside a part: the fit section CFI/TLI, and the labels of a class, a level, and a set of variables
-# that older versions print in capitals.
-CAPS_LABEL = re.compile(r"^(?:CFI/TLI|CLASS \d+|WITHIN|BETWEEN|VARIABLE SET \d+)\s*$")
+# inside a part: the fit section CFI/TLI, the labels of a class, a level, and a set of variables
+# that older versions print in capitals, and the pair of variables of a table of CROSSTABS.
+CAPS_LABEL = re.compile(r"^(?:CFI/TLI|CLASS \d+|WITHIN|BETWEEN|VARIABLE SET \d+"
+                        r"|[A-Z][\w#$&.]* AND [A-Z][\w#$&.]*)\s*$")
 
 # The first words of a message that Mplus marks as a problem, or that tells of a failed or doubtful
 # estimation. Mplus words these messages as it words its other messages, so only the wording tells
