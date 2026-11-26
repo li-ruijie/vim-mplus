@@ -1,0 +1,984 @@
+# The kinds of the candidate lines of the 428 example outputs of Mplus 9.1.1 (the examples folder of
+# the installation, written by Mplus 6.1, 8, and 8.8). Written by "python kinds.py table" and read by
+# "python kinds.py check", which compares an output set with it. See kinds.py for the kinds and rules.
+#
+# Each record is: kind, a question mark where the label is not certain, the number of such lines in
+# the examples, the place of the line, and its text. In the text every number is #, and every run of
+# two spaces or more is two spaces. A text too long for the line goes on below, after a +, joined
+# with one space. The place is the fields that the rules read, set apart by slashes:
+#
+#   indent        0 to 11, and 12 for 12 or more
+#   above         empty lines above: 0, 1, or 2+, and for 0 the line above: i indented, s a
+#                 sentence at column 0, c other text at column 0
+#   below         empty lines below: 1+, or 0 and the line below: i indented, c at column 0
+#   paragraph     1 alone, 2a and 2b the lines of a paragraph of two, f m l first, middle, last
+#   depth         the next line with text: d at most one column less deep, s shallower
+#   R             a rule of underscores two lines below
+#
+# Lines of the echoed input are listed by their header (place "echo"), and lines of the banner, the
+# footer, and the printed title by their text.
+#
+banner         95  banner             #/#/#  #:# AM
+banner        333  banner             #/#/#  #:# PM
+banner        428  banner             MUTHEN & MUTHEN
+banner         95  banner             Mplus VERSION #
+banner        333  banner             Mplus VERSION #.#
+echohead      428  echo               INPUT INSTRUCTIONS
+echosect      321  echo               ANALYSIS:
+echosect        3  echo               DATA IMPUTATION:
+echosect        3  echo               DATA MISSING:
+echosect        1  echo               DATA TWOPART:
+echosect        1  echo               DATA WIDETOLONG:
+echosect      224  echo               DATA:
+echosect       13  echo               DEFINE:
+echosect        2  echo               MODEL #:
+echosect       46  echo               MODEL C#:
+echosect        8  echo               MODEL C:
+echosect        4  echo               MODEL CB:
+echosect        5  echo               MODEL CG:
+echosect       24  echo               MODEL CONSTRAINT:
+echosect        2  echo               MODEL CU:
+echosect        2  echo               MODEL CW:
+echosect        2  echo               MODEL CY:
+echosect        4  echo               MODEL DZ:
+echosect        4  echo               MODEL FEMALE:
+echosect       17  echo               MODEL G#:
+echosect        2  echo               MODEL INDIRECT:
+echosect       10  echo               MODEL MISSING:
+echosect       16  echo               MODEL MONTECARLO:
+echosect       22  echo               MODEL POPULATION-C#:
+echosect        4  echo               MODEL POPULATION-C:
+echosect        2  echo               MODEL POPULATION-CB:
+echosect        2  echo               MODEL POPULATION-CG:
+echosect        1  echo               MODEL POPULATION-CU:
+echosect        1  echo               MODEL POPULATION-CW:
+echosect        1  echo               MODEL POPULATION-CY:
+echosect       14  echo               MODEL POPULATION-G#:
+echosect      188  echo               MODEL POPULATION:
+echosect        1  echo               MODEL PRIOR:
+echosect        7  echo               MODEL PRIORS:
+echosect      416  echo               MODEL:
+echosect      204  echo               MONTECARLO:
+echosect      336  echo               OUTPUT:
+echosect       42  echo               PLOT:
+echosect        6  echo               SAVEDATA:
+echosect      427  echo               TITLE:
+echosect      224  echo               VARIABLE:
+part            4  0/1/1+/1/d         QUALITY OF NUMERICAL RESULTS
+part           33  0/1/1+/1/d         RANDOM STARTS RESULTS RANKED FROM THE BEST TO THE WORST LOGLIKELIHOOD
+                                      + VALUES
+part            1  0/1/1+/1/d         SAVEDATA INFORMATION
+part          427  0/1/1+/1/d         SUMMARY OF ANALYSIS
+part            2  0/2+/0c/2a/d       CLASSIFICATION OF INDIVIDUALS BASED ON THEIR MOST LIKELY
+part            1  0/2+/0c/2a/d       EQUALITY TESTS OF MEANS ACROSS CLASSES USING POSTERIOR
+                                      + PROBABILITY-BASED
+part           71  0/2+/0c/2a/d       FINAL CLASS COUNTS AND PROPORTIONS FOR EACH LATENT CLASS VARIABLE
+part           62  0/2+/0c/2a/d       FINAL CLASS COUNTS AND PROPORTIONS FOR THE LATENT CLASS PATTERNS
+part          267  0/2+/0c/2a/d       FINAL CLASS COUNTS AND PROPORTIONS FOR THE LATENT CLASSES
+part           18  0/2+/1+/1/d        ALTERNATIVE PARAMETERIZATIONS FOR THE CATEGORICAL LATENT VARIABLE
+                                      + REGRESSION
+part     ?      9  0/2+/1+/1/d        BETWEEN LEVEL RESULTS
+part            2  0/2+/1+/1/d        BETWEEN-LEVEL FACTOR SCORE COMPARISONS
+part            1  0/2+/1+/1/d        BRANT WALD TEST FOR PROPORTIONAL ODDS
+part           23  0/2+/1+/1/d        C-SPECIFIC CLASSIFICATION RESULTS
+part          120  0/2+/1+/1/d        CLASSIFICATION QUALITY
+part            1  0/2+/1+/1/d        CONFIDENCE INTERVALS OF MODEL RESULTS
+part            1  0/2+/1+/1/d        CONFIDENCE INTERVALS OF TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND
+                                      + DIRECT EFFECTS
+part           20  0/2+/1+/1/d        CORRELATIONS AND MEAN SQUARE ERROR OF THE TRUE FACTOR VALUES AND THE
+                                      + FACTOR SCORES
+part           14  0/2+/1+/1/d        COUNT PROPORTION OF ZERO, MINIMUM AND MAXIMUM VALUES
+part           25  0/2+/1+/1/d        COVARIANCE COVERAGE OF DATA
+part            1  0/2+/1+/1/d        COVARIANCE COVERAGE OF DATA FOR THE FIRST DATA SET
+part           12  0/2+/1+/1/d        COVARIANCE COVERAGE OF DATA FOR THE FIRST REPLICATION
+part            2  0/2+/1+/1/d        COVARIATE EFFECTS ON TRANSITION PROBABILITY ODDS RATIOS
+part            1  0/2+/1+/1/d        DESCRIPTIVE STATISTICS FOR DATA MISSING
+part            2  0/2+/1+/1/d        DIFFERENCE OUTPUT
+part           20  0/2+/1+/1/d        EXPLORATORY FACTOR ANALYSIS WITH # FACTOR(S):
+part           12  0/2+/1+/1/d        EXPLORATORY FACTOR ANALYSIS WITH # WITHIN FACTOR(S) AND # BETWEEN
+                                      + FACTOR(S):
+part            4  0/2+/1+/1/d        EXPLORATORY FACTOR ANALYSIS WITH # WITHIN FACTOR(S) AND UNRESTRICTED
+                                      + BETWEEN COVARIANCE:
+part            3  0/2+/1+/1/d        EXPLORATORY FACTOR ANALYSIS WITH UNRESTRICTED WITHIN COVARIANCE AND #
+                                      + BETWEEN FACTOR(S):
+part            6  0/2+/1+/1/d        IRT PARAMETERIZATION
+part            6  0/2+/1+/1/d        LATENT CLASS INDICATOR MEANS AND PROBABILITIES FOR EACH LATENT CLASS
+part            8  0/2+/1+/1/d        LATENT CLASS INDICATOR ODDS RATIOS FOR THE LATENT CLASSES
+part           11  0/2+/1+/1/d        LATENT CLASS ODDS RATIO RESULTS
+part           17  0/2+/1+/1/d        LATENT TRANSITION PROBABILITIES BASED ON THE ESTIMATED MODEL
+part           29  0/2+/1+/1/d        LOGISTIC REGRESSION ODDS RATIO RESULTS
+part            1  0/2+/1+/1/d        LOGRANK OUTPUT
+part          447  0/2+/1+/1/d        MODEL FIT INFORMATION
+part            2  0/2+/1+/1/d        MODEL MODIFICATION INDICES
+part          419  0/2+/1+/1/d        MODEL RESULTS
+part     ?     24  0/2+/1+/1/d        MODEL RESULTS USE THE LATENT CLASS VARIABLE ORDER
+part            1  0/2+/1+/1/d        MODIFICATION INDICES
+part           13  0/2+/1+/1/d        ODDS RATIO FOR THE ALTERNATIVE PARAMETERIZATIONS FOR THE CATEGORICAL
+                                      + LATENT VARIABLE REGRESSION
+part            1  0/2+/1+/1/d        PLAUSIBLE VALUE MEAN, MEDIAN, SD, AND PERCENTILES FOR EACH OBSERVATION
+part           42  0/2+/1+/1/d        PLOT INFORMATION
+part          345  0/2+/1+/1/d        QUALITY OF NUMERICAL RESULTS
+part           18  0/2+/1+/1/d        R-SQUARE
+part           19  0/2+/1+/1/d        RANDOM STARTS RESULTS RANKED FROM THE BEST TO THE WORST LOGLIKELIHOOD
+                                      + VALUES
+part            2  0/2+/1+/1/d        RESULTS FOR BASIC ANALYSIS
+part     ?      4  0/2+/1+/1/d        RESULTS FOR CLASS #
+part            7  0/2+/1+/1/d        RESULTS FOR EXPLORATORY FACTOR ANALYSIS
+part           38  0/2+/1+/1/d        RESULTS IN PROBABILITY SCALE
+part            4  0/2+/1+/1/d        SAMPLE STATISTICS
+part            5  0/2+/1+/1/d        SAMPLE STATISTICS FOR ESTIMATED FACTOR SCORES
+part          140  0/2+/1+/1/d        SAMPLE STATISTICS FOR THE FIRST REPLICATION
+part          200  0/2+/1+/1/d        SAVEDATA INFORMATION
+part            8  0/2+/1+/1/d        STANDARDIZED MODEL RESULTS
+part            6  0/2+/1+/1/d        SUMMARIES OF PLAUSIBLE VALUES (N = NUMBER OF OBSERVATIONS * NUMBER OF
+                                      + IMPUTATIONS)
+part            1  0/2+/1+/1/d        SUMMARY OF ANALYSIS
+part           18  0/2+/1+/1/d        SUMMARY OF CENSORED LIMITS
+part           82  0/2+/1+/1/d        SUMMARY OF DATA
+part            3  0/2+/1+/1/d        SUMMARY OF DATA FOR THE FIRST DATA SET
+part           70  0/2+/1+/1/d        SUMMARY OF DATA FOR THE FIRST REPLICATION
+part            6  0/2+/1+/1/d        SUMMARY OF MISSING DATA PATTERNS
+part            1  0/2+/1+/1/d        SUMMARY OF MISSING DATA PATTERNS FOR THE FIRST DATA SET
+part           12  0/2+/1+/1/d        SUMMARY OF MISSING DATA PATTERNS FOR THE FIRST REPLICATION
+part            4  0/2+/1+/1/d        SUMMARY OF MODEL FIT INFORMATION
+part            5  0/2+/1+/1/d        SUMMARY OF PLAUSIBLE STANDARD DEVIATION (N = NUMBER OF OBSERVATIONS)
+part          708  0/2+/1+/1/d        TECHNICAL # OUTPUT
+part           54  0/2+/1+/1/d        TECHNICAL OUTPUT
+part            2  0/2+/1+/1/d        TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+part            3  0/2+/1+/1/d        TRANSITION PROBABILITY ODDS
+part           79  0/2+/1+/1/d        UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+part            2  0/2+/1+/1/d        UNIVARIATE PROPORTIONS FOR CATEGORICAL VARIABLES
+part          165  0/2+/1+/1/d        UNIVARIATE SAMPLE STATISTICS
+part     ?     10  0/2+/1+/1/d        WITHIN LEVEL RESULTS
+part          200  0/2+/1+/1/d        WITHIN-LEVEL R-SQUARE FOR CLUSTER #
+part          200  0/2+/1+/1/d        WITHIN-LEVEL STANDARDIZED MODEL RESULTS FOR CLUSTER #
+part2         143  0/0c/1+/2b/d       BASED ON ESTIMATED POSTERIOR PROBABILITIES
+part2         116  0/0c/1+/2b/d       BASED ON THE ESTIMATED MODEL
+part2          91  0/0c/1+/2b/d       BASED ON THEIR MOST LIKELY LATENT CLASS MEMBERSHIP
+part2          50  0/0c/1+/2b/d       BASED ON THEIR MOST LIKELY LATENT CLASS PATTERN
+part2           2  0/0c/1+/2b/d       LATENT CLASS MEMBERSHIP
+part2           1  0/0c/1+/2b/d       MULTIPLE IMPUTATIONS WITH # DEGREE(S) OF FREEDOM FOR THE OVERALL TEST
+sub             1  0/0i/1+/2b/d       Group #
+sub            25  0/0i/1+/l/d        Latent Class #
+sub             3  0/0i/1+/l/d        Latent Class Pattern # #
+sub             1  0/0i/1+/l/d        Latent Class Pattern # # #
+sub      ?      2  0/0s/1+/2b/d       Final stage loglikelihood values at local maxima, seeds, and initial
+                                      + stage start numbers:
+sub            59  0/1/0c/2a/d        Average Latent Class Probabilities for Most Likely Latent Class
+                                      + Membership (Row)
+sub            56  0/1/0c/2a/d        Chi-Square Test of Model Fit for the Binary and Ordered Categorical
+sub             1  0/1/0c/2a/d        Posterior Predictive P-Value (Confidence Limits), Deviance (DIC), and
+                                      + Estimated Number of
+sub             2  0/1/1+/1/d         Available post-processing tools
+sub            11  0/1/1+/1/d         Bayesian Posterior Predictive Checking using Chi-Square
+sub            16  0/1/1+/1/d         Between LEVEL# Level
+sub            13  0/1/1+/1/d         Between LEVEL#A Level
+sub            13  0/1/1+/1/d         Between LEVEL#B Level
+sub           152  0/1/1+/1/d         Between Level
+sub             7  0/1/1+/1/d         Between SUBJECT Level
+sub             7  0/1/1+/1/d         Between TIME Level
+sub           150  0/1/1+/1/d         CFI/TLI
+sub           147  0/1/1+/1/d         Categorical Latent Variables
+sub            15  0/1/1+/1/d         Chi-Square Contribution From Each Group
+sub             2  0/1/1+/1/d         Chi-Square Test for MCAR under the Unrestricted Latent Class
+                                      + Indicator Model
+sub           152  0/1/1+/1/d         Chi-Square Test of Model Fit
+sub            84  0/1/1+/1/d         Chi-Square Test of Model Fit for the Baseline Model
+sub             3  0/1/1+/1/d         Chi-Square Test of Model Fit for the Count Outcomes
+sub             3  0/1/1+/1/d         Chi-Square Test of Model Fit for the Count Outcomes**
+sub           118  0/1/1+/1/d         Class Counts and Proportions
+sub             1  0/1/1+/1/d         Class Proportions
+sub             8  0/1/1+/1/d         Classification Quality for C
+sub            36  0/1/1+/1/d         Classification Quality for C#
+sub             8  0/1/1+/1/d         Classification Quality for CB
+sub             5  0/1/1+/1/d         Classification Quality for CG
+sub             2  0/1/1+/1/d         Classification Quality for CW
+sub      ?     18  0/1/1+/1/d         Continuous latent variables
+sub             1  0/1/1+/1/d         Effects from F# to F#
+sub             2  0/1/1+/1/d         Effects from X# to Y#
+sub      ?     50  0/1/1+/1/d         Final stage loglikelihood values at local maxima, seeds, and initial
+                                      + stage start numbers:
+sub             5  0/1/1+/1/d         Group #
+sub             5  0/1/1+/1/d         Group DZ
+sub             5  0/1/1+/1/d         Group FEMALE
+sub            37  0/1/1+/1/d         Group G#
+sub             5  0/1/1+/1/d         Group MALE
+sub             5  0/1/1+/1/d         Group MZ
+sub           385  0/1/1+/1/d         Information Criteria
+sub             1  0/1/1+/1/d         Information Criteria Including the Auxiliary Part
+sub           239  0/1/1+/1/d         Latent Class #
+sub            14  0/1/1+/1/d         Latent Class # (#)
+sub            13  0/1/1+/1/d         Latent Class # Compared to Latent Class #
+sub             4  0/1/1+/1/d         Latent Class C##
+sub           118  0/1/1+/1/d         Latent Class C###
+sub            21  0/1/1+/1/d         Latent Class C### Compared to Latent Class C###
+sub             2  0/1/1+/1/d         Latent Class CB##
+sub             8  0/1/1+/1/d         Latent Class CG##
+sub           151  0/1/1+/1/d         Latent Class Pattern # #
+sub            47  0/1/1+/1/d         Latent Class Pattern # # #
+sub            28  0/1/1+/1/d         Latent Class Pattern # # # Compared to Latent Class Pattern # # #
+sub            21  0/1/1+/1/d         Latent Class Pattern # # Compared to Latent Class Pattern # #
+sub           328  0/1/1+/1/d         Loglikelihood
+sub             1  0/1/1+/1/d         Loglikelihood Including the Auxiliary Part
+sub             2  0/1/1+/1/d         ON Statements
+sub      ?    428  0/1/1+/1/d         Observed dependent variables
+sub            10  0/1/1+/1/d         Optimum Function Value for Weighted Least-Squares Estimator
+sub            31  0/1/1+/1/d         Parameterization using Reference Class #
+sub             2  0/1/1+/1/d         Parameters for Class-specific Model Parts
+sub            28  0/1/1+/1/d         Parameters for Class-specific Model Parts of C#
+sub             1  0/1/1+/1/d         Parameters for Class-specific Model Parts of CG
+sub             4  0/1/1+/1/d         Parameters in the Overall Part of the Model (Parameters Equal in All
+                                      + of the Classes)
+sub           156  0/1/1+/1/d         RMSEA (Root Mean Square Error Of Approximation)
+sub            20  0/1/1+/1/d         Results for Class-specific Model Parts of C#
+sub           131  0/1/1+/1/d         SRMR (Standardized Root Mean Square Residual)
+sub            13  0/1/1+/1/d         SRMR (Standardized Root Mean Square Residual) for the BETWEEN level
+sub            13  0/1/1+/1/d         SRMR (Standardized Root Mean Square Residual) for the WITHIN level
+sub             2  0/1/1+/1/d         VARIABLE SET #
+sub             6  0/1/1+/1/d         Variable Y#
+sub             5  0/1/1+/1/d         Variable Z#
+sub      ?      1  0/1/1+/1/d         Variables used for imputation
+sub      ?    144  0/1/1+/1/d         Variables with special functions
+sub             2  0/1/1+/1/d         Variances/Residual Variances
+sub             3  0/1/1+/1/d         WITH Statements
+sub             8  0/1/1+/1/d         WRMR (Weighted Root Mean Square Residual)
+sub           177  0/1/1+/1/d         Within Level
+sub             2  0/1/1+/1/d         Within-Level R-Square Averaged Across Clusters
+sub             6  0/1/1+/1/d         Within-Level Standardized Estimates Averaged Over Clusters
+sub            93  0/2+/0c/2a/d       Average Latent Class Probabilities for Most Likely Latent Class
+                                      + Membership (Row)
+sub             8  0/2+/0c/2a/d       Average Latent Class Probabilities for Most Likely Latent Class
+                                      + Pattern (Row)
+sub           121  0/2+/0c/2a/d       Classification Probabilities for the Most Likely Latent Class
+                                      + Membership (Column)
+sub           121  0/2+/0c/2a/d       Logits for the Classification Probabilities for the Most Likely
+                                      + Latent Class Membership (Column)
+sub             2  0/2+/1+/1/d        Between Level
+sub      ?      2  0/2+/1+/1/d        Final stage loglikelihood values at local maxima, seeds, and initial
+                                      + stage start numbers:
+sub             1  0/2+/1+/1/d        ON Statements
+sub             2  0/2+/1+/1/d        ON/BY Statements
+sub           205  0/2+/1+/1/d        STD Standardization
+sub           208  0/2+/1+/1/d        STDY Standardization
+sub           205  0/2+/1+/1/d        STDYX Standardization
+sub      ?      1  0/2+/1+/1/d        Variables used for imputation
+sub             2  1/1/1+/1/d         Item Categories
+sub             7  1/1/1+/1/d         Item Discriminations
+sub             2  1/1/1+/1/d         Results for Factor LOGV
+sub             1  1/1/1+/1/d         Results for Factor S
+sub             2  1/1/1+/1/d         Results for Factor S#
+sub             2  1/1/1+/1/d         Results for Y (referred to as plausible label B_Y)
+sub            31  10/1/1+/1/d        Likelihood Ratio Chi-Square
+sub            31  10/1/1+/1/d        Pearson Chi-Square
+sub             1  12/2+/1+/1/d       Average Results Across Replications
+sub           180  2/1/1+/1/d         BIVARIATE ESTIMATION FOR U# AND U#
+sub             2  2/1/1+/1/d         C Classes (Rows) by C# Classes (Columns)
+sub            19  2/1/1+/1/d         C# Classes (Rows) by C# Classes (Columns)
+sub             4  2/1/1+/1/d         CG Classes (Rows) by C Classes (Columns)
+sub             3  2/1/1+/1/d         CG Classes (Rows) by C# Classes (Columns)
+sub             2  2/1/1+/1/d         Conditional probabilities and odds for the latent class variables
+sub      ?     16  2/1/1+/1/d         Error messages for each replication (if any)
+sub            16  2/1/1+/1/d         Latent Class Variable Patterns
+sub             1  2/1/1+/1/d         Loop plots
+sub             1  2/1/1+/1/d         Order and format of variables
+sub             1  2/1/1+/1/d         Order of information saved
+sub           195  2/1/1+/1/d         Order of variables
+sub             2  2/1/1+/1/d         Specific indirect
+sub            13  2/1/1+/1/d         Time-to-event (survival)
+sub            45  2/1/1+/1/d         UNIVARIATE ESTIMATION FOR U#
+sub             1  2/2+/1+/1/d        Estimates
+sub            49  2/2+/1+/1/d        FINAL STAGE ITERATIONS
+sub            49  2/2+/1+/1/d        INITIAL STAGE ITERATIONS
+sub             1  2/2+/1+/1/d        Summary of Dropout and Non-Dropouts
+sub           292  2/2+/1+/1/d        TECHNICAL # OUTPUT FOR REPLICATION #
+sub          1319  2/2+/1+/1/d        TECHNICAL # OUTPUT FOR STARTING VALUE SET #
+sub            70  2/2+/1+/1/d        TECHNICAL # OUTPUT FOR UNPERTURBED STARTING VALUE SET
+sub             4  2/2+/1+/1/d        Within and between sample statistics with Weight matrix
+sub             3  3/1/1+/1/d         TECHNICAL # OUTPUT FOR BAYES ESTIMATION
+sub            65  3/2+/1+/1/d        TECHNICAL # OUTPUT FOR BAYES ESTIMATION
+sub           107  3/2+/1+/1/d        TECHNICAL # OUTPUT FOR REPLICATION #
+sub           105  3/2+/1+/1/d        TECHNICAL # OUTPUT FOR THE BASELINE MODEL
+sub             1  3/2+/1+/1/d        TECHNICAL # OUTPUT FOR THE H# MODEL
+sub           109  3/2+/1+/1/d        TECHNICAL # OUTPUT FOR THE H# MODEL FOR REPLICATION #
+sub           159  4/1/1+/1/d         Akaike (AIC)
+sub           159  4/1/1+/1/d         Bayesian (BIC)
+sub            63  4/1/1+/1/d         CFI
+sub            21  4/1/1+/1/d         Deviance (DIC)
+sub            21  4/1/1+/1/d         Estimated Number of Parameters (pD)
+sub           206  4/1/1+/1/d         H# Value
+sub            34  4/1/1+/1/d         Likelihood Ratio Chi-Square
+sub            33  4/1/1+/1/d         Pearson Chi-Square
+sub             1  4/1/1+/1/d         Pearson Chi-Square for MCAR
+sub             3  4/1/1+/1/d         Posterior Predictive P-Value
+sub           159  4/1/1+/1/d         Sample-Size Adjusted BIC (n* = (n + #) / #)
+sub            63  4/1/1+/1/d         TLI
+sub            58  5/1/1+/1/d         Cluster information
+sub             3  5/1/1+/1/d         Cluster information for LEVEL#A
+sub             3  5/1/1+/1/d         Cluster information for LEVEL#B
+sub             7  5/1/1+/1/d         Cluster information for SUBJECT
+sub             1  5/1/1+/1/d         Cluster information for TIME
+sub             2  5/1/1+/1/d         EFFECT OF X
+sub            31  5/1/1+/1/d         Estimated Intraclass Correlations for the Y Variables
+sub             4  5/1/1+/1/d         Estimated Intraclass Correlations for the Y Variables for LEVEL# level
+sub             1  5/1/1+/1/d         LOGRANK TEST FOR SURVIVAL VARIABLE T COMPARING CLASS # AGAINST CLASS #
+sub      ?     28  5/1/1+/1/d         REPLICATION #:
+sub             1  5/2+/1+/1/d        BIVARIATE MODEL FIT INFORMATION
+sub             3  5/2+/1+/1/d        ESTIMATED CONDITIONAL PROBABILITIES FOR THE LATENT CLASS VARIABLES
+sub             3  5/2+/1+/1/d        ESTIMATED MARGINAL PROBABILITIES FOR THE LATENT CLASS VARIABLES
+sub            18  5/2+/1+/1/d        ESTIMATED SAMPLE STATISTICS
+sub            10  5/2+/1+/1/d        ESTIMATED SAMPLE STATISTICS FOR BETWEEN
+sub             4  5/2+/1+/1/d        ESTIMATED SAMPLE STATISTICS FOR BETWEEN LEVEL#
+sub             2  5/2+/1+/1/d        ESTIMATED SAMPLE STATISTICS FOR G# BETWEEN
+sub             2  5/2+/1+/1/d        ESTIMATED SAMPLE STATISTICS FOR G# WITHIN
+sub            12  5/2+/1+/1/d        ESTIMATED SAMPLE STATISTICS FOR WITHIN
+sub             1  5/2+/1+/1/d        ESTIMATES DERIVED FROM THE MODEL
+sub             2  5/2+/1+/1/d        EVALUATED AT THE SAMPLE MEAN FOR ALL COVARIATES
+sub             4  5/2+/1+/1/d        EXPECTED PARAMETER CHANGE
+sub            13  5/2+/1+/1/d        MISSING DATA PATTERN FREQUENCIES
+sub             3  5/2+/1+/1/d        MISSING DATA PATTERN FREQUENCIES FOR U
+sub             1  5/2+/1+/1/d        MISSING DATA PATTERN FREQUENCIES FOR WITHIN
+sub             4  5/2+/1+/1/d        MISSING DATA PATTERN FREQUENCIES FOR Y
+sub            13  5/2+/1+/1/d        MISSING DATA PATTERNS (x = not missing)
+sub             1  5/2+/1+/1/d        MISSING DATA PATTERNS (x = not missing) FOR WITHIN
+sub             3  5/2+/1+/1/d        MISSING DATA PATTERNS FOR U (x = not missing)
+sub             4  5/2+/1+/1/d        MISSING DATA PATTERNS FOR Y (x = not missing)
+sub             1  5/2+/1+/1/d        MODEL FIT INFORMATION FOR THE LATENT CLASS INDICATOR MODEL PART
+sub             4  5/2+/1+/1/d        MODIFICATION INDICES
+sub             4  5/2+/1+/1/d        MODIFICATION INDICES FOR ANALYSIS WITH # FACTOR(S)
+sub           126  5/2+/1+/1/d        PARAMETER SPECIFICATION
+sub             3  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR #
+sub            61  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN
+sub            16  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN LEVEL#
+sub            13  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN LEVEL#A
+sub            13  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN LEVEL#B
+sub            34  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN LEVEL, LATENT CLASS #
+sub            64  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN LEVEL, LATENT CLASS PATTERN # #
+sub            16  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN LEVEL, LATENT CLASS PATTERN # # #
+sub             7  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN SUBJECT
+sub             7  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR BETWEEN TIME
+sub            47  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR G#
+sub             2  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR G# BETWEEN
+sub             2  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR G# WITHIN
+sub           157  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS #
+sub            10  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS # (#)
+sub             6  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS INDICATOR GROWTH MODEL PART
+sub            55  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS INDICATOR MODEL PART
+sub            13  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS INDICATOR MODEL PART
+                                      + (BETWEEN)
+sub            13  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS INDICATOR MODEL PART (WITHIN)
+sub            66  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS PATTERN # #
+sub            70  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS PATTERN # # #
+sub           140  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS PATTERN # # # #
+sub           106  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS REGRESSION MODEL PART
+sub            15  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS REGRESSION MODEL PART
+                                      + (BETWEEN)
+sub            15  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR LATENT CLASS REGRESSION MODEL PART
+                                      + (WITHIN)
+sub            10  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+sub             3  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR THE BASE HAZARD PARAMETERS
+sub            15  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR THE CENSORED/NOMINAL/COUNT MODEL PART
+sub            89  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR WITHIN
+sub            34  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR WITHIN LEVEL, LATENT CLASS #
+sub            64  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR WITHIN LEVEL, LATENT CLASS PATTERN # #
+sub            16  5/2+/1+/1/d        PARAMETER SPECIFICATION FOR WITHIN LEVEL, LATENT CLASS PATTERN # # #
+sub            83  5/2+/1+/1/d        POPULATION VALUES
+sub            33  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN
+sub             8  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN LEVEL#
+sub            10  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN LEVEL#A
+sub            10  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN LEVEL#B
+sub            17  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN LEVEL, LATENT CLASS #
+sub            32  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN LEVEL, LATENT CLASS PATTERN # #
+sub             8  5/2+/1+/1/d        POPULATION VALUES FOR BETWEEN LEVEL, LATENT CLASS PATTERN # # #
+sub            23  5/2+/1+/1/d        POPULATION VALUES FOR G#
+sub             2  5/2+/1+/1/d        POPULATION VALUES FOR G# BETWEEN
+sub             2  5/2+/1+/1/d        POPULATION VALUES FOR G# WITHIN
+sub            88  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS #
+sub             3  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS INDICATOR GROWTH MODEL PART
+sub            30  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS INDICATOR MODEL PART
+sub             7  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS INDICATOR MODEL PART (BETWEEN)
+sub             7  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS INDICATOR MODEL PART (WITHIN)
+sub            33  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS PATTERN # #
+sub            26  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS PATTERN # # #
+sub            70  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS PATTERN # # # #
+sub            55  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS REGRESSION MODEL PART
+sub             7  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS REGRESSION MODEL PART (BETWEEN)
+sub             7  5/2+/1+/1/d        POPULATION VALUES FOR LATENT CLASS REGRESSION MODEL PART (WITHIN)
+sub             5  5/2+/1+/1/d        POPULATION VALUES FOR THE BASE HAZARD PARAMETERS
+sub             2  5/2+/1+/1/d        POPULATION VALUES FOR THE BASE HAZARD PARAMETERS FOR BETWEEN
+sub             2  5/2+/1+/1/d        POPULATION VALUES FOR THE BASE HAZARD PARAMETERS FOR WITHIN
+sub             7  5/2+/1+/1/d        POPULATION VALUES FOR THE CENSORED/NOMINAL/COUNT MODEL PART
+sub            47  5/2+/1+/1/d        POPULATION VALUES FOR WITHIN
+sub            17  5/2+/1+/1/d        POPULATION VALUES FOR WITHIN LEVEL, LATENT CLASS #
+sub            32  5/2+/1+/1/d        POPULATION VALUES FOR WITHIN LEVEL, LATENT CLASS PATTERN # #
+sub             8  5/2+/1+/1/d        POPULATION VALUES FOR WITHIN LEVEL, LATENT CLASS PATTERN # # #
+sub            29  5/2+/1+/1/d        PROPORTION OF DATA PRESENT
+sub             6  5/2+/1+/1/d        PROPORTION OF DATA PRESENT FOR U
+sub             8  5/2+/1+/1/d        PROPORTION OF DATA PRESENT FOR Y
+sub             1  5/2+/1+/1/d        RESPONSE PATTERN FREQUENCIES AND CHI-SQUARE CONTRIBUTIONS
+sub             1  5/2+/1+/1/d        RESPONSE PATTERNS
+sub           119  5/2+/1+/1/d        SAMPLE STATISTICS
+sub            23  5/2+/1+/1/d        SAMPLE STATISTICS FOR G#
+sub           126  5/2+/1+/1/d        STARTING VALUES
+sub             3  5/2+/1+/1/d        STARTING VALUES FOR #
+sub            61  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN
+sub            16  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN LEVEL#
+sub            13  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN LEVEL#A
+sub            13  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN LEVEL#B
+sub            34  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN LEVEL, LATENT CLASS #
+sub            64  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN LEVEL, LATENT CLASS PATTERN # #
+sub            16  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN LEVEL, LATENT CLASS PATTERN # # #
+sub             7  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN SUBJECT
+sub             7  5/2+/1+/1/d        STARTING VALUES FOR BETWEEN TIME
+sub            47  5/2+/1+/1/d        STARTING VALUES FOR G#
+sub             2  5/2+/1+/1/d        STARTING VALUES FOR G# BETWEEN
+sub             2  5/2+/1+/1/d        STARTING VALUES FOR G# WITHIN
+sub           157  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS #
+sub            10  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS # (#)
+sub             6  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS INDICATOR GROWTH MODEL PART
+sub            55  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS INDICATOR MODEL PART
+sub            13  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS INDICATOR MODEL PART (BETWEEN)
+sub            13  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS INDICATOR MODEL PART (WITHIN)
+sub            66  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS PATTERN # #
+sub            70  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS PATTERN # # #
+sub           140  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS PATTERN # # # #
+sub           106  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS REGRESSION MODEL PART
+sub            15  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS REGRESSION MODEL PART (BETWEEN)
+sub            15  5/2+/1+/1/d        STARTING VALUES FOR LATENT CLASS REGRESSION MODEL PART (WITHIN)
+sub            10  5/2+/1+/1/d        STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+sub             3  5/2+/1+/1/d        STARTING VALUES FOR THE BASE HAZARD PARAMETERS
+sub            15  5/2+/1+/1/d        STARTING VALUES FOR THE CENSORED/NOMINAL/COUNT MODEL PART
+sub            89  5/2+/1+/1/d        STARTING VALUES FOR WITHIN
+sub            34  5/2+/1+/1/d        STARTING VALUES FOR WITHIN LEVEL, LATENT CLASS #
+sub            64  5/2+/1+/1/d        STARTING VALUES FOR WITHIN LEVEL, LATENT CLASS PATTERN # #
+sub            16  5/2+/1+/1/d        STARTING VALUES FOR WITHIN LEVEL, LATENT CLASS PATTERN # # #
+sub             1  5/2+/1+/1/d        Simulated prior distributions
+sub            18  5/2+/1+/1/d        TECHNICAL # OUTPUT FOR THE ROTATED SOLUTION
+sub            18  5/2+/1+/1/d        TECHNICAL # OUTPUT FOR THE UNROTATED SOLUTION
+sub           152  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+sub             3  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR #
+sub             2  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR DZ
+sub             4  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR FEMALE
+sub            12  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR G#
+sub             4  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR MALE
+sub             2  5/2+/1+/1/d        UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR MZ
+sub             1  5/2+/1+/1/d        UNIVARIATE MODEL FIT INFORMATION
+sub2           55  0/0c/1+/2b/d       (Ordinal) Outcomes
+sub2            1  0/0c/1+/2b/d       (Ordinal) Outcomes**
+sub2            1  0/0c/1+/2b/d       Parameters (pD) From Each Group
+sub2          152  0/0c/1+/2b/d       by Latent Class (Column)
+sub2          242  0/0c/1+/2b/d       by Latent Class (Row)
+sub2            8  0/0c/1+/2b/d       by Latent Class Pattern (Column)
+table        2364  11/2+/0i/f/d/R     ALPHA
+table         398  11/2+/0i/f/d/R     ALPHA(C)
+table          28  11/2+/0i/f/d/R     ALPHA(F) FOR LATENT CLASS #
+table           4  11/2+/0i/f/d/R     ALPHA(P) FOR LATENT CLASS #
+table          65  11/2+/0i/f/d/R     BASE HAZARD PARAMETERS
+table           8  11/2+/0i/f/d/R     BASE HAZARD PARAMETERS FOR LATENT CLASS #
+table        2364  11/2+/0i/f/d/R     BETA
+table          74  11/2+/0i/f/d/R     BETA(C)
+table          20  11/2+/0i/f/d/R     BETA(CC) FOR C##
+table          10  11/2+/0i/f/d/R     BETA(CC) FOR CB##
+table          14  11/2+/0i/f/d/R     BETA(CC) FOR CG##
+table           9  11/2+/0i/f/d/R     BETWEEN LEVEL CORRELATION
+table           9  11/2+/0i/f/d/R     BETWEEN LEVEL VARIANCE/COVARIANCE
+table           2  11/2+/0i/f/d/R     BI-GEOMIN FACTOR CORRELATIONS (* significant at #% level)
+table           2  11/2+/0i/f/d/R     BI-GEOMIN ROTATED LOADINGS (* significant at #% level)
+table         252  11/2+/0i/f/d/R     Correlations
+table          60  11/2+/0i/f/d/R     Covariance Coverage
+table         252  11/2+/0i/f/d/R     Covariances
+table          29  11/2+/0i/f/d/R     Covariances/Correlations/Residual Correlations
+table          22  11/2+/0i/f/d/R     DELTA
+table           4  11/2+/0i/f/d/R     EIGENVALUES FOR BETWEEN LEVEL SAMPLE CORRELATION MATRIX
+table           8  11/2+/0i/f/d/R     EIGENVALUES FOR SAMPLE CORRELATION MATRIX
+table           4  11/2+/0i/f/d/R     EIGENVALUES FOR WITHIN LEVEL SAMPLE CORRELATION MATRIX
+table           8  11/2+/0i/f/d/R     ESTIMATED MEANS
+table          86  11/2+/0i/f/d/R     ESTIMATED RESIDUAL VARIANCES
+table           2  11/2+/0i/f/d/R     Est./S.E. BI-GEOMIN FACTOR CORRELATIONS
+table           2  11/2+/0i/f/d/R     Est./S.E. BI-GEOMIN ROTATED LOADINGS
+table          86  11/2+/0i/f/d/R     Est./S.E. ESTIMATED RESIDUAL VARIANCES
+table          35  11/2+/0i/f/d/R     Est./S.E. GEOMIN FACTOR CORRELATIONS
+table          35  11/2+/0i/f/d/R     Est./S.E. GEOMIN ROTATED LOADINGS
+table           1  11/2+/0i/f/d/R     Estimated Correlation Matrix for the Latent Variables
+table           1  11/2+/0i/f/d/R     Estimated Covariance Matrix for the Latent Variables
+table           1  11/2+/0i/f/d/R     Estimated Means for the Latent Variables
+table          21  11/2+/0i/f/d/R     FACTOR STRUCTURE
+table          16  11/2+/0i/f/d/R     GAMMA
+table         258  11/2+/0i/f/d/R     GAMMA(C)
+table          15  11/2+/0i/f/d/R     GAMMA(CC) FOR C###
+table           8  11/2+/0i/f/d/R     GAMMA(F) FOR LATENT CLASS #
+table          35  11/2+/0i/f/d/R     GEOMIN FACTOR CORRELATIONS (* significant at #% level)
+table          35  11/2+/0i/f/d/R     GEOMIN ROTATED LOADINGS (* significant at #% level)
+table          40  11/2+/0i/f/d/R     KAPPA(P) FOR LATENT CLASS #
+table           8  11/2+/0i/f/d/R     KAPPA(U) FOR LATENT CLASS #
+table        2359  11/2+/0i/f/d/R     LAMBDA
+table          11  11/2+/0i/f/d/R     LAMBDA(F) FOR CLASS LATENT CLASS #
+table          17  11/2+/0i/f/d/R     LAMBDA(F) FOR LATENT CLASS #
+table           4  11/2+/0i/f/d/R     LAMBDA(P) FOR LATENT CLASS #
+table          10  11/2+/0i/f/d/R     LAMBDA(U)
+table           9  11/2+/0i/f/d/R     MEANS/INTERCEPTS/THRESHOLDS
+table         252  11/2+/0i/f/d/R     Means
+table          33  11/2+/0i/f/d/R     Means/Intercepts/Thresholds
+table          12  11/2+/0i/f/d/R     NEW/ADDITIONAL PARAMETERS
+table        3310  11/2+/0i/f/d/R     NU
+table         108  11/2+/0i/f/d/R     NU(P) FOR LATENT CLASS #
+table           8  11/2+/0i/f/d/R     New/Additional Parameters
+table        2364  11/2+/0i/f/d/R     PSI
+table          15  11/2+/0i/f/d/R     PSI(C)
+table           2  11/2+/0i/f/d/R     S.E. BI-GEOMIN FACTOR CORRELATIONS
+table           2  11/2+/0i/f/d/R     S.E. BI-GEOMIN ROTATED LOADINGS
+table          86  11/2+/0i/f/d/R     S.E. ESTIMATED RESIDUAL VARIANCES
+table          35  11/2+/0i/f/d/R     S.E. GEOMIN FACTOR CORRELATIONS
+table          35  11/2+/0i/f/d/R     S.E. GEOMIN ROTATED LOADINGS
+table           3  11/2+/0i/f/d/R     SLOPES
+table           8  11/2+/0i/f/d/R     Slopes
+table         528  11/2+/0i/f/d/R     TAU
+table         426  11/2+/0i/f/d/R     TAU(U) FOR LATENT CLASS #
+table        1144  11/2+/0i/f/d/R     TAU(U) FOR LATENT CLASS PATTERN # #
+table         506  11/2+/0i/f/d/R     TAU(U) FOR LATENT CLASS PATTERN # # #
+table         890  11/2+/0i/f/d/R     TAU(U) FOR LATENT CLASS PATTERN # # # #
+table        3298  11/2+/0i/f/d/R     THETA
+table           4  11/2+/0i/f/d/R     THETA(C) FOR CLASS LATENT CLASS #
+table           6  11/2+/0i/f/d/R     THETA(C) FOR LATENT CLASS #
+table           9  11/2+/0i/f/d/R     WITHIN LEVEL CORRELATION
+table           9  11/2+/0i/f/d/R     WITHIN LEVEL VARIANCE/COVARIANCE
+warning         2  0/0i/0i/m/d        *** WARNING
+warning         5  0/0i/0i/m/d        *** WARNING in MODEL POPULATION command
+warning        12  0/0i/0i/m/d        *** WARNING in MODEL command
+warning         2  0/1/0i/f/d         *** WARNING in MODEL command
+warning  ?     99  0/1/1+/1/d         Errors for replication with data file ex#.#rep#.dat:
+warning        13  0/2+/0i/f/d        *** WARNING
+warning        45  0/2+/0i/f/d        *** WARNING in MODEL command
+warning         5  0/2+/0i/f/d        *** WARNING in OUTPUT command
+warning  ?      1  0/2+/1+/1/d        Errors for replication with data file ex#.#rep#.dat:
+warning         1  10/0i/1+/l/s       #
+warning         1  11/0i/0i/m/s       for a continuous dependent variable with a covariate, linear trend,
+                                      + random slopes,
+warning         4  2/0c/0i/m/d        A y-variable has been declared on the within level but not referred
+                                      + to on
+warning         1  2/0c/0i/m/d        All continuous latent variable covariances involving I on the within
+                                      + level
+warning         1  2/0c/0i/m/d        All continuous latent variable covariances involving II have been
+                                      + fixed to #
+warning         2  2/0c/0i/m/d        All continuous latent variable covariances involving IIB on the
+                                      + between level
+warning         1  2/0c/0i/m/d        All continuous latent variable covariances involving Q have been
+                                      + fixed to #
+warning         4  2/0c/0i/m/d        All continuous latent variable covariances involving S have been
+                                      + fixed to #
+warning         4  2/0c/0i/m/d        All continuous latent variable covariances involving SB on the
+                                      + between level
+warning         3  2/0c/0i/m/d        All continuous latent variable covariances involving SI have been
+                                      + fixed to #
+warning         1  2/0c/0i/m/d        All continuous latent variable covariances involving SIW on the
+                                      + within level
+warning         3  2/0c/0i/m/d        All continuous latent variable covariances involving SU have been
+                                      + fixed to #
+warning         2  2/0c/0i/m/d        All continuous latent variable covariances involving SW on the within
+                                      + level
+warning        12  2/0c/0i/m/d        All variables are uncorrelated with all other variables within class.
+warning         1  2/0c/0i/m/d        Data set contains cases with missing on all variables except
+warning         4  2/0c/0i/m/d        In the MODEL POPULATION command, the predictor variable on the WITHIN
+                                      + level refers to the whole observed
+warning         1  2/0c/0i/m/d        In the MODEL POPULATION command, the predictor variable refers to the
+                                      + whole observed variable
+warning         7  2/0c/0i/m/d        In the MODEL command, the predictor variable on the WITHIN level
+                                      + refers to the whole observed
+warning         2  2/0c/0i/m/d        In the MODEL command, the predictor variable refers to the whole
+                                      + observed variable
+warning         3  2/0c/0i/m/d        Input line exceeded # characters. Some input may be truncated.
+warning        11  2/0c/0i/m/d        One or more individual-level variables have no variation within a
+warning         5  2/0c/0i/m/d        TECH# option is the default for multiple imputation.
+warning         1  2/0c/0i/m/d        TYPE=RANDOM is used to declare random effect variables in the model.
+warning        11  2/0c/0i/m/d        Values given in the MODEL command for EFA factors are used only as
+warning         1  2/0i/0c/m/s        TITLE:  two-level time series analysis with a univariate first-order
+                                      + autoregressive AR(
+warning         1  2/0i/0c/m/s        because the variance of II is fixed at #.
+warning         1  2/0i/0c/m/s        because the variance of Q is fixed at #.
+warning         2  2/0i/0c/m/s        because the variance of S is fixed at #.
+warning         2  2/0i/0c/m/s        have been fixed to # because the variance of IIB is fixed at #.
+warning         2  2/0i/0c/m/s        have been fixed to # because the variance of SB is fixed at #.
+warning         1  2/0i/0c/m/s        have been fixed to # because the variance of SW is fixed at #.
+warning         3  2/0i/0c/m/s        specify the variable as a within variable.  Problem with:  Y#
+warning        12  2/0i/0i/m/d        Check that this is what is intended.
+warning         1  2/0i/0i/m/d        No random effect variables were found.  TYPE=RANDOM will be ignored.
+warning         1  2/0i/0i/m/d        Number of cases with missing on all variables except x-variables:  #
+warning         1  2/0i/0i/m/d        TITLE: two-level time series analysis with a univariate first-order
+                                      + autoregressive AR(#) mo
+warning        11  2/0i/0i/m/d        This applies to the following statement(s):
+warning         2  2/0i/0i/m/d        because the variance of S is fixed at #.
+warning         3  2/0i/0i/m/d        because the variance of SI is fixed at #.
+warning         3  2/0i/0i/m/d        because the variance of SU is fixed at #.
+warning         1  2/0i/0i/m/d        have been fixed to # because the variance of I is fixed at #.
+warning         2  2/0i/0i/m/d        have been fixed to # because the variance of SB is fixed at #.
+warning         1  2/0i/0i/m/d        have been fixed to # because the variance of SIW is fixed at #.
+warning         1  2/0i/0i/m/d        have been fixed to # because the variance of SW is fixed at #.
+warning         3  2/0i/0i/m/d        in the following statement(s):
+warning        11  2/0i/0i/m/d        population values in computing coverage.  EFA factors cannot be given
+warning         1  2/0i/0i/m/d        specify the variable as a within variable.  Problem with:  Y#
+warning        11  2/0i/0i/m/d        starting values.
+warning         4  2/0i/0i/m/d        the between level.  Please check that this is what is intended.  If
+                                      + this is not intended,
+warning        11  2/0i/0i/m/d        variable.  To use the latent within-level part, use ESTIMATOR=BAYES
+                                      + in the ANALYSIS command.
+warning         1  2/0i/0i/m/d        x-variables.  These cases were not included in the analysis.
+warning        11  2/0i/1+/l/d        cluster for the following clusters.
+warning  ?     54  3/0i/1+/l/s        # WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+warning  ?      9  3/1/1+/1/s         # WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+warning         1  4/0i/0c/m/s        B | Y ON M
+warning         1  4/0i/0c/m/s        S | Y ON X
+warning         1  4/0i/0c/m/s        S# | Y ON W
+warning         1  4/0i/0c/m/s        S# | Y# ON Y#
+warning         1  4/0i/0c/m/s        U ON Y
+warning         1  4/0i/0c/m/s        U# ON Y#
+warning         1  4/0i/0i/m/d        B | Y ON M
+warning         2  4/0i/0i/m/d        S | Y ON X
+warning         2  4/0i/0i/m/d        S# | Y ON W
+warning         2  4/0i/0i/m/d        S# | Y# ON Y#
+warning         1  4/0i/0i/m/d        U# ON Y#
+warning         2  5/0i/0i/m/d        AN ADJUSTMENT TO THE ESTIMATION OF THE INFORMATION MATRIX HAS BEEN
+                                      + MADE.
+warning         1  5/0i/0i/m/d        CLUSTERS. THIS IS MOST LIKELY DUE TO AR COEFFICIENTS GREATER THAN #
+                                      + OR PARAMETERS GIVING NON-STATIONARY MODELS.
+warning         1  5/0i/0i/m/d        CONDITION NUMBER IS  #.#D-#.  PROBLEM INVOLVING THE FOLLOWING
+                                      + PARAMETER:
+warning         2  5/0i/0i/m/d        CONDITION NUMBER IS  -#.#D-#.  PROBLEM INVOLVING THE FOLLOWING
+                                      + PARAMETER:
+warning         3  5/0i/0i/m/d        FIRST-ORDER DERIVATIVE PRODUCT MATRIX.  THIS MAY BE DUE TO THE
+                                      + STARTING
+warning         8  5/0i/0i/m/d        IS NOT POSITIVE DEFINITE.  THIS COULD INDICATE A NEGATIVE VARIANCE/
+warning         2  5/0i/0i/m/d        MCONVERGENCE OR LOGCRITERION OPTIONS OR BY CHANGING THE STARTING
+                                      + VALUES
+warning         2  5/0i/0i/m/d        OBSERVED AND THE EXPECTED INFORMATION MATRICES DO NOT MATCH.
+warning         8  5/0i/0i/m/d        RESIDUAL VARIANCE FOR A LATENT VARIABLE, A CORRELATION GREATER OR
+                                      + EQUAL
+warning         2  5/0i/0i/m/d        SOLUTION MAY NOT BE TRUSTWORTHY DUE TO LOCAL MAXIMA.  INCREASE THE
+warning         1  5/0i/0i/m/d        SUCH POSTERIOR DRAWS ARE REMOVED. THE FOLLOWING CLUSTERS HAD SUCH
+                                      + PROBLEMS:
+warning         8  5/0i/0i/m/d        THAN TWO LATENT VARIABLES.  CHECK THE TECH# OUTPUT FOR MORE
+                                      + INFORMATION.
+warning         2  5/0i/0i/m/d        THE CONDITION NUMBER IS  -#.#D-#.
+warning         2  5/0i/0i/m/d        THE PROBLEM MAY ALSO BE RESOLVED BY DECREASING THE VALUE OF THE
+warning         1  5/0i/0i/m/d        THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES MAY NOT BE
+warning         8  5/0i/0i/m/d        TO ONE BETWEEN TWO LATENT VARIABLES, OR A LINEAR DEPENDENCY AMONG MORE
+warning         3  5/0i/0i/m/d        TRUSTWORTHY FOR SOME PARAMETERS DUE TO A NON-POSITIVE DEFINITE
+warning         3  5/0i/0i/m/d        VALUES BUT MAY ALSO BE AN INDICATION OF MODEL NONIDENTIFICATION.  THE
+warning         4  5/0i/0i/m/d        WARNING:  THE LATENT VARIABLE COVARIANCE MATRIX (PSI) IN GROUP G#
+warning         2  5/0i/0i/m/d        WARNING: THE MODEL ESTIMATION HAS REACHED A SADDLE POINT OR A POINT
+                                      + WHERE THE
+warning         6  5/0i/1+/2b/d       WARNING:  THE BIVARIATE TABLE OF U# AND U# HAS AN EMPTY CELL.
+warning         2  5/0i/1+/2b/s       BE COMPUTED.
+warning         2  5/0i/1+/2b/s       NUMBER OF LEVEL # CLUSTERS. REDUCE THE NUMBER OF PARAMETERS.
+warning         1  5/0i/1+/2b/s       USE AUXILIARY (E) ONLY FOR METHODS RESEARCH PURPOSES.
+warning         1  5/0i/1+/2b/s       WARNING:  THE BIVARIATE TABLE OF U# AND U# HAS AN EMPTY CELL.
+warning         1  5/0i/1+/l/d        NUMBER OF RANDOM STARTS.
+warning         1  5/0i/1+/l/d        OR BY INCREASING THE NUMBER OF INTEGRATION POINTS OR BY USING THE MLF
+                                      + ESTIMATOR.
+warning         4  5/0i/1+/l/d        PROBLEM INVOLVING VARIABLE A#.
+warning         2  5/0i/1+/l/d        Parameter #, %BETWEEN LEVEL#%: SF# ON Z
+warning         1  5/0i/1+/l/s        NUMBER OF RANDOM STARTS.
+warning         1  5/0i/1+/l/s        OR BY INCREASING THE NUMBER OF INTEGRATION POINTS OR BY USING THE MLF
+                                      + ESTIMATOR.
+warning         4  5/0i/1+/l/s        PROBLEM INVOLVING VARIABLE C#.
+warning         1  5/0i/1+/l/s        Parameter #, C## ON X
+warning         2  5/1/0i/2a/d        THE H# MODEL ESTIMATION DID NOT CONVERGE.  CHI-SQUARE TEST AND SAMPLE
+                                      + STATISTICS COULD NOT
+warning         2  5/1/0i/2a/d        THE NONIDENTIFICATION IS MOST LIKELY DUE TO HAVING MORE PARAMETERS
+                                      + THAN THE
+warning         1  5/1/0i/2a/d        WARNING:  AUXILIARY (E) CAN GIVE BIASED RESULTS AND IS SUPERSEDED BY
+                                      + THE BCH AND DU#STEP OPTIONS.
+warning         2  5/1/0i/f/d         THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES MAY NOT BE
+warning         2  5/1/0i/f/d         WARNING:  THE LATENT VARIABLE COVARIANCE MATRIX (PSI) IN GROUP MZ
+warning         5  5/1/1+/1/d         WARNING:  THE BIVARIATE TABLE OF U# AND U# HAS AN EMPTY CELL.
+warning         1  5/1/1+/1/s         WARNING:  THE BIVARIATE TABLE OF U# AND U# HAS AN EMPTY CELL.
+warning         2  5/2+/0i/f/d        PROBLEM OCCURRED IN EXPLORATORY FACTOR ANALYSIS WITH # FACTOR(S).
+warning         2  5/2+/0i/f/d        WARNING:  THE BEST LOGLIKELIHOOD VALUE WAS NOT REPLICATED.  THE
+warning         2  5/2+/0i/f/d        WARNING:  THE LATENT VARIABLE COVARIANCE MATRIX (PSI) IN GROUP DZ
+warning         1  5/2+/0i/f/d        WARNING: PROBLEMS OCCURRED IN SEVERAL ITERATIONS IN THE COMPUTATION
+                                      + OF THE STANDARDIZED ESTIMATES FOR SEVERAL
+warning         1  5/2+/1+/1/d        WARNING:  THE BIVARIATE TABLE OF U# AND U# HAS AN EMPTY CELL.
+message         2  0/0c/0c/m/d        regressed on covariates may not be included.  To include these,
+                                      + request
+message        50  0/0c/1+/2b/d       RANDOM STARTS TO CHECK THAT THE BEST LOGLIKELIHOOD IS STILL OBTAINED
+                                      + AND REPLICATED.
+message  ?      3  0/0c/1+/2b/d       optimizations.
+message         2  0/0c/1+/l/d        MODINDICES (ALL).
+message  ?      3  0/1/0c/2a/d        # perturbed starting value run(s) did not converge in the initial
+                                      + stage
+message         2  0/1/0c/f/d         NOTE:  Modification indices for direct effects of observed dependent
+                                      + variables
+message         1  0/1/0i/2a/d        *  The loglikelihood cannot be used directly for chi-square testing
+                                      + with
+message         2  0/1/0i/2a/d        ** Of the # cells in the frequency table, #
+message         2  0/1/0i/2a/d        ** Of the # cells in the latent class indicator table, #
+message        34  0/1/0i/f/d         *  The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV
+                                      + cannot be used
+message        14  0/1/0i/f/d         NOTE:  The sample statistics for within and between refer to the
+message  ?      1  0/1/1+/1/d         # perturbed starting value run(s) did not converge or were rejected
+                                      + in the third stage.
+message         3  0/1/1+/1/d         ** Large values were truncated at #.
+message         8  0/1/1+/1/d         NOTE:  These are average results over # data sets.
+message         1  0/1/1+/1/d         No modification indices above the minimum value.
+message         1  0/1/1+/1/d         THE MODEL ESTIMATION TERMINATED NORMALLY
+message  ?     42  0/1/1+/1/d         The following plots are available:
+message  ?      2  0/2+/0c/2a/d       # perturbed starting value run(s) did not converge.
+message        50  0/2+/0c/2a/d       THE BEST LOGLIKELIHOOD VALUE HAS BEEN REPLICATED.  RERUN WITH AT
+                                      + LEAST TWICE THE
+message       365  0/2+/1+/1/d        INPUT READING TERMINATED NORMALLY
+message       310  0/2+/1+/1/d        THE MODEL ESTIMATION TERMINATED NORMALLY
+message         1  5/1/1+/1/d         * based on the first set of variables
+message  ?      1  5/2+/1+/1/d        Kolmogorov-Smirnov comparing posterior distributions across chains #
+                                      + and # using # draws.
+label         126  0/1/0i/2a/d        Categorical latent variables
+label    ?      1  0/1/0i/2a/d        Chi-Square Test of Model Fit for the Binary and Ordered Categorical
+label         258  0/1/0i/2a/d        Continuous latent variables
+label          58  0/1/0i/2a/d        Input data file(s)
+label           5  0/1/0i/2a/d        New/Additional Parameters
+label           2  0/1/0i/2a/d        Observed auxiliary variables
+label         212  0/1/0i/2a/d        Observed independent variables
+label          10  0/1/0i/2a/d        X#
+label           4  0/1/0i/f/d         Base Hazard Parameters
+label          12  0/1/0i/f/d         Continuous latent variables
+label         166  0/1/0i/f/d         Input data file(s)
+label          12  0/1/0i/f/d         New/Additional Parameters
+label         211  0/1/0i/f/d         Number of replications
+label           1  0/1/0i/f/d         Observed auxiliary variables
+colhead        10  12/1/1+/1/s        Chi-Square  P-Value
+colhead         1  12/1/1+/1/s        M.I.  E.P.C.  Std E.P.C.  StdYX E.P.C.
+colhead         1  12/2+/1+/1/d       Average  Std. Dev.  Deviations from the Mean
+colhead         1  12/2+/1+/1/d       Average  Std. Dev.  Deviations from the Mean(% Sig Coeff)
+colhead        36  2/1/1+/1/d         Cluster variable  CLUS
+colhead         1  2/1/1+/1/d         Cluster variable  PERSON
+colhead         8  2/1/1+/1/d         Cluster variable  SUBJECT
+colhead         4  2/1/1+/1/d         Cluster variables  LEVEL#  LEVEL#
+colhead         2  2/1/1+/1/d         Cluster variables  LEVEL#B  LEVEL#A
+colhead         5  2/1/1+/1/d         Cluster variables  SUBJECT  TIME
+colhead         4  2/1/1+/1/d         Save file format  Free
+colhead         9  2/1/1+/1/s         Cluster variable  CLUS
+colhead         4  2/1/1+/1/s         Cluster variable  SUBJECT
+colhead         1  2/1/1+/1/s         Cluster variables  LEVEL#B  LEVEL#A
+colhead         2  2/1/1+/1/s         Cluster variables  SUBJECT  TIME
+colhead         9  2/1/1+/1/s         Grouping variable  G
+colhead         5  2/1/1+/1/s         Grouping variable  GROUP
+colhead         1  2/1/1+/1/s         Knownclass  C
+colhead         2  2/1/1+/1/s         Knownclass  CDZ
+colhead         4  2/1/1+/1/s         Knownclass  CG
+colhead         1  2/1/1+/1/s         Weight variable  W
+colhead         2  3/1/1+/1/d         C#  C#
+colhead         2  3/1/1+/1/d         C#  C#  C#
+colhead         2  3/1/1+/1/d         CG  C
+colhead         2  3/1/1+/1/d         CU  CY
+colhead         1  3/1/1+/1/s         C  C#  C#  C#
+colhead         4  3/1/1+/1/s         C#  C#
+colhead         1  3/1/1+/1/s         C#  C#  C#  C#
+colhead         4  3/1/1+/1/s         CB  C
+colhead         2  3/1/1+/1/s         CB  C#  C#
+colhead         2  3/1/1+/1/s         CB  CW
+colhead         1  3/1/1+/1/s         CG  C
+colhead         1  3/1/1+/1/s         CG  C#  C#
+colhead         1  5/1/1+/1/d         Parameter  Prior Mean  Prior Variance  Prior Std. Dev.
+colhead        11  5/1/1+/1/d         Variable  Cluster IDs with no within-cluster variation
+colhead        67  5/2+/1+/1/d        PRIORS FOR ALL PARAMETERS  PRIOR MEAN  PRIOR VARIANCE  PRIOR STD. DEV.
+colhead        31  7/1/1+/1/d         Size (s)  Cluster ID with Size s
+colhead        48  7/1/1+/1/d         Size (s)  Number of clusters of Size s
+colhead         4  7/1/1+/1/d         Size (s)  Number of level # clusters of Size s
+footer        428  footer             # Stoner Ave.
+footer        428  footer             Copyright (c) #-# Muthen & Muthen
+footer        428  footer             Fax: (#) #-#
+footer        428  footer             Los Angeles, CA  #
+footer        428  footer             MUTHEN & MUTHEN
+footer        428  footer             Support: Support@StatModel.com
+footer        428  footer             Tel: (#) #-#
+footer        428  footer             Web: www.StatModel.com
+plain           1  0/0c/0c/m/d        A#  WITH S  #.#  -#.#  -#.#  -#.#
+plain           1  0/0c/0c/m/d        A#  WITH Y#  #.#  -#.#  -#.#  -#.#
+plain           2  0/0c/0c/m/d        Base Hazard  ON
+plain         211  0/0c/0c/m/d        Censored, Binary or Ordered Categorical (Ordinal), Unordered
+plain         148  0/0c/0c/m/d        Convergence criterion  #.#D-#
+plain          42  0/0c/0c/m/d        Convergence criterion for H#  #.#D-#
+plain          26  0/0c/0c/m/d        Epsilon value  Varies
+plain           1  0/0c/0c/m/d        I  BY Y#  #.#  #.#  #.#  #.#
+plain           1  0/0c/0c/m/d        Information matrix  EXPECTED
+plain         318  0/0c/0c/m/d        Information matrix  OBSERVED
+plain          12  0/0c/0c/m/d        Link  LOGIT
+plain          34  0/0c/0c/m/d        Maximum number of EM iterations  #
+plain         148  0/0c/0c/m/d        Maximum number of iterations  #
+plain          36  0/0c/0c/m/d        Maximum number of iterations for H#  #
+plain          97  0/0c/0c/m/d        Maximum number of steepest descent iterations  #
+plain         126  0/0c/0c/m/d        Number of continuous latent variables  #
+plain         428  0/0c/0c/m/d        Number of independent variables  #
+plain           1  0/0c/0c/m/d        Number of observations  #
+plain          27  0/0c/0c/m/d        Optimization Specifications for the Exploratory Factor Analysis
+plain         211  0/0c/0c/m/d        Optimization Specifications for the Quasi-Newton Algorithm for
+plain          12  0/0c/0c/m/d        Optimization algorithm  EMA
+plain          23  0/0c/0c/m/d        Parameterization  DELTA
+plain           4  0/0c/0c/m/d        Parameterization  LOGIT
+plain           3  0/0c/0c/m/d        Parameterization  LOGLINEAR
+plain           2  0/0c/0c/m/d        Parameterization  PROBABILITY
+plain           6  0/0c/0c/m/d        Parameterization  THETA
+plain           4  0/0c/0c/m/d        Rotation  BI-GEOMIN
+plain          26  0/0c/0c/m/d        Rotation  GEOMIN
+plain          22  0/0c/0c/m/d        Row standardization  CORRELATION
+plain           8  0/0c/0c/m/d        Row standardization  COVARIANCE
+plain           1  0/0c/0c/m/d        S  ON A#  #.#  -#.#  -#.#  -#.#
+plain           1  0/0c/0c/m/d        S  ON I  /
+plain           1  0/0c/0c/m/d        S  ON X  #.#  -#.#  -#.#  -#.#
+plain           2  0/0c/0c/m/d        S  ON Y#  #.#  -#.#  -#.#  -#.#
+plain          30  0/0c/0c/m/d        Type of rotation  OBLIQUE
+plain           1  0/0c/0c/m/d        X  WITH S  #.#  -#.#  -#.#  -#.#
+plain           3  0/0c/0c/m/d        Y#  ON Y#  #.#  #.#  #.#  #.#
+plain           1  0/0c/0c/m/d        Y#  ON Y#  #.#  -#.#  -#.#  -#.#
+plain           1  0/0c/0c/m/d        Y#  WITH I  #.#  #.#  #.#  #.#
+plain           1  0/0c/0c/m/d        Y#  WITH Y#  #.#  #.#  #.#  #.#
+plain           1  0/0c/0c/m/d        Y#  WITH Y#  #.#  -#.#  -#.#  -#.#
+plain         211  0/0c/0i/m/d        Categorical (Nominal) and Count Outcomes
+plain         211  0/0c/0i/m/d        Categorical Latent variables
+plain         211  0/0c/0i/m/d        Continuous Outcomes
+plain          34  0/0c/0i/m/d        Convergence criteria for the EM algorithm
+plain         137  0/0c/0i/m/d        Integration Specifications
+plain           1  0/0c/0i/m/d        Number of bootstrap draws
+plain          27  0/0c/0i/m/d        Number of observations
+plain          32  0/0c/0i/m/d        Random Starts Specifications
+plain          30  0/0c/0i/m/d        Rotation Algorithm
+plain          70  0/0c/0i/m/d        Specifications for Bayesian Estimation
+plain           5  0/0c/1+/2b/d       Average number of observations  #
+plain           1  0/0c/1+/2b/d       I  BY Y#  #.#  #.#  #.#  #.#
+plain         395  0/0c/1+/2b/d       Number of observations  #
+plain           1  0/0c/1+/2b/d       Y#  ON A#  #.#  -#.#  -#.#  -#.#
+plain           2  0/0c/1+/l/d        A#  WITH Y#  #.#  -#.#  -#.#  -#.#
+plain           4  0/0c/1+/l/d        Base Hazard  EQUAL ACROSS CLASSES
+plain          28  0/0c/1+/l/d        Cholesky  OFF
+plain          53  0/0c/1+/l/d        Cholesky  ON
+plain           6  0/0c/1+/l/d        Convergence criterion for H#  #.#D-#
+plain           1  0/0c/1+/l/d        I  BY S  #.#  -#.#  -#.#  -#.#
+plain          30  0/0c/1+/l/d        Link  LOGIT
+plain          29  0/0c/1+/l/d        Link  PROBIT
+plain          51  0/0c/1+/l/d        Maximum number of steepest descent iterations  #
+plain         126  0/0c/1+/l/d        Number of categorical latent variables  #
+plain         302  0/0c/1+/l/d        Number of continuous latent variables  #
+plain           1  0/0c/1+/l/d        Number of patterns  #
+plain          33  0/0c/1+/l/d        Optimization algorithm  EMA
+plain           1  0/0c/1+/l/d        Parameterization  LOGIT
+plain           1  0/0c/1+/l/d        Y#  ON A#  #.#  -#.#  -#.#  -#.#
+plain           5  0/0i/0c/m/d        Base Hazard  OFF
+plain           2  0/0i/0c/m/d        Base Hazard  ON
+plain          52  0/0i/0c/m/d        Link  LOGIT
+plain          12  0/0i/0c/m/d        Link  PROBIT
+plain          12  0/0i/0c/m/d        Maximum number of iterations for H#  #
+plain          34  0/0i/0c/m/d        Minimum variance  #.#D-#
+plain           3  0/0i/0c/m/d        Optimization Specifications for the Exploratory Factor Analysis
+plain         422  0/0i/0c/m/d        Optimization Specifications for the M step of the EM Algorithm for
+plain         174  0/0i/0c/m/d        Optimization algorithm  EMA
+plain           6  0/0i/0c/m/d        Optimization algorithm  EMA/FS
+plain           4  0/0i/0c/m/d        Optimization algorithm  FS
+plain          15  0/0i/0c/m/d        Parameterization  LOGIT
+plain           1  0/0i/0c/m/d        Parameterization  LOGLINEAR
+plain           2  0/0i/0c/m/d        Parameterization  PROBABILITY
+plain         211  0/0i/0i/m/d        Optimization Specifications for the EM Algorithm
+plain          21  0/0i/0i/m/d        Random Starts Specifications
+plain           5  0/0i/0i/m/d        Specifications for Bayes Factor Score Estimation
+plain           3  0/0i/0i/m/d        Specifications for Data Imputation
+plain          38  0/0i/1+/l/d        Cholesky  OFF
+plain          18  0/0i/1+/l/d        Cholesky  ON
+plain         164  0/0i/1+/l/d        Input data format  FREE
+plain           8  0/0i/1+/l/d        Link  LOGIT
+plain          11  0/0i/1+/l/d        Link  PROBIT
+plain          16  0/0i/1+/l/d        Optimization algorithm  EMA
+plain           3  0/0i/1+/l/d        Parameterization  LOGIT
+plain         204  0/0i/1+/l/d        Value of seed  #
+plain         400  0/1/0c/2a/d        Number of groups  #
+plain           1  0/1/0c/2a/d        Y#  ON I  /
+plain           1  0/1/0c/2a/d        Y#  ON Y#  #.#  #.#  #.#  #.#
+plain           7  0/1/0c/f/d         Estimator  BAYES
+plain          11  0/1/0c/f/d         Estimator  ML
+plain           6  0/1/0c/f/d         Estimator  MLR
+plain           1  0/1/0c/f/d         Estimator  WLSM
+plain           6  0/1/0c/f/d         Estimator  WLSMV
+plain         428  0/1/0c/f/d         Number of dependent variables  #
+plain          28  0/1/0c/f/d         Number of groups  #
+plain           1  0/1/0c/f/d         S  ON Y#  #.#  -#.#  -#.#  -#.#
+plain           1  0/1/0c/f/d         Y#  ON I  /
+plain           1  0/1/0c/f/d         Y#  WITH I  #.#  -#.#  -#.#  -#.#
+plain           1  0/1/0c/f/d         Y#  WITH S  #.#  #.#  #.#  #.#
+plain          60  0/1/1+/1/d         Input data format  FREE
+plain           2  0/1/1+/1/d         Minimum M.I. value for printing the modification index  #.#
+plain          38  0/1/1+/1/d         Minimum covariance coverage value  #.#
+plain         447  0/1/1+/1/d         Number of Free Parameters  #
+plain           1  0/1/1+/1/d         Y#  #.#  #.#  #.#  #.#
+plain           1  0/1/1+/1/d         Y#  #.#  -#.#  -#.#  -#.#
+plain           1  0/1/1+/1/d         Y#  ON Y#  #.#  #.#  #.#  #.#
+plain           1  0/1/1+/1/d         Y#  WITH Y#  #.#  -#.#  -#.#  -#.#
+plain          62  0/2+/0c/f/d        Estimator  BAYES
+plain          76  0/2+/0c/f/d        Estimator  ML
+plain           1  0/2+/0c/f/d        Estimator  MLF
+plain         225  0/2+/0c/f/d        Estimator  MLR
+plain           2  0/2+/0c/f/d        Estimator  WLSM
+plain          31  0/2+/0c/f/d        Estimator  WLSMV
+plain          37  0/2+/1+/1/d        MINIMUM ROTATION FUNCTION VALUE  #.#
+plain           1  0/2+/1+/1/d        Number of Free Parameters  #
+plain           2  10/1/1+/1/d        Posterior Predictive P-Value  #.#
+plain           1  10/1/1+/1/s        #
+plain           6  10/1/1+/1/s        #  #
+plain          13  10/1/1+/1/s        Estimate  #.#
+plain           3  10/1/1+/1/s        H# Value  -#.#
+plain           6  10/1/1+/1/s        Posterior Predictive P-Value  #.#
+plain           2  10/1/1+/1/s        Prior Posterior Predictive P-Value  #.#
+plain          63  10/1/1+/1/s        Value  #.#
+plain          10  10/1/1+/1/s        Value  #.#D-#
+plain           2  11/1/1+/1/s        #
+plain         222  11/1/1+/1/s        #  #
+plain          40  11/1/1+/1/s        #  #  #
+plain           7  11/1/1+/1/s        #  #  #  #
+plain           3  11/1/1+/1/s        #  #  #  #  #
+plain           2  11/1/1+/1/s        #  #  #  #  #  #
+plain           2  11/1/1+/1/s        #  #  #  #  #  #  #  #
+plain           1  11/1/1+/1/s        #  #  #  #  #  #  #  #  #
+plain           1  12/1/1+/1/s        #
+plain         116  12/1/1+/1/s        #  #
+plain          30  12/1/1+/1/s        #  #  #
+plain           1  12/1/1+/1/s        #  #  #  #
+plain           1  12/1/1+/1/s        #  #  #  #  #
+plain           1  12/1/1+/1/s        #.#  #.#
+plain           7  12/1/1+/1/s        -#.#  #.#
+plain          18  12/1/1+/1/s        Estimate
+plain           1  12/1/1+/1/s        Lower .#%  Lower #.#%  Lower #%  Estimate  Upper #%  Upper
+                                      + #.#%  Upper .#%
+plain           1  12/2+/1+/1/s       Lower .#%  Lower #.#%  Lower #%  Estimate  Upper #%  Upper
+                                      + #.#%  Upper .#%
+plain           1  2/1/1+/1/d         Indirect  #.#  #.#  #.#  #.#
+plain           4  2/1/1+/1/d         Save file record length  #
+plain           1  2/1/1+/1/d         Save missing symbol  *
+plain           1  2/1/1+/1/d         Sum of indirect  #.#  #.#  #.#  #.#
+plain           1  2/1/1+/1/d         Sum of indirect  #.#  #.#  #.#  #.#  #.#  #.#  #.#
+plain    ?    143  2/1/1+/1/s         Error messages for each replication (if any)
+plain          10  2/1/1+/1/s         Overall test  #.#  #.#
+plain           3  4/1/1+/1/s         #  #.#
+plain           1  4/1/1+/1/s         U
+plain           1  4/1/1+/1/s         U#  #.#  #.#
+plain          31  5/1/1+/1/d         Average cluster size  #.#
+plain           4  5/1/1+/1/d         Average cluster size for LEVEL# level  #.#
+plain          33  5/1/1+/1/d         Number of clusters  #
+plain           4  5/1/1+/1/d         Number of level # clusters  #
+plain          17  5/1/1+/1/d         Number of missing data patterns  #
+plain           1  5/1/1+/1/d         THE TOTAL PEARSON CHI-SQUARE CONTRIBUTION FROM EMPTY CELLS IS  #.#
+plain           1  5/1/1+/1/d         Y  #.#
+plain           1  5/1/1+/1/s         #-factor against #-factor  #.#  #  #.#
+plain         179  5/1/1+/1/s         Entropy  #.#
+plain          23  5/1/1+/1/s         Number of clusters  #
+plain           7  5/1/1+/1/s         Number of missing data patterns  #
+plain           1  5/1/1+/1/s         U  #.#  Y  #.#
+plain          11  5/1/1+/1/s         Y  #.#
+plain           1  5/1/1+/1/s         Y  #.#  M  #.#
+plain           1  5/2+/1+/1/s        MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H#) MODEL IS  -#.#
+plain           8  5/2+/1+/1/s        MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H#) MODEL IS -#.#
+plain           1  6/1/1+/1/s         U  # # # # # # # # # # # # # # # #
+plain           1  6/1/1+/1/s         U  #.#  #  #
+plain           1  6/1/1+/1/s         U#  #
+plain           5  6/1/1+/1/s         U#  #.#  #  #
+plain           8  6/1/1+/1/s         Y#  #.#
+plain          14  7/1/1+/1/d         Number of clusters  #
+plain           1  7/1/1+/1/s         #  #  #.#
+plain           2  7/1/1+/1/s         #  #.#  #.#
+plain          68  8/1/1+/1/d         Degrees of freedom  #
+plain           5  8/1/1+/1/s         #  #
+plain           1  8/1/1+/1/s         #  # # # # # # # # # # # # # # # # # # # #
+plain           9  9/1/1+/1/s         #  #
