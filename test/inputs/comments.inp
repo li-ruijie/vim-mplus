@@ -1,0 +1,16 @@
+TITLE:	comments as Mplus reads them ! a comment
+! a comment line of the title
+second line of the title ! printed by Mplus
+!* printed as well
+DATA:	FILE IS data.dat; !* a block comment
+that holds a header
+VARIABLE: names = none;
+*!
+data: file is data.dat;
+VARIABLE:	NAMES ARE y x;
+MODEL:
+	x; ! a note !* that opens a block comment
+model: x on y;
+*!
+	y on x;
+OUTPUT:	tech1;

@@ -694,7 +694,11 @@ highlighted as mplusSection in the base file.
 │ \<ON\> (model operator by default)      │ Model   │
 │ \%(=\s*\)\@<=\<ON\> (setting value)     │ Command │
 │ !.*$                                    │ Comment │
-│ ^\s*!\*...\*! (block comment, @Spell)   │ Comment │
+│ !\*...\*! (block comment, @Spell)       │ Comment │
+│   anywhere, also after code or a !      │         │
+│ in a title: ! and !* on the TITLE line, │ Comment │
+│   and a line below it that starts with  │         │
+│   a ! with no * after it                │         │
 │ ^\s*TITLE: to the next section header   │ Title   │
 │ "…" and '…' (quoted strings)            │ String  │
 └─────────────────────────────────────────┴─────────┘

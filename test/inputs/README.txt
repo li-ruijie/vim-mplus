@@ -15,3 +15,8 @@ do-define.inp         DO statements over three lines and a DO inside a DO
                       deeper and the line after the statement back.
 do-priors.inp         The same in MODEL PRIORS, with the Bayes estimator.
                       TECH1 prints the priors that the loops give.
+comments.inp          Comments in a title, where Mplus prints a line with a
+                      ! or !* below the TITLE line, and block comments that
+                      open after code and in a ! comment, which drop their
+                      line and hold a header. gq keeps such lines as
+                      written.

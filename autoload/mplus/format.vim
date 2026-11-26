@@ -86,9 +86,12 @@ endfunction
 " a line of its own. Mplus takes a command only at the start of a line, so
 " "TITLE: Model comparison: two groups" is a title, and "MODEL: MODEL: y ON
 " x;" is an error. With the text moved down, Mplus would end the title at
-" it, and it would accept the second input.
+" it, and it would accept the second input. A TITLE line with a ! in its
+" text stays as written too. Mplus reads a ! there as the start of a comment,
+" and prints it as title text on a line below the TITLE line.
 function! s:Kept(header) abort
     return !a:header[3] || !empty(mplus#section#Parse(a:header[2]))
+        \ || (a:header[0] ==# 'TITLE' && a:header[2] =~# '!')
 endfunction
 
 " Enter in a:state the section that starts with a:header, which is a result
@@ -167,6 +170,24 @@ function! s:FormatCode(line, state) abort
     endwhile
 endfunction
 
+" Return whether a:line belongs to a block comment (!* ... *!), and set
+" a:state.in_block to whether one is open after it. Mplus 9.1.1 opens a
+" block comment at a !* anywhere on a line, also after code, and drops the
+" whole line where the comment stays open, so such a line stays as written.
+" On the lines of a title below the TITLE line a !* is title text.
+function! s:InBlock(state, line) abort
+    if a:state.in_block
+        let a:state.in_block = a:line !~# '\*!' || mplus#section#Opens(a:line)
+        return 1
+    endif
+    if (a:line !~# '^\s*!\*' && !mplus#section#Opens(a:line))
+        \ || (a:state.free && a:state.section ==# 'TITLE' && empty(mplus#section#Parse(a:line)))
+        return 0
+    endif
+    let a:state.in_block = mplus#section#Opens(a:line)
+    return 1
+endfunction
+
 " Describe the text above line a:lnum: the section it belongs to, whether it
 " is free text, whether it is inside a block comment, whether a new
 " statement starts on a:lnum, and whether a:lnum goes on with the value of
@@ -178,8 +199,7 @@ function! s:StateBefore(lnum) abort
     let l:state = {'section': '', 'free': 0, 'in_block': 0, 'at_start': 1,
         \ 'verbatim': 0}
     for l:line in getline(1, a:lnum - 1)
-        if l:state.in_block || l:line =~# '^\s*!\*'
-            let l:state.in_block = l:line !~# '\*!'
+        if s:InBlock(l:state, l:line)
             continue
         endif
         " The code after the colon of a header starts the first statement.
@@ -303,8 +323,7 @@ function! mplus#format#Format() abort
         let l:line = substitute(l:line, '\s\+$', '', '')
 
         " Block comment (!* ... *!): whitespace cleanup only
-        if l:state.in_block || l:line =~# '^\s*!\*'
-            let l:state.in_block = l:line !~# '\*!'
+        if s:InBlock(l:state, l:line)
             call setline(l:lnum, l:line)
             let l:lnum += 1
             continue

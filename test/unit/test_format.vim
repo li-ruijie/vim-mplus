@@ -316,6 +316,40 @@ function! Test_header_in_a_block_comment_is_no_header() abort
     call assert_equal(l:lines[0:3], getline(1, 4))
 endfunction
 
+function! Test_block_comment_mark_in_a_title() abort
+    " Below the TITLE line Mplus takes !* for title text, so the header
+    " after it starts a section. On the TITLE line it opens a block comment,
+    " and Mplus drops that line, so it stays as written.
+    call assert_equal(['TITLE:', '    a title', '    !* text of the title', 'DATA:',
+        \ '    FILE = x.dat;', 'MODEL:', '    Y ON X;'],
+        \ s:Format(['TITLE: a title', '!* text of the title', 'data: file is x.dat;',
+        \ 'model: y on x;']))
+    call assert_equal(['TITLE: a title !* a comment', '    data: file = none.dat;', '    *!',
+        \ 'DATA:', '    FILE = x.dat;'],
+        \ s:Format(['TITLE: a title !* a comment', 'data: file = none.dat;', '*!',
+        \ 'data: file = x.dat;']))
+endfunction
+
+function! Test_comment_on_the_title_line_is_kept_there() abort
+    " Mplus reads a ! on the TITLE line as the start of a comment and prints
+    " it as title text on the lines below, so the text stays on its line.
+    call assert_equal(['TITLE: a title ! a comment', '    more', 'DATA:'],
+        \ s:Format(['TITLE: a title ! a comment', 'more', 'DATA:']))
+    call assert_equal(['TITLE:', '    a title', 'DATA:'], s:Format(['TITLE: a title', 'DATA:']))
+endfunction
+
+function! Test_block_comment_after_code() abort
+    " Mplus opens a block comment at a !* after code or in a ! comment, and
+    " drops the line where it stays open. That line and the comment stay as
+    " written, and a header in it is no header.
+    call assert_equal(['MODEL:', '    y on x; !* a note', '    data: x', '    *!', '    Z ON W;',
+        \ '    z on w; ! a !* b', '    output: x *!', 'OUTPUT:', '    TECH1;'],
+        \ s:Format(['MODEL:', 'y on x; !* a note', 'data: x', '*!', 'z on w;',
+        \ 'z on w; ! a !* b', 'output: x *!', 'output: tech1;']))
+    call assert_equal(['MODEL:', '    Y ON X; !* a note *!', 'OUTPUT:', '    TECH1;'],
+        \ s:Format(['MODEL:', 'y on x; !* a note *!', 'output: tech1;']))
+endfunction
+
 function! Test_header_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['TITLE: a study', '  step 2: twenty sets', '  impu = y1;',

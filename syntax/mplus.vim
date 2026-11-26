@@ -19,10 +19,20 @@ syn match mplusStatement "\<\(MONT\|MONTE\|MONTEC\|MONTECA\|MONTECAR\|MONTECARL\
 "" TITLE starts after the TITLE header and runs to the next section header,
 "" by the rule of autoload/mplus/section.vim. A semicolon does not end a
 "" title, and a line that begins with a variable called title starts none.
+""
+"" Mplus 9.1.1 reads the TITLE line as it reads code, so a ! there starts a
+"" comment and a !* a block comment, which may run past the next header.
+"" Below the TITLE line it takes neither. A line whose first character after
+"" the indent is a ! that no * follows is a comment line, and Mplus prints
+"" every other line, ! and !* included, as a line of the title.
 execute 'syn region mplusTitle matchgroup=mplusStatement'
     \ 'start="^\s*TITL\%[E]\s*:"'
     \ 'end="^\ze\s*' . mplus#section#Pattern() . '"'
-    \ 'contains=mplusComment'
+    \ 'contains=mplusTitleComment,mplusTitleBlockComment'
+syn match mplusTitleComment "^\s*!\*\@!.*" contained
+syn match mplusTitleComment "\c\%(^\s*TITL\%[E]\s*:.\{-}\)\@<=!.*" contained
+execute 'syn region mplusTitleBlockComment start="\c\%(^\s*TITL\%[E]\s*:.\{-}\)\@<=!\*"'
+    \ 'end="\*!" contained contains=@Spell extend'
 syn region mplusString start=+"+ end=+"+
 syn region mplusString start=+'+ end=+'+
 
@@ -459,10 +469,12 @@ syn keyword mplusCommand ZIP
 syn keyword mplusStatement HPD
 
 "" Comments (defined last to override other matches)
-syn match  mplusComment "!.*$"
-"" A block comment has "extend", so that a line in it that looks like a
-"" section header does not end the fold of the section around it.
-syn region mplusBlockComment start="^\s*!\*" end="\*!" contains=@Spell extend
+"" Mplus 9.1.1 opens a block comment at a !* anywhere on a line, also after
+"" code or in a ! comment. A block comment has "extend", so that a line in
+"" it that looks like a section header does not end the fold of the section
+"" around it.
+syn match  mplusComment "!.*$" contains=mplusBlockComment
+syn region mplusBlockComment start="!\*" end="\*!" contains=@Spell extend
 
 "" Highlight links
 highlight link mplusStatement Statement
@@ -472,6 +484,8 @@ highlight link mplusNumber    Number
 highlight link mplusSection   Include
 highlight link mplusComment   Comment
 highlight link mplusBlockComment Comment
+highlight link mplusTitleComment Comment
+highlight link mplusTitleBlockComment Comment
 highlight link mplusSpeccom   Special
 highlight link mplusHeader    Type
 highlight link mplusTitle     String

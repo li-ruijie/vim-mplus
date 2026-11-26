@@ -57,8 +57,11 @@ endfunction
 
 " Return whether a section starts on line a:lnum of the current buffer. A
 " line in a block comment (!* ... *!) starts none, whatever it looks like.
-" The comment is open at the line when the nearest line above that begins
-" or ends a block comment begins one.
+" The comment is open at the line when the nearest line above that opens
+" a block comment that stays open, or that closes one, opens one. Mplus
+" 9.1.1 opens a block comment at a !* anywhere on a line, also after code
+" or in a ! comment, except on the lines of a title below the TITLE line,
+" where !* is title text.
 function! mplus#section#Starts(lnum) abort
     if getline(a:lnum) !~? '^\s*' . s:header
         return 0
@@ -66,14 +69,41 @@ function! mplus#section#Starts(lnum) abort
     let l:lnum = a:lnum - 1
     while l:lnum >= 1
         let l:line = getline(l:lnum)
-        if l:line =~# '\*!'
+        if mplus#section#Opens(l:line)
+            if !s:TitleText(l:lnum)
+                return 0
+            endif
+        elseif l:line =~# '\*!'
             return 1
-        elseif l:line =~# '^\s*!\*'
-            return 0
         endif
         let l:lnum -= 1
     endwhile
     return 1
+endfunction
+
+" Return whether a block comment opens on a:line and is still open at its
+" end, when the line is read as code is.
+function! mplus#section#Opens(line) abort
+    return a:line =~# '!\*\%(.*\*!\)\@!'
+endfunction
+
+" Return whether line a:lnum is a line of title text below a TITLE line.
+" That holds when the nearest header above it is a TITLE header that opens
+" no block comment, and the line is no header itself.
+function! s:TitleText(lnum) abort
+    if !empty(mplus#section#Parse(getline(a:lnum)))
+        return 0
+    endif
+    let l:lnum = a:lnum - 1
+    while l:lnum >= 1
+        if mplus#section#Starts(l:lnum)
+            let l:header = mplus#section#Parse(getline(l:lnum))
+            return l:header[0] ==# 'TITLE' && l:header[3]
+                \ && !mplus#section#Opens(getline(l:lnum))
+        endif
+        let l:lnum -= 1
+    endwhile
+    return 0
 endfunction
 
 " Take a:line apart as a section header. Return [] when no section starts
