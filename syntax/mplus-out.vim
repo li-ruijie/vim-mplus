@@ -33,28 +33,37 @@ syn match mplusHeader "^\s*Weighted Root Mean Square Residual.*$"
 "" equals sign). Result lines stand in capitals as well (" F1       BY",
 "" the names above the columns of a matrix, the rows of the modification
 "" indices, the lines of a message), so a line in capitals is a header in
-"" two places only. The first is column 0, where the headers of the parts of
-"" an output stand (MODEL RESULTS), unless the line holds a decimal number
-"" or ends with a slash, as the rows of the modification indices do. The
-"" second is an indented line that has an empty line above and below it
+"" three places only. The first is column 0, where the headers of the parts
+"" of an output stand (MODEL RESULTS), unless the line holds a decimal
+"" number or ends with a slash, as the rows of the modification indices do.
+"" The second is an indented line that has an empty line above and below it
 "" and holds no decimal number, which is how the headers inside a part
 "" stand (PARAMETER SPECIFICATION under TECHNICAL 1 OUTPUT).
+"" The third is the name of a matrix or table. Mplus prints every matrix
+"" (NU, LAMBDA, THETA under TECHNICAL 1 OUTPUT) and every table of the same
+"" form (ESTIMATED RESIDUAL VARIANCES) as a name, a line of column names,
+"" and a rule of underscores, eight to a column. In the 428 example outputs
+"" each of the 22,198 rules has a name two lines above it, 21,008 of them in
+"" capitals, and no result label stands there, so an indented line in
+"" capitals is a header when the line two below it is such a rule.
 "" Specific mixed-case headers of the model fit information count as well.
 let s:caps = '\s*\u[A-Z 0-9/,&():.*%=-]\+$'
 "" Each pattern tests the cheap condition first, as it is tried on every line.
 let s:main = '\u\%(.*\.\d\)\@!\%(.*/\s*$\)\@![A-Z 0-9/,&():.*%=-]\+$'
 let s:sub = '\%(\s\+\u[A-Z 0-9/,&():.*%=-]\+\n\s*$\)\@=\%(^\s*\n\)\@<=\%(.*\.\d\)\@!'
     \ . '\s\+\u[A-Z 0-9/,&():.*%=-]\+$'
+let s:matrix = '\s\+\u[A-Z 0-9/,&():.*%=-]\+\%(\n.*\S.*\n\s*_\{8}\%(\s\+_\{8}\)*\s*$\)\@='
 let s:mixed = '\s*\(Loglikelihood\|Information Criteria\|Chi-Square Test of Model Fit.*'
     \ . '\|RMSEA.*\|SRMR.*\|WRMR.*\|Weighted Root Mean Square Residual.*\)\s*$'
 "" A header of the echoed input that stands in capitals, alone or before
 "" other text in capitals ("  MODEL:", "  MODEL:  %WITHIN%").
 let s:echoed = '\%(' . s:caps . '\)\@=\s*' . mplus#section#Pattern()
-let s:fold_end = 'end="\C^\ze' . s:main . '\|^\ze' . s:sub . '\|^\ze' . s:mixed
-    \ . '\|^\ze' . s:echoed . '"'
+let s:fold_end = 'end="\C^\ze' . s:main . '\|^\ze' . s:sub . '\|^\ze' . s:matrix
+    \ . '\|^\ze' . s:mixed . '\|^\ze' . s:echoed . '"'
     \ . ' fold keepend contains=mplusComment,mplusHeader,mplusSection,mplusTitle'
 execute 'syn region mplusFold matchgroup=mplusHeader'
-    \ 'start="\C^' . s:main . '\|^' . s:sub . '\|^' . s:mixed . '"' s:fold_end
+    \ 'start="\C^' . s:main . '\|^' . s:sub . '\|^' . s:matrix . '\|^' . s:mixed . '"'
+    \ s:fold_end
 
 "" An echoed header in capitals starts a fold as well. This region is
 "" defined later and therefore wins where such a header is also a line with

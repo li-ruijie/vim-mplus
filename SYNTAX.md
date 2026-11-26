@@ -39,7 +39,9 @@ mplus-inp.vim adds:          mplus-out.vim defines:
                                               + mixed-case fit headers)
                                \C^\u[A-Z 0-9/,&():.*%=-]+$ at column 0,
                                or indented between two empty lines,
-                               and without a decimal number
+                               and without a decimal number, or
+                               indented two lines above a rule of
+                               underscores (the name of a matrix)
                                mplusTitle    (the printed title, up to
                                               SUMMARY OF ANALYSIS)
 ```
@@ -677,7 +679,8 @@ highlighted as mplusSection in the base file.
 │   no decimal number, no slash at end    │         │
 │ \C^\s+\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
 │   empty line above and below, and no    │         │
-│   decimal number                        │         │
+│   decimal number, or a rule of          │         │
+│   underscores two lines below           │         │
 │ Mixed-case fit headers (output)         │ Header  │
 │ ^\s*(SECTION)(\s+[^: \t]+)?\s*:         │ Section │
 │   (input, and the input in an output)   │         │

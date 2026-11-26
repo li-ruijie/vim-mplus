@@ -214,9 +214,10 @@ function! Test_echoed_header_in_capitals() abort
 endfunction
 
 function! Test_output_headers_and_result_lines() abort
-    " A line in capitals is a header at column 0, or where it is indented
-    " and has an empty line above and below it. Result lines in capitals
-    " are no headers and start no fold.
+    " A line in capitals is a header at column 0, where it is indented and
+    " has an empty line above and below it, and where it is the name of the
+    " matrix or table below it (NU, LAMBDA, ESTIMATED RESIDUAL VARIANCES).
+    " Result lines in capitals are no headers and start no fold.
     let l:lines = [
         \ 'Mplus VERSION 9.1.1',
         \ 'MUTHEN & MUTHEN',
@@ -261,6 +262,19 @@ function! Test_output_headers_and_result_lines() abort
         \ '              ________      ________',
         \ '                    1             2',
         \ '',
+        \ '',
+        \ '           LAMBDA',
+        \ '              F1',
+        \ '              ________',
+        \ ' Y1                 0',
+        \ ' Y2                13',
+        \ '',
+        \ '',
+        \ '           ESTIMATED RESIDUAL VARIANCES',
+        \ '              Y1            Y2',
+        \ '              ________      ________',
+        \ '                0.999         0.999',
+        \ '',
         \ '     THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES MAY NOT BE',
         \ '     TRUSTWORTHY FOR SOME PARAMETERS',
         \ '',
@@ -272,7 +286,7 @@ function! Test_output_headers_and_result_lines() abort
         \ 'MUTHEN & MUTHEN',
         \ '3463 Stoner Ave.']
     call s:Buffer('mplus-out', l:lines)
-    let l:headers = [2, 3, 5, 12, 16, 18, 33, 36, 47, 52]
+    let l:headers = [2, 3, 5, 12, 16, 18, 33, 36, 39, 45, 52, 60, 65]
     for l:lnum in range(1, len(l:lines))
         if l:lnum == 8
             call assert_equal(['mplusSection'], s:LineGroups(l:lnum))
@@ -282,7 +296,7 @@ function! Test_output_headers_and_result_lines() abort
             call assert_equal(-1, index(s:LineGroups(l:lnum), 'mplusHeader'), l:lines[l:lnum - 1])
         endif
     endfor
-    call assert_equal([-1, 2, 5, 8, 12, 16, 18, 33, 36, 47, 52], s:FoldStarts())
+    call assert_equal([-1, 2, 5, 8, 12, 16, 18, 33, 36, 39, 45, 52, 60, 65], s:FoldStarts())
 endfunction
 
 function! Test_printed_title_is_title_text() abort

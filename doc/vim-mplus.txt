@@ -206,15 +206,16 @@ Output files ~
 Folds span between headers in capitals and specific mixed-case headers
 from model fit output (Loglikelihood, Information Criteria, Chi-Square
 Test of Model Fit, RMSEA, SRMR, WRMR). A line in capitals is a header in
-two places. The first is column 0 (MODEL FIT INFORMATION, STANDARDIZED
+three places. The first is column 0 (MODEL FIT INFORMATION, STANDARDIZED
 MODEL RESULTS), unless the line holds a decimal number or ends with a
 slash, as the rows of the modification indices do. The second is an
 indented line with an empty line above and below it and no decimal number
-(PARAMETER SPECIFICATION under TECHNICAL 1 OUTPUT). Every other line in
-capitals is a result line, is not highlighted, and starts no fold. Examples
-are " F1       BY", the names above the columns of a matrix, the name of a
-matrix that stands directly above it (NU, THETA), and the lines of a
-message. The headers of the input that Mplus echoes at the top are shown as
+(PARAMETER SPECIFICATION under TECHNICAL 1 OUTPUT). The third is the name
+of a matrix or table (NU, LAMBDA, THETA, ESTIMATED RESIDUAL VARIANCES),
+which Mplus prints above a line of column names and a rule of underscores.
+Every other line in capitals is a result line, is not highlighted, and
+starts no fold. Examples are " F1       BY", the names above the columns of
+a matrix, and the lines of a message. The headers of the input that Mplus echoes at the top are shown as
 |mplusSection|, and one in capitals ("  MODEL:") starts a fold.
 The title that Mplus prints between the messages about the input and
 SUMMARY OF ANALYSIS is shown as |mplusTitle|, whatever its lines look like,
