@@ -435,6 +435,62 @@ function! Test_indent_after_a_do_statement() abort
         \ 'p# - q#;']))
 endfunction
 
+function! Test_indent_of_a_do_statement_over_lines() abort
+    " A DO statement ends with the semicolon of its expression, on whatever
+    " line that stands, and the loop takes no statement after it. The lines
+    " that go on with it are one level deeper, and the line after it has the
+    " indent of the line where it started, also below a DO inside a DO.
+    " Mplus 9.1.1 stops with an error at END DO in DEFINE, MODEL, MODEL
+    " CONSTRAINT, MODEL TEST, and MODEL PRIORS, so such a line is indented
+    " as any other line is.
+    call assert_equal([
+        \ 'MODEL CONSTRAINT:',
+        \ '    NEW(Q1 Q2 R);',
+        \ '    DO (1, 2)',
+        \ '        Q# = P# *',
+        \ '        2;',
+        \ '    R = Q1 + Q2;',
+        \ '    DO ($, 1, 2)',
+        \ '        DO (#, 1, 2) 0 = A$ - B#;',
+        \ '    S = 1;',
+        \ '    DO ($, 1, 2)',
+        \ '        ! a note; with a semicolon',
+        \ '        DO (#, 1, 2)',
+        \ '            0 = A$ - B#; ! the end',
+        \ '    T = 1;',
+        \ '    END DO;',
+        \ '    U = 1;',
+        \ 'OUTPUT:',
+        \ '    TECH1;'],
+        \ s:Format([
+        \ 'MODEL CONSTRAINT:',
+        \ 'NEW(q1 q2 r);',
+        \ 'DO (1, 2)',
+        \ 'q# = p# *',
+        \ '2;',
+        \ 'r = q1 + q2;',
+        \ 'DO ($, 1, 2)',
+        \ 'DO (#, 1, 2) 0 = a$ - b#;',
+        \ 's = 1;',
+        \ 'DO ($, 1, 2)',
+        \ '! a note; with a semicolon',
+        \ 'DO (#, 1, 2)',
+        \ '0 = a$ - b#; ! the end',
+        \ 't = 1;',
+        \ 'END DO;',
+        \ 'u = 1;',
+        \ 'output: tech1;']))
+    " The indent of the line below is that of the DO line, whatever it is.
+    enew!
+    call setline(1, ['DEFINE:', '        DO (1, 3)', '            d# = y# - x#;', 'e = 1;',
+        \ '  x = 1; y = 2;', '        z = 3;'])
+    set filetype=mplus-inp
+    4normal! ==
+    6normal! ==
+    call assert_equal('        e = 1;', getline(4))
+    call assert_equal('  z = 3;', getline(6))
+endfunction
+
 function! Test_whole_input() abort
     call assert_equal([
         \ 'TITLE:',

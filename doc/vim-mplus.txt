@@ -235,9 +235,13 @@ For mplus-inp files, 'indentexpr' applies contextual rules:
     - Section headers (full or abbreviated) are placed at column 0. See
       |vim-mplus-sections| for what counts as a header.
     - Lines after a section header are indented by one 'shiftwidth'.
-    - A line that starts with DO(...) and does not hold the semicolon of
-      its statement increases the indent of the next line by one level.
-      After "DO(1,6) expression;" the indent stays. END DO decreases it.
+    - A DO statement ends with the semicolon of its expression, on
+      whatever line that stands. A line that starts with DO(...) and does
+      not hold the semicolon increases the indent of the next line by one
+      level, and the line after the statement has the indent of the line
+      where the statement starts. After "DO(1,6) expression;" the indent
+      stays. Mplus has no END DO and stops with an error at it, so such a
+      line is indented as any other.
     - Other lines preserve the previous line's indentation.
 
 ==============================================================================

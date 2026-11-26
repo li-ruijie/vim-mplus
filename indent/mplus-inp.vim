@@ -10,7 +10,6 @@ setlocal indentkeys+==SAVEDATA:,=SAVE:,=PLOT:,=MONTECARLO:,=MONT:
 setlocal indentkeys+==CONSTRAINT:,=INDIRECT:,=POPULATION:,=MISSING:,=PRIORS:,=TEST:
 setlocal indentkeys+==PRIOR:,=COVERAGE:
 setlocal indentkeys+==IMPUTATION:,=TWOPART:,=WIDETOLONG:,=LONGTOWIDE:,=SURVIVAL:,=COHORT:
-setlocal indentkeys+=0=DO,0=END
 
 let b:undo_indent = "setlocal indentexpr< indentkeys<"
 
@@ -24,7 +23,6 @@ function! GetMplusInpIndent()
         return 0
     endif
 
-    let line = getline(v:lnum)
     let prev_line = getline(lnum)
     let ind = indent(lnum)
 
@@ -39,19 +37,40 @@ function! GetMplusInpIndent()
         return shiftwidth()
     endif
 
-    "" Handle DO loops
-    "" If previous line starts with DO and doesn't contain END DO, indent.
-    "" DO (1, 6) expression; is one statement, so a DO line that holds the
-    "" semicolon of its statement has nothing below it that belongs to it.
-    if prev_line =~? '^\s*DO\s*(' && prev_line !~? '\<END\s\+DO\>'
-        \ && substitute(prev_line, '!.*', '', '') !~# ';'
-        let ind = ind + shiftwidth()
+    "" DO (1, 6) expression; is one statement, which ends with the semicolon
+    "" of its expression on whatever line that stands, and the loop takes no
+    "" statement after it. Mplus has no END DO, and stops with an error at it.
+    "" A line below a DO line that does not end the statement is one level
+    "" deeper, the lines below it keep their indent, and the line after the
+    "" statement has the indent of the line where the statement starts.
+    let code = substitute(prev_line, '!.*', '', '')
+    if prev_line =~? '^\s*DO\s*(' && code !~# ';'
+        return ind + shiftwidth()
     endif
-
-    "" If current line starts with END DO, dedent
-    if line =~? '^\s*END\s\+DO\>'
-        let ind = ind - shiftwidth()
+    if code =~# ';'
+        let start = s:StatementStart(lnum)
+        if getline(start) =~? '^\s*DO\s*('
+            return indent(start)
+        endif
     endif
 
     return ind
+endfunction
+
+"" Return the line where the statement that ends on line a:lnum starts. That
+"" is the first line with code below the nearest line above that ends a
+"" statement or starts a section. Empty lines and comments hold no code.
+function! s:StatementStart(lnum)
+    let start = a:lnum
+    let lnum = a:lnum - 1
+    while lnum >= 1 && !mplus#section#Starts(lnum)
+        let code = substitute(getline(lnum), '!.*', '', '')
+        if code =~# ';'
+            break
+        elseif code =~# '\S'
+            let start = lnum
+        endif
+        let lnum -= 1
+    endwhile
+    return start
 endfunction
