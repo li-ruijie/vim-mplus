@@ -14,6 +14,8 @@ Usage:
     python kinds.py check [--exact] LIST DIR...
                                                compare the outputs under DIR with a labelled list,
                                                with --exact also every key and count
+    python kinds.py compare DUMP               compare the kinds and fold levels that dump.vim wrote
+                                               with the oracle, line by line
 
 Kinds of line, with the fold rank of the kinds that start a fold:
     banner    the lines above INPUT INSTRUCTIONS (version, MUTHEN & MUTHEN, date and time)
@@ -646,6 +648,57 @@ def check(path, roots, exact):
     return wrong + (missing + counted if exact else 0)
 
 
+def read_dump(path):
+    """Read what test/corpus/dump.vim wrote, and yield (output, errors, [(kind, level), ...])."""
+    name = None
+    for raw in Path(path).read_text(encoding="utf-8", errors="replace").splitlines():
+        if raw.startswith("= "):
+            if name is not None:
+                yield name, errors, rows
+            name, errors, rows = raw[2:], [], []
+        elif raw.startswith("! "):
+            errors.append(raw[2:])
+        else:
+            kind, level = raw.split()
+            rows.append((kind, int(level)))
+    if name is not None:
+        yield name, errors, rows
+
+
+def differences(texts, rows):
+    """Return the lines where the editor rows differ from the oracle, as (index, editor kind, editor
+    level, oracle kind, oracle level). The named kinds of plain text are plain to the editor."""
+    lines = classify(texts)
+    # The text ends with a line break, after which Python finds one more empty line.
+    if len(lines) == len(rows) + 1 and lines[-1].blank:
+        lines.pop()
+    out = []
+    for i in range(max(len(lines), len(rows))):
+        kind, level = rows[i] if i < len(rows) else ("none", -1)
+        line = lines[i] if i < len(lines) else None
+        mine = ("none", -1) if line is None else \
+            ("plain" if line.kind in ("message", "label", "colhead") else line.kind, line.level)
+        if (kind, level) != mine:
+            out.append((i, kind, level) + mine)
+    return out
+
+
+def compare(dump):
+    """Compare the outputs in a dump of the editor with the oracle line by line. Return the number of
+    lines that differ, error messages counted as lines."""
+    total = files = 0
+    for name, errors, rows in read_dump(dump):
+        files += 1
+        for message in errors:
+            total += 1
+            print(f"{name}: error: {message}")
+        for i, kind, level, okind, olevel in differences(read(name), rows):
+            total += 1
+            print(f"{name}:{i + 1}: editor {kind} {level}, oracle {okind} {olevel}")
+    print(f"{files} outputs, {total} lines differ")
+    return total
+
+
 def main(argv):
     if len(argv) >= 2 and argv[0] == "show":
         lines = classify(read(argv[1]))
@@ -677,6 +730,8 @@ def main(argv):
         exact = argv[1] == "--exact"
         rest = argv[2:] if exact else argv[1:]
         return 1 if check(rest[0], rest[1:], exact) else 0
+    if len(argv) == 2 and argv[0] == "compare":
+        return 1 if compare(argv[1]) else 0
     print(__doc__)
     return 2
 
