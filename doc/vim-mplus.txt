@@ -172,6 +172,10 @@ the colon of a header are title text or code:
 
     TITLE: Model comparison: two groups
 
+A line inside a block comment (!* ... *!) starts no section, whatever it
+looks like. It ends no fold, and the indent and the formatter do not take
+it for a header.
+
 What Mplus does with a section depends on its header:
 
     anal:               The command, here ANALYSIS.

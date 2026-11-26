@@ -170,29 +170,25 @@ endfunction
 " Describe the text above line a:lnum: the section it belongs to, whether it
 " is free text, whether it is inside a block comment, whether a new
 " statement starts on a:lnum, and whether a:lnum goes on with the value of
-" a file option. The lines between the nearest header above and a:lnum are
-" read as mplus#format#Format() reads them, so that a part of a file is
-" formatted as it is with the whole file.
+" a file option. The lines above a:lnum are read from the first one as
+" mplus#format#Format() reads them, so that a part of a file is formatted
+" as it is with the whole file, and a line in a block comment that looks
+" like a header is not taken for one.
 function! s:StateBefore(lnum) abort
     let l:state = {'section': '', 'free': 0, 'in_block': 0, 'at_start': 1,
         \ 'verbatim': 0}
-    let l:top = a:lnum - 1
-    while l:top >= 1
-        let l:header = mplus#section#Parse(getline(l:top))
-        if !empty(l:header)
-            call s:Enter(l:state, l:header)
-            break
-        endif
-        let l:top -= 1
-    endwhile
-    " Code after the colon of the header starts the first statement.
-    if l:top >= 1 && !l:state.free
-        call s:FormatCode(l:header[2], l:state)
-    endif
-    for l:line in getline(l:top + 1, a:lnum - 1)
+    for l:line in getline(1, a:lnum - 1)
         if l:state.in_block || l:line =~# '^\s*!\*'
             let l:state.in_block = l:line !~# '\*!'
-        elseif !l:state.free && l:line !~# '^\s*!'
+            continue
+        endif
+        " The code after the colon of a header starts the first statement.
+        let l:header = mplus#section#Parse(l:line)
+        if !empty(l:header)
+            call s:Enter(l:state, l:header)
+            let l:line = l:header[2]
+        endif
+        if !l:state.free && l:line !~# '^\s*!'
             call s:FormatCode(l:line, l:state)
         endif
     endfor

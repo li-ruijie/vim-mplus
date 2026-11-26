@@ -297,6 +297,22 @@ function! Test_code_on_the_header_line_is_read_from_above_a_range() abort
     call assert_equal('    model x', getline(6))
 endfunction
 
+function! Test_header_in_a_block_comment_is_no_header() abort
+    " The lines of the comment get the indent of the line above them, as
+    " every line does that is no header.
+    let l:lines = ['ANALYSIS:', '    !* notes', 'SAVEDATA: no header', '  title: no header *!',
+        \ '    esti = ml;']
+    call assert_equal(['ANALYSIS:', '    !* notes', '    SAVEDATA: no header',
+        \ '    title: no header *!', '    ESTIMATOR = ML;'], s:Format(l:lines))
+    " The section of the last line is read from above the comment.
+    enew!
+    call setline(1, l:lines)
+    set filetype=mplus-inp
+    5normal gqq
+    call assert_equal('  ESTIMATOR = ML;', getline(5))
+    call assert_equal(l:lines[0:3], getline(1, 4))
+endfunction
+
 function! Test_header_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['TITLE: a study', '  step 2: twenty sets', '  impu = y1;',

@@ -39,4 +39,11 @@ function! Test_parts_of_a_header() abort
     endfor
 endfunction
 
+function! Test_no_section_starts_in_a_block_comment() abort
+    enew!
+    call setline(1, ['!* DATA: x', 'MODEL: y', 'title: z *!', 'MODEL:', '!* one line *!',
+        \ 'OUTPUT:', '  !* open', 'PLOT:'])
+    call assert_equal([0, 0, 0, 1, 0, 1, 0, 0], map(range(1, 8), 'mplus#section#Starts(v:val)'))
+endfunction
+
 call RunTests()

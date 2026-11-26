@@ -53,9 +53,25 @@ function! mplus#section#Pattern() abort
     return s:header
 endfunction
 
-" Return whether a section starts on line a:lnum of the current buffer.
+" Return whether a section starts on line a:lnum of the current buffer. A
+" line in a block comment (!* ... *!) starts none, whatever it looks like.
+" The comment is open at the line when the nearest line above that begins
+" or ends a block comment begins one.
 function! mplus#section#Starts(lnum) abort
-    return getline(a:lnum) =~? '^\s*' . s:header
+    if getline(a:lnum) !~? '^\s*' . s:header
+        return 0
+    endif
+    let l:lnum = a:lnum - 1
+    while l:lnum >= 1
+        let l:line = getline(l:lnum)
+        if l:line =~# '\*!'
+            return 1
+        elseif l:line =~# '^\s*!\*'
+            return 0
+        endif
+        let l:lnum -= 1
+    endwhile
+    return 1
 endfunction
 
 " Take a:line apart as a section header. Return [] when no section starts

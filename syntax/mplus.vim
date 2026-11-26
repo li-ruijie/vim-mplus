@@ -460,7 +460,9 @@ syn keyword mplusStatement HPD
 
 "" Comments (defined last to override other matches)
 syn match  mplusComment "!.*$"
-syn region mplusBlockComment start="^\s*!\*" end="\*!" contains=@Spell
+"" A block comment has "extend", so that a line in it that looks like a
+"" section header does not end the fold of the section around it.
+syn region mplusBlockComment start="^\s*!\*" end="\*!" contains=@Spell extend
 
 "" Highlight links
 highlight link mplusStatement Statement

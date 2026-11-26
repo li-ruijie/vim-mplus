@@ -118,6 +118,25 @@ function! Test_title_text_on_the_title_line() abort
     call assert_equal([1, 3], s:FoldStarts())
 endfunction
 
+function! Test_header_in_a_block_comment_starts_no_fold() abort
+    call s:Buffer('mplus-inp', [
+        \ '!* DATA: a heading in a comment',
+        \ 'MODEL: and one more *!',
+        \ 'MODEL:',
+        \ '  f BY y1;',
+        \ '  !* a note',
+        \ 'DATA: this is inside the comment',
+        \ '  MODEL male: and so is this *!',
+        \ '  y ON x;',
+        \ 'OUTPUT:',
+        \ '  TECH1;'])
+    call assert_equal([-1, 3, 9], s:FoldStarts())
+    for l:lnum in [1, 2, 5, 6, 7]
+        call assert_equal(['mplusBlockComment'], s:LineGroups(l:lnum)[-1:], l:lnum)
+    endfor
+    call assert_equal('mplusModel', synIDattr(synID(8, 5, 1), 'name'))
+endfunction
+
 function! Test_section_name_in_full_or_shortened() abort
     call s:Buffer('mplus-inp', ['MODEL:', '  f BY y1;', 'modeling: x;',
         \ 'database: y;', 'models x: z;', 'plo: z;', 'anal:', '  TYPE = BASIC;',
