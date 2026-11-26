@@ -209,10 +209,82 @@ function! Test_echoed_header_in_capitals() abort
     call assert_equal(['mplusHeader'], s:LineGroups(16))
     call assert_equal(['mplusHeader'], s:LineGroups(18))
     call assert_equal(['mplusHeader'], s:LineGroups(21))
-    " The folds are those of the lines in capitals. Lines 1 and 20 are in
-    " no closed fold, the first as it is not in capitals and the other as
-    " its fold has one line.
-    call assert_equal([-1, 2, 5, 8, 10, 12, 16, 18, -1, 21], s:FoldStarts())
+    " The folds are those of the headers. Line 1 is in no fold, as it is not
+    " in capitals. Line 20 is a result line and stays in the fold of line 18.
+    call assert_equal(['mplusFold'], s:LineGroups(20))
+    call assert_equal([-1, 2, 5, 8, 10, 12, 16, 18, 21], s:FoldStarts())
+endfunction
+
+function! Test_output_headers_and_result_lines() abort
+    " A line in capitals is a header at column 0, or where it is indented
+    " and has an empty line above and below it. Result lines in capitals
+    " are no headers and start no fold.
+    let l:lines = [
+        \ 'Mplus VERSION 9.1.1',
+        \ 'MUTHEN & MUTHEN',
+        \ '11/26/2026  10:30 AM',
+        \ '',
+        \ 'INPUT INSTRUCTIONS',
+        \ '',
+        \ '  TITLE: a study',
+        \ '  MODEL:',
+        \ '    F1 BY Y1-Y3',
+        \ '       Y4;',
+        \ '',
+        \ 'INPUT READING TERMINATED NORMALLY',
+        \ '',
+        \ 'a study',
+        \ '',
+        \ 'SUMMARY OF ANALYSIS',
+        \ '',
+        \ 'MODEL RESULTS',
+        \ '',
+        \ '                    Estimate',
+        \ ' F1       BY',
+        \ '    Y1                 1.000',
+        \ ' Y2       WITH',
+        \ '    Y3               999.000',
+        \ '',
+        \ 'MINIMUM ROTATION FUNCTION VALUE       0.12345',
+        \ '',
+        \ 'ON/BY Statements',
+        \ '',
+        \ 'Y1       ON I        /',
+        \ 'I        BY Y1                     4.225     0.057',
+        \ '',
+        \ 'TECHNICAL 1 OUTPUT',
+        \ '',
+        \ '',
+        \ '     PARAMETER SPECIFICATION',
+        \ '',
+        \ '',
+        \ '           NU',
+        \ '              Y1            Y2',
+        \ '              ________      ________',
+        \ '                    1             2',
+        \ '',
+        \ '     THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES MAY NOT BE',
+        \ '     TRUSTWORTHY FOR SOME PARAMETERS',
+        \ '',
+        \ '  TECHNICAL 8 OUTPUT FOR STARTING VALUE SET 3',
+        \ '',
+        \ '   E STEP  ITER  LOGLIKELIHOOD    ABS CHANGE',
+        \ '              1  -0.21490513D+04    0.0000000',
+        \ '',
+        \ 'MUTHEN & MUTHEN',
+        \ '3463 Stoner Ave.']
+    call s:Buffer('mplus-out', l:lines)
+    let l:headers = [2, 3, 5, 12, 16, 18, 33, 36, 47, 52]
+    for l:lnum in range(1, len(l:lines))
+        if l:lnum == 8
+            call assert_equal(['mplusSection'], s:LineGroups(l:lnum))
+        elseif index(l:headers, l:lnum) >= 0
+            call assert_equal(['mplusHeader'], s:LineGroups(l:lnum), l:lines[l:lnum - 1])
+        else
+            call assert_equal(-1, index(s:LineGroups(l:lnum), 'mplusHeader'), l:lines[l:lnum - 1])
+        endif
+    endfor
+    call assert_equal([-1, 2, 5, 8, 12, 16, 18, 33, 36, 47, 52], s:FoldStarts())
 endfunction
 
 function! Test_printed_title_is_title_text() abort

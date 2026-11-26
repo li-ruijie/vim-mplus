@@ -33,11 +33,13 @@ mplus-inp.vim                    mplus-out.vim
 mplus-inp.vim adds:          mplus-out.vim defines:
   mplusFold regions            mplusComment  (! comments)
   matchgroup=mplusSection      mplusSection  (%labels%, echoed headers)
-  ^TITLE:  (contains mplusTitle) mplusHeader (timestamp + all-caps lines
+  ^TITLE:  (contains mplusTitle) mplusHeader (timestamp + headers in capitals
                                               + mixed-case syn matches)
-  ^(SECTION)(\s\S+)?:         mplusFold     (between all-caps headers
+  ^(SECTION)(\s\S+)?:         mplusFold     (between headers in capitals
                                               + mixed-case fit headers)
-                               \C^\s*\u[A-Z 0-9/,&():.*%=-]+$
+                               \C^\u[A-Z 0-9/,&():.*%=-]+$ at column 0,
+                               or indented between two empty lines,
+                               and without a decimal number
                                mplusTitle    (the printed title, up to
                                               SUMMARY OF ANALYSIS)
 ```
@@ -671,7 +673,11 @@ highlighted as mplusSection in the base file.
 │ Pattern                                 │ Group   │
 ├─────────────────────────────────────────┼─────────┤
 │ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header  │
-│ \C^\s*\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
+│ \C^\u[A-Z 0-9/,&():.*%=-]+$ (output)    │ Header  │
+│   no decimal number, no slash at end    │         │
+│ \C^\s+\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
+│   empty line above and below, and no    │         │
+│   decimal number                        │         │
 │ Mixed-case fit headers (output)         │ Header  │
 │ ^\s*(SECTION)(\s+[^: \t]+)?\s*:         │ Section │
 │   (input, and the input in an output)   │         │
