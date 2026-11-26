@@ -4,9 +4,10 @@
 " written for the purpose: kinds-lca.out is a latent class analysis with
 " random starts, CROSSTABS, TECH1, and TECH8, kinds-boot.out a factor model
 " with bootstrap draws, TECH9, and an OUTPUT option that Mplus ignores with
-" an error, and kinds-efa.out an exploratory factor analysis of binary items
-" with warnings. test/corpus/check-syntax.sh holds the syntax to the same
-" rules on every line of the example outputs.
+" an error, kinds-efa.out an exploratory factor analysis of binary items
+" with warnings, and kinds-groups.out CROSSTABS in an analysis of two
+" groups. test/corpus/check-syntax.sh holds the syntax to the same rules on
+" every line of the example outputs.
 
 source <sfile>:p:h/common.vim
 
@@ -99,6 +100,12 @@ function! Test_kinds_of_lines() abort
         \ [57, 'mplusPart', 1], [73, 'mplusWarning', 1], [76, 'mplusWarning', 1],
         \ [77, 'mplusWarning', 1], [82, 'mplusPart', 1], [85, 'mplusTable', 2],
         \ [86, 'mplusTableFold', 2], [91, 'mplusPart', 1], [94, 'mplusPart', 1]])
+    " In an analysis of groups the pair of CROSSTABS stands directly below the
+    " line that names the group, and is a sub-header there too.
+    call s:CheckLines('kinds-groups.out', [
+        \ [77, 'mplusPart', 1], [79, 'mplusPartFold', 1], [80, 'mplusSub', 2],
+        \ [83, 'mplusSubFold', 2], [91, 'mplusSubFold', 2], [97, 'mplusSubFold', 2],
+        \ [98, 'mplusSub', 2], [117, 'mplusStatus', 0]])
 endfunction
 
 function! Test_fold_starts() abort
@@ -122,6 +129,9 @@ function! Test_fold_starts() abort
         call assert_equal([-1, -1, -1], map(copy(l:starts), 'index(v:val, l:lnum)'),
             \ 'no start ' . l:lnum)
     endfor
+    bwipeout!
+    call s:Edit('kinds-groups.out')
+    call assert_equal([80, 98], filter(s:Starts(2), 'v:val > 77 && v:val < 117'))
     bwipeout!
 endfunction
 

@@ -44,8 +44,8 @@ let s:alone = '\%(\n\s*$\|\%$\)\@='
 "" the pair of variables of a table of CROSSTABS ("U1 AND U2"). The $ stands
 "" in a group of its own, so that it means the end of the line whatever
 "" follows it.
-let s:labels = '\%(CFI\/TLI\|CLASS \d\+\|WITHIN\|BETWEEN\|VARIABLE SET \d\+'
-    \ . '\|\u[[:alnum:]_#$&.]* AND \u[[:alnum:]_#$&.]*\)\%(\s*$\)'
+let s:pair = '\u[[:alnum:]_#$&.]* AND \u[[:alnum:]_#$&.]*'
+let s:labels = '\%(CFI\/TLI\|CLASS \d\+\|WITHIN\|BETWEEN\|VARIABLE SET \d\+\|' . s:pair . '\)\%(\s*$\)'
 
 "" A part header: a line at column 0 in capitals that starts with a capital
 "" letter and has an empty line above, alone or with a second line of the
@@ -64,13 +64,16 @@ let s:otherpart = '^\%(TECHNICAL\)\@!\u\@=' . s:above . s:part1 . '.*\%(\n' . s:
 "" lowercase letter and single spaces between its words (Loglikelihood,
 "" Latent Class 1, STDYX Standardization). The line above is empty or
 "" indented, or ends a sentence, so that a label directly below the heads of
-"" the columns counts too. A second line may follow it at column 0, or
+"" the columns counts too. In an analysis of groups the pair of CROSSTABS
+"" stands directly below the indented line that names the group ("  Group
+"" MALE"). A second line may follow a sub-header at column 0, or
 "" indented when it starts with a parenthesis ("     (Ordinal) Outcomes").
 "" The start of a region inside a region whose end pattern spans lines ends
 "" with its first line, so the second line is a match of its own (s:sub2).
 let s:sub0text = s:low . s:nogap . s:nodec . s:noend . s:nomsg
 let s:sub2text = '\%(\S\|\s\+(\)\@=' . s:sub0text . '.*'
-let s:sub0 = '^\u\@=\%(' . s:above . s:labels . s:alone
+let s:sub0 = '^\u\@=\%(\%(' . s:above . s:labels
+    \ . '\|\%(^\s.*\n\)\@<=' . s:pair . '\%(\s*$\)\)' . s:alone
     \ . '\|' . s:sub0text . '\%(\%(^\|^\s.*\|^.*\a\a\.\s*\)\n\)\@<=.*'
     \ . '\%(\%(\n' . s:sub2text . '\)\=\%(\n\s*$\|\%$\)\)\@=\)'
 let s:sub2 = '^\%(^\u.*\n\)\@<=' . s:sub2text . s:alone

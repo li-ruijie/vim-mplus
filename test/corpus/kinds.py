@@ -93,6 +93,9 @@ MESSAGE = re.compile(r"^\s*(?:THE |The |NOTE:|\*|INPUT READING TERMINATED NORMAL
 # that older versions print in capitals, and the pair of variables of a table of CROSSTABS.
 CAPS_LABEL = re.compile(r"^(?:CFI/TLI|CLASS \d+|WITHIN|BETWEEN|VARIABLE SET \d+"
                         r"|[A-Z][\w#$&.]* AND [A-Z][\w#$&.]*)\s*$")
+# The pair of CROSSTABS, which in an analysis of groups stands directly below the indented line
+# that names the group ("  Group MALE").
+PAIR = re.compile(r"^[A-Z][\w#$&.]* AND [A-Z][\w#$&.]*\s*$")
 
 # The first words of a message that Mplus marks as a problem, or that tells of a failed or doubtful
 # estimation. Mplus words these messages as it words its other messages, so only the wording tells
@@ -393,7 +396,8 @@ def _header(lines, i):
         line.kind = "part"
         if not alone_below:
             below.kind = "part2"
-    elif not line.indent and line.up and CAPS_LABEL.match(text) and alone_below:
+    elif not line.indent and (line.up and CAPS_LABEL.match(text) or line.prev == "i" and PAIR.match(text)) \
+            and alone_below:
         line.kind = "sub"
     elif not line.indent and (line.up or line.prev in ("i", "s")) and _col0_sub_line(text) \
             and (alone_below or cont(_col0_sub_line, indented=True)):
