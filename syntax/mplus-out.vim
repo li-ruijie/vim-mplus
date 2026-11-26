@@ -87,9 +87,11 @@ execute 'syn region mplusFold matchgroup=mplusSection'
 "" follow it. The output of a run that was ended ends with the title.
 "" The title is title text whatever it looks like, so nothing is matched in
 "" it, and the region has "extend", so that a title line in capitals does not
-"" end the fold around it and start another.
+"" end the fold around it and start another. The region starts on the empty
+"" line that Mplus writes after either of the two lines, and its pattern
+"" tests that a line is empty before it looks back at the line above.
 syn region mplusTitle extend
-    \ start="^\%(\%(INPUT READING TERMINATED NORMALLY\|\s*\d\+ WARNING(S) FOUND IN THE INPUT INSTRUCTIONS\)\s*\n\)\@<="
+    \ start="^\_$\%(\%(INPUT READING TERMINATED NORMALLY\|\s*\d\+ WARNING(S) FOUND IN THE INPUT INSTRUCTIONS\)\s*\n\)\@<="
     \ end="^\zeSUMMARY OF ANALYSIS\s*$\|^\ze\s\+\S\|^\ze\*\*\* FATAL ERROR\s*\n\%(\s*\n\)*\s\+\S"
 
 "" Highlight links
