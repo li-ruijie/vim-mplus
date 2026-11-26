@@ -80,6 +80,17 @@ function! s:Expand(word, section) abort
     return a:word
 endfunction
 
+" Return whether the header line that mplus#section#Parse() took apart as
+" a:header stays as written. That holds for a header that Mplus does not
+" read, and for one whose text after the colon would be a header itself on
+" a line of its own. Mplus takes a command only at the start of a line, so
+" "TITLE: Model comparison: two groups" is a title, and "MODEL: MODEL: y ON
+" x;" is an error. With the text moved down, Mplus would end the title at
+" it, and it would accept the second input.
+function! s:Kept(header) abort
+    return !a:header[3] || !empty(mplus#section#Parse(a:header[2]))
+endfunction
+
 " Enter in a:state the section that starts with a:header, which is a result
 " of mplus#section#Parse(). The lines of a TITLE are free text. So are the
 " lines under a header that Mplus does not read, since it passes over them.
@@ -174,6 +185,10 @@ function! s:StateBefore(lnum) abort
         endif
         let l:top -= 1
     endwhile
+    " Code after the colon of the header starts the first statement.
+    if l:top >= 1 && !l:state.free
+        call s:FormatCode(l:header[2], l:state)
+    endif
     for l:line in getline(l:top + 1, a:lnum - 1)
         if l:state.in_block || l:line =~# '^\s*!\*'
             let l:state.in_block = l:line !~# '\*!'
@@ -286,12 +301,16 @@ function! mplus#format#Format() abort
         " (MODEL INDIRECT:). The name is written in full and any content
         " after the colon moves to a line of its own. A header that Mplus
         " does not read (MODE INDIRECT:) stays as written, since the full
-        " name would make Mplus read the section.
+        " name would make Mplus read the section. So does a header with
+        " text after the colon that would be a header on its own line.
         let l:header = mplus#section#Parse(l:line)
         if !empty(l:header)
             call s:Enter(l:state, l:header)
-            if !l:header[3]
+            if s:Kept(l:header)
                 call setline(l:lnum, l:line)
+                if !l:state.free
+                    call s:FormatCode(l:header[2], l:state)
+                endif
             else
                 call setline(l:lnum, l:header[0]
                     \ . (l:header[1] ==# '' ? '' : ' ' . l:header[1]) . ':')

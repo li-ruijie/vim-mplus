@@ -104,6 +104,18 @@ function! Test_title_text() abort
     call assert_equal([1, 4, 6, 9], s:FoldStarts())
 endfunction
 
+function! Test_title_text_on_the_title_line() abort
+    " Text on the TITLE: line is title text, whatever it looks like.
+    call s:Buffer('mplus-inp', [
+        \ "TITLE:\tModel comparison: two groups",
+        \ '  and more text',
+        \ 'DATA:',
+        \ '  FILE = x.dat;'])
+    call assert_equal(['mplusStatement', 'mplusTitle'], s:LineGroups(1))
+    call assert_equal(['mplusTitle'], s:LineGroups(2))
+    call assert_equal([1, 3], s:FoldStarts())
+endfunction
+
 function! Test_section_name_in_full_or_shortened() abort
     call s:Buffer('mplus-inp', ['MODEL:', '  f BY y1;', 'modeling: x;',
         \ 'database: y;', 'models x: z;', 'plo: z;', 'anal:', '  TYPE = BASIC;',

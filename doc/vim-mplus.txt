@@ -166,6 +166,11 @@ These lines end a title, since Mplus reads each as a command:
     data: one file
     Variable names: a list
 
+Mplus takes a command only at the start of a line. The same words after
+the colon of a header are title text or code:
+
+    TITLE: Model comparison: two groups
+
 What Mplus does with a section depends on its header:
 
     anal:               The command, here ANALYSIS.
@@ -236,6 +241,10 @@ selected range:
     - Preserves a header that Mplus does not read, such as
       "mode indirect:", and the lines of its section (whitespace cleanup
       only). See |vim-mplus-sections|.
+    - Preserves a header line whose text after the colon would be a header
+      on a line of its own ("TITLE: Model comparison: two groups"). On
+      the line of its header Mplus reads that text as title text or code,
+      and moved down it would start a section.
     - Uppercases all code (Mplus is case-insensitive; standard convention).
       Quoted strings and file names keep their spelling, since a file name
       is case-sensitive outside Windows. The options that take a file name

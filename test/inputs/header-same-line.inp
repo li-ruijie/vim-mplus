@@ -1,0 +1,4 @@
+TITLE:	a command name after a header is no header
+DATA:	FILE IS data.dat;
+VARIABLE:	NAMES ARE y x;
+MODEL:	MODEL: y ON x;

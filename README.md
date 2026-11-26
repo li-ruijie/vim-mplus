@@ -50,6 +50,9 @@ followed by a colon at once or after one more word (`DATA:`, `anal:`,
 `Model comparison:`). A header that Mplus does not read, such as
 `mode indirect:`, is left as written together with its section, since
 Mplus passes over that section and would read it under `MODEL INDIRECT:`.
+Text after the colon of a header that would be a header on a line of its
+own (`TITLE: Model comparison: two groups`) stays on the line of its
+header, where Mplus reads it as title text.
 The formatter also sets `fileformat=unix` and `fileencoding=utf-8` to avoid
 encoding issues across platforms.
 

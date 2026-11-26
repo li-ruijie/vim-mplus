@@ -1,0 +1,4 @@
+TITLE:	this is a test of Model comparison: two groups
+DATA:	FILE IS data.dat;
+VARIABLE:	NAMES ARE y x;
+MODEL:	y ON x;

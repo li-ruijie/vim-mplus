@@ -5,8 +5,8 @@
 #   partial   the first 10 inputs of every chapter of examples (the default)
 #   full      every input
 #
-# Every example input is run through Mplus as it is and again after gq has
-# formatted it. The two runs have to end with the same exit status and the
+# Every example input, and every input of test/inputs/, is run through Mplus
+# as it is and again after gq has formatted it. The two runs have to end with the same exit status and the
 # same output below the echoed input. That output holds the messages about
 # the input, the summary of the analysis, and the model results. Four
 # things are left out of the comparison: the lines that give a time, the
@@ -75,20 +75,21 @@ native_path() {
     fi
 }
 
-# The inputs in the order of their numbers. A chapter is a directory and
-# the start of a name up to its first dot (ex3, mcex3).
-mapfile -t FILES < <(find "$EXAMPLES" -name '*.inp' 2>/dev/null | sort -V |
-    awk -F/ -v mode="$MODE" '{
-        chapter = $NF
-        sub(/\..*/, "", chapter)
-        if (mode == "full" || ++count[substr($0, 1, length($0) - length($NF)) chapter] <= 10)
-            print
-    }')
+# The inputs of test/inputs/ come first, in both modes. They hold what no
+# example has, such as a title that looks like a section header. The
+# examples follow in the order of their numbers. A chapter is a directory
+# and the start of a name up to its first dot (ex3, mcex3).
+mapfile -t FILES < <(
+    find "$TEST_DIR/inputs" -name '*.inp' | sort
+    find "$EXAMPLES" -name '*.inp' 2>/dev/null | sort -V |
+        awk -F/ -v mode="$MODE" '{
+            chapter = $NF
+            sub(/\..*/, "", chapter)
+            if (mode == "full" || ++count[substr($0, 1, length($0) - length($NF)) chapter] <= 10)
+                print
+        }'
+)
 TOTAL=${#FILES[@]}
-if [[ $TOTAL -eq 0 ]]; then
-    echo "ERROR: no *.inp files were found in $EXAMPLES"
-    exit 1
-fi
 
 WORK="${MPLUS_TEST_DIR:-$(mktemp -d)}"
 mkdir -p "$WORK/original" "$WORK/formatted"
@@ -100,7 +101,7 @@ report() {
 }
 
 report "Mplus: $MPLUS"
-report "Mode: $MODE, $TOTAL inputs from $EXAMPLES"
+report "Mode: $MODE, $TOTAL inputs from test/inputs/ and $EXAMPLES"
 report "Runs: $WORK"
 report "---"
 

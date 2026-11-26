@@ -255,6 +255,48 @@ function! Test_statement_is_read_from_above_a_range() abort
     call assert_equal('    = MLR; TYPE =', getline(7))
 endfunction
 
+function! Test_text_after_a_header_that_looks_like_a_header() abort
+    " Mplus takes a command only at the start of a line. Text after the
+    " colon of a header is title text or code, also when it would be a
+    " header on a line of its own, so it stays on the line of its header.
+    call assert_equal([
+        \ 'TITLE:    Model comparison: two groups',
+        \ 'DATA:',
+        \ '    FILE = x.dat;'],
+        \ s:Format(["TITLE:\tModel comparison: two groups", 'data: file is x.dat;']))
+    call assert_equal([
+        \ 'title: Data notes: collected in 2020',
+        \ '    and a second line',
+        \ 'DATA:'],
+        \ s:Format(['title: Data notes: collected in 2020', 'and a second line', 'DATA:']))
+    call assert_equal([
+        \ 'TITLE: anal: x',
+        \ 'MODEL: MODEL: y ON x1',
+        \ '    X3;',
+        \ 'OUTPUT:',
+        \ '    TECH1;'],
+        \ s:Format(['TITLE: anal: x', 'MODEL: MODEL: y ON x1', 'x3;', 'output: tech1;']))
+    " Text that is no header on its own line moves down as before.
+    call assert_equal([
+        \ 'TITLE:',
+        \ '    this is a test of Model comparison: two groups',
+        \ 'DATA:'],
+        \ s:Format(['TITLE: this is a test of Model comparison: two groups', 'DATA:']))
+endfunction
+
+function! Test_code_on_the_header_line_is_read_from_above_a_range() abort
+    enew!
+    call setline(1, ['DATA: FILE IS', '    Mixed.dat;', 'ANALYSIS: esti', '    = mlr;',
+        \ 'TITLE: Model comparison: two groups', '    model x'])
+    set filetype=mplus-inp
+    2normal gqq
+    call assert_equal('    Mixed.dat;', getline(2))
+    4normal gqq
+    call assert_equal('    = MLR;', getline(4))
+    6normal gqq
+    call assert_equal('    model x', getline(6))
+endfunction
+
 function! Test_header_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['TITLE: a study', '  step 2: twenty sets', '  impu = y1;',
