@@ -41,8 +41,8 @@ header is none:
 A fold of rank r runs from its header to the line above the next header of rank r or lower, and
 holds the folds of higher rank that start inside it. A table directly under a part is at level 2.
 The echoed input ends at its first line with text at column 0, and the folds open in it end there.
-A sub-header at column 0 holds the lines below it up to the next line with text at column 0 that is
-no row of numbers. The footer ends every fold.
+A sub-header at column 0 holds the lines below it up to the next line with text at column 0 that has
+an empty line above it and is no row of numbers. The footer ends every fold.
 
 The status block tells how the estimation ended. It opens at the status line THE MODEL ESTIMATION
 TERMINATED NORMALLY at column 0, at the error of an estimation that did not terminate normally
@@ -427,8 +427,8 @@ def _levels(lines, echo_end, foot, block):
             if i in block:
                 continue
         rank = RANK.get(line.kind)
-        if rank is None and not line.blank and not line.indent and line.kind not in ("sub2", "part2") \
-                and not is_row(line.text):
+        if rank is None and not line.blank and not line.indent and line.up \
+                and line.kind not in ("sub2", "part2") and not is_row(line.text):
             for k, entry in enumerate(stack):
                 if entry[1]:
                     del stack[k:]
