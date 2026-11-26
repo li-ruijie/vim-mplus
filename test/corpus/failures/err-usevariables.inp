@@ -1,0 +1,6 @@
+! USEVARIABLES names X9, which is neither in NAMES nor defined.
+TITLE: err-usevariables
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 x9;
+MODEL: y1 ON x1;

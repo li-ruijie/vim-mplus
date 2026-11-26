@@ -1,0 +1,6 @@
+! A continuous variable is declared CATEGORICAL.
+TITLE: err-categorical-values
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1-y3; CATEGORICAL = y1;
+MODEL: f BY y1-y3;

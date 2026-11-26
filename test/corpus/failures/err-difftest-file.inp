@@ -1,0 +1,7 @@
+! DIFFTEST names a file of derivatives that does not exist.
+TITLE: err-difftest-file
+DATA: FILE = binary.dat;
+VARIABLE: NAMES = u1-u4 xb;
+  USEVARIABLES = u1-u3; CATEGORICAL = u1-u3;
+ANALYSIS: ESTIMATOR = WLSMV; DIFFTEST = nosuch.dat;
+MODEL: f BY u1-u3;

@@ -1,0 +1,6 @@
+! A label in MODEL has no closing parenthesis.
+TITLE: err-parenthesis
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 x2;
+MODEL: y1 ON x1 (a;

@@ -1,0 +1,5 @@
+! The data have three columns for four names. Mplus reads two lines a case.
+TITLE: misread-columns
+DATA: FILE = short.dat;
+VARIABLE: NAMES = y1-y4;
+MODEL: f BY y1-y4;

@@ -1,0 +1,7 @@
+! No case has U1 = 1 and U2 = 0.
+TITLE: empty-cell
+DATA: FILE = binary.dat;
+VARIABLE: NAMES = u1-u4 xb;
+  USEVARIABLES = u1-u3; CATEGORICAL = u1-u3;
+MODEL: f BY u1-u3;
+OUTPUT: CROSSTABS;

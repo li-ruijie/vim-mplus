@@ -1,0 +1,8 @@
+! A Monte Carlo study with two iterations for each replication.
+TITLE: noconv-montecarlo
+MONTECARLO: NAMES = y1-y4; NOBSERVATIONS = 100; NREPS = 5;
+  SEED = 4533;
+MODEL POPULATION: f BY y1-y4*.8; f@1; y1-y4*.36;
+ANALYSIS: ITERATIONS = 2;
+MODEL: f BY y1-y4*.8; f@1;
+OUTPUT: TECH9;

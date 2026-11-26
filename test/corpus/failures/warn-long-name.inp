@@ -1,0 +1,7 @@
+! The variable names are longer than eight characters.
+TITLE: warn-long-name
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = response1 response2 response3 response4
+    response5 response6 covariate1 covariate2;
+  USEVARIABLES = response1 covariate1;
+MODEL: response1 ON covariate1;

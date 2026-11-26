@@ -1,0 +1,6 @@
+! Three latent classes of three binary items, more parameters than cells.
+TITLE: mixture-nonid
+DATA: FILE = lca.dat;
+VARIABLE: NAMES = u1-u6; USEVARIABLES = u1-u3;
+  CATEGORICAL = u1-u3; CLASSES = c (3);
+ANALYSIS: TYPE = MIXTURE; STARTS = 20 4;

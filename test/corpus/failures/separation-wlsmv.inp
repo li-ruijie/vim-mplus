@@ -1,0 +1,6 @@
+! U4 equals XB, in a probit regression with WLSMV.
+TITLE: separation-wlsmv
+DATA: FILE = binary.dat;
+VARIABLE: NAMES = u1-u4 xb;
+  USEVARIABLES = u3 u4 xb; CATEGORICAL = u3 u4;
+MODEL: u3 u4 ON xb;

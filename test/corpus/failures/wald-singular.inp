@@ -1,0 +1,9 @@
+! MODEL TEST states the same restriction twice.
+TITLE: wald-singular
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 x2;
+MODEL: y1 ON x1 (a);
+  y1 ON x2 (b);
+MODEL TEST: 0 = a - b;
+  0 = 2*a - 2*b;

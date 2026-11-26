@@ -1,0 +1,5 @@
+! A FORMAT of fixed columns is given for data in free format.
+TITLE: misread-format
+DATA: FILE = cont.dat; FORMAT = 8F4.1;
+VARIABLE: NAMES = y1-y6 x1 x2;
+MODEL: f1 BY y1-y3; f2 BY y4-y6;

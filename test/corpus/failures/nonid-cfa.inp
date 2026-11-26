@@ -1,0 +1,6 @@
+! A factor with two indicators, its variance and both loadings free.
+TITLE: nonid-cfa
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 y2;
+MODEL: f BY y1* y2; f*;

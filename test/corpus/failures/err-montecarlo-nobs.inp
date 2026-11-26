@@ -1,0 +1,5 @@
+! MONTECARLO has no NOBSERVATIONS.
+TITLE: err-montecarlo-nobs
+MONTECARLO: NAMES = y1-y4; NREPS = 2;
+MODEL POPULATION: f BY y1-y4*.8; f@1; y1-y4*.36;
+MODEL: f BY y1-y4*.8;

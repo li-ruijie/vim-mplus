@@ -1,0 +1,8 @@
+! TYPE = TWOLEVEL is given without CLUSTER.
+TITLE: err-no-cluster
+DATA: FILE = twolevel.dat;
+VARIABLE: NAMES = y x w v clus;
+  USEVARIABLES = y x; WITHIN = x;
+ANALYSIS: TYPE = TWOLEVEL;
+MODEL: %WITHIN%
+  y ON x;

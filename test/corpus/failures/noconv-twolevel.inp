@@ -1,0 +1,10 @@
+! A random slope model with two EM iterations at most.
+TITLE: noconv-twolevel
+DATA: FILE = twolevel.dat;
+VARIABLE: NAMES = y x w v clus;
+  USEVARIABLES = y x; WITHIN = x; CLUSTER = clus;
+ANALYSIS: TYPE = TWOLEVEL RANDOM; MITERATIONS = 2;
+MODEL: %WITHIN%
+  s | y ON x;
+  %BETWEEN%
+  y WITH s;

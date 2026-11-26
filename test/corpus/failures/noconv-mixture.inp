@@ -1,0 +1,6 @@
+! A latent class model with two EM iterations at most and no random starts.
+TITLE: noconv-mixture
+DATA: FILE = lca.dat;
+VARIABLE: NAMES = u1-u6; CATEGORICAL = u1-u6;
+  CLASSES = c (2);
+ANALYSIS: TYPE = MIXTURE; STARTS = 0; MITERATIONS = 2;

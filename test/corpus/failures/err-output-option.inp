@@ -1,0 +1,6 @@
+! OUTPUT asks for TECH99, which Mplus does not know.
+TITLE: err-output-option
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+MODEL: f1 BY y1-y3; f2 BY y4-y6;
+OUTPUT: TECH1 TECH99;

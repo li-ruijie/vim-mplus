@@ -1,0 +1,6 @@
+! A line is longer than the 90 characters that Mplus reads.
+TITLE: warn-long-line
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 x2;
+MODEL: y1 ON x1 x2;                                         ! this comment runs past the 90th character

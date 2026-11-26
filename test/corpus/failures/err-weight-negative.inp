@@ -1,0 +1,7 @@
+! The sampling weight takes negative values.
+TITLE: err-weight-negative
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1; WEIGHT = x2;
+ANALYSIS: ESTIMATOR = MLR;
+MODEL: y1 ON x1;

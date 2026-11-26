@@ -1,0 +1,6 @@
+! EFA with three iterations at most.
+TITLE: noconv-efa
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1-y6;
+ANALYSIS: TYPE = EFA 1 3; ITERATIONS = 3;

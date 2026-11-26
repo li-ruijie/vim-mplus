@@ -1,0 +1,6 @@
+! EFA with three factors of six variables, which leaves no degrees of freedom.
+TITLE: efa-overfactor
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1-y6;
+ANALYSIS: TYPE = EFA 3 3;

@@ -1,0 +1,7 @@
+! XS is the difference of X1 and X2, so the covariates are collinear.
+TITLE: npd-x-singular
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 x2 xs;
+DEFINE: xs = x1 - x2;
+MODEL: y1 ON x1 x2 xs;

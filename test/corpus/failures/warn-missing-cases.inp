@@ -1,0 +1,6 @@
+! Some cases are missing on all outcomes, and some on the covariate.
+TITLE: warn-missing-cases
+DATA: FILE = missing.dat;
+VARIABLE: NAMES = y1-y3 x; MISSING = ALL (-99);
+MODEL: y1-y3 ON x;
+OUTPUT: PATTERNS;

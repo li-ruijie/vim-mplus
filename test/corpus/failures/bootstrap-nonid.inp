@@ -1,0 +1,7 @@
+! Bootstrap standard errors for the model of nonid-cfa.
+TITLE: bootstrap-nonid
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 y2;
+ANALYSIS: BOOTSTRAP = 20;
+MODEL: f BY y1* y2; f*;

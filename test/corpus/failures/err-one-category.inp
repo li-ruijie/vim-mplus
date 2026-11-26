@@ -1,0 +1,7 @@
+! USEOBSERVATIONS leaves one category of the categorical variable U2.
+TITLE: err-one-category
+DATA: FILE = binary.dat;
+VARIABLE: NAMES = u1-u4 xb;
+  USEVARIABLES = u1-u3; CATEGORICAL = u1-u3;
+  USEOBSERVATIONS = u2 EQ 1;
+MODEL: f BY u1-u3;

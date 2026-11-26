@@ -1,0 +1,7 @@
+! U4 equals XB, so the logistic regression has no finite estimate.
+TITLE: separation-ml
+DATA: FILE = binary.dat;
+VARIABLE: NAMES = u1-u4 xb;
+  USEVARIABLES = u4 xb; CATEGORICAL = u4;
+ANALYSIS: ESTIMATOR = ML;
+MODEL: u4 ON xb;

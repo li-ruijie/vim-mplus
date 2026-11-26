@@ -1,0 +1,8 @@
+! The model has more parameters than the three variables have moments.
+TITLE: nonid-negative-df
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1-y3;
+MODEL: f BY y1* y2 y3;
+  f;
+  y1 WITH y2; y1 WITH y3; y2 WITH y3;

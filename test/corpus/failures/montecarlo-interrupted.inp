@@ -1,0 +1,6 @@
+! A Monte Carlo study too long for the time limit, which ends the run.
+TITLE: montecarlo-interrupted
+MONTECARLO: NAMES = y1-y8; NOBSERVATIONS = 2000;
+  NREPS = 100000; SEED = 381;
+MODEL POPULATION: f BY y1-y8*.8; f@1; y1-y8*.36;
+MODEL: f BY y1-y8*.8; f@1;
