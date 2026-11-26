@@ -651,16 +651,18 @@ def check(path, roots, exact):
 def read_dump(path):
     """Read what test/corpus/dump.vim wrote, and yield (output, errors, [(kind, level), ...])."""
     name = None
-    for raw in Path(path).read_text(encoding="utf-8", errors="replace").splitlines():
-        if raw.startswith("= "):
-            if name is not None:
-                yield name, errors, rows
-            name, errors, rows = raw[2:], [], []
-        elif raw.startswith("! "):
-            errors.append(raw[2:])
-        else:
-            kind, level = raw.split()
-            rows.append((kind, int(level)))
+    with open(path, encoding="utf-8", errors="replace") as handle:
+        for raw in handle:
+            raw = raw.rstrip("\r\n")
+            if raw.startswith("= "):
+                if name is not None:
+                    yield name, errors, rows
+                name, errors, rows = raw[2:], [], []
+            elif raw.startswith("! "):
+                errors.append(raw[2:])
+            else:
+                kind, level = raw.split()
+                rows.append((kind, int(level)))
     if name is not None:
         yield name, errors, rows
 
