@@ -219,7 +219,9 @@ a matrix, and the lines of a message. The headers of the input that Mplus echoes
 |mplusSection|, and one in capitals ("  MODEL:") starts a fold.
 The title that Mplus prints between the messages about the input and
 SUMMARY OF ANALYSIS is shown as |mplusTitle|, whatever its lines look like,
-and starts no fold.
+and starts no fold. In the output of a run that stops after the title, the
+title ends before the first indented line, which no line of a title is, or
+before a line *** FATAL ERROR with an indented message below it.
 
 ==============================================================================
 6. INDENTATION                                         *vim-mplus-indentation*

@@ -76,12 +76,21 @@ execute 'syn region mplusFold matchgroup=mplusSection'
 "" about the input and the summary of the analysis. The messages end with the
 "" line INPUT READING TERMINATED NORMALLY or, when there were warnings, with
 "" the line that counts them. Every one of the 428 example outputs has one of
-"" the two lines and the summary. The title is title text whatever it looks
-"" like, so nothing is matched in it, and the region has "extend", so that a
-"" title line in capitals does not end the fold around it and start another.
+"" the two lines and the summary. A run that stops after the title has no
+"" summary, and there the title ends at the first line that cannot belong to
+"" it. Mplus prints every line of the title without its indent, so an
+"" indented line ends it (the warnings about a singular sample covariance
+"" matrix). A run that Mplus stops has the line *** FATAL ERROR after the
+"" title, with the indented lines of the message below it. That line ends
+"" the title where the next line with text is indented, so a title line of
+"" the same text ends the title only when it is the last one and warnings
+"" follow it. The output of a run that was ended ends with the title.
+"" The title is title text whatever it looks like, so nothing is matched in
+"" it, and the region has "extend", so that a title line in capitals does not
+"" end the fold around it and start another.
 syn region mplusTitle extend
     \ start="^\%(\%(INPUT READING TERMINATED NORMALLY\|\s*\d\+ WARNING(S) FOUND IN THE INPUT INSTRUCTIONS\)\s*\n\)\@<="
-    \ end="^\zeSUMMARY OF ANALYSIS\s*$"
+    \ end="^\zeSUMMARY OF ANALYSIS\s*$\|^\ze\s\+\S\|^\ze\*\*\* FATAL ERROR\s*\n\%(\s*\n\)*\s\+\S"
 
 "" Highlight links
 highlight link mplusSection Include

@@ -1,0 +1,28 @@
+Mplus VERSION 9.1.1
+MUTHEN & MUTHEN
+11/26/2026   1:05 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: a run that stops after the title
+    MODEL RESULTS OF THE RUN
+        an indented line
+
+    after an empty line
+  MONTECARLO: NAMES ARE y1-y6; NOBSERVATIONS = 5000; NREPS = 100000;
+    SEED = 1;
+  MODEL POPULATION: f1 BY y1-y3*1; f2 BY y4-y6*1; f1-f2@1; y1-y6*.5;
+  MODEL: f1 BY y1-y3*1; f2 BY y4-y6*1; f1-f2@1; y1-y6*.5;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+a run that stops after the title
+MODEL RESULTS OF THE RUN
+an indented line
+
+after an empty line
+

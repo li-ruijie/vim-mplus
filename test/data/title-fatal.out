@@ -1,0 +1,30 @@
+Mplus VERSION 9.1.1
+MUTHEN & MUTHEN
+11/26/2026   1:05 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: a run that stops after the title
+    MODEL RESULTS OF THE RUN
+        an indented line
+
+    after an empty line
+  MONTECARLO: NAMES ARE y1-y3; NOBSERVATIONS = 100; NREPS = 2; SEED = 1;
+  MODEL POPULATION: f BY y1-y3*1; f@1; y1-y3*-5;
+  MODEL: f BY y1-y3*1; f@1; y1-y3*.5;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+a run that stops after the title
+MODEL RESULTS OF THE RUN
+an indented line
+
+after an empty line
+
+*** FATAL ERROR
+  THE POPULATION COVARIANCE MATRIX THAT YOU GAVE
+  AS INPUT IS NOT POSITIVE DEFINITE AS IT SHOULD BE.

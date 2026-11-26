@@ -43,7 +43,9 @@ mplus-inp.vim adds:          mplus-out.vim defines:
                                indented two lines above a rule of
                                underscores (the name of a matrix)
                                mplusTitle    (the printed title, up to
-                                              SUMMARY OF ANALYSIS)
+                                              SUMMARY OF ANALYSIS, an
+                                              indented line, or
+                                              *** FATAL ERROR)
 ```
 
 ## Highlight Groups

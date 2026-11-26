@@ -328,6 +328,35 @@ function! Test_printed_title_is_title_text() abort
     bwipeout!
 endfunction
 
+function! Test_printed_title_without_summary() abort
+    " Outputs of Mplus 9.1.1 that stop after the printed title, as Mplus wrote
+    " them. In title-fatal.out the population covariance matrix is not
+    " positive definite, in title-warning.out the sample covariance matrix is
+    " singular, and title-interrupted.out is a long Monte Carlo study that
+    " was ended after 15 seconds. The title is title text up to its end and
+    " no further, also where it has an empty line in it.
+    for [l:name, l:first, l:last] in [['title-fatal.out', 22, 26],
+        \ ['title-warning.out', 22, 26], ['title-interrupted.out', 23, 27]]
+        execute 'edit' fnameescape(s:data . l:name)
+        call assert_equal('mplus-out', &filetype, l:name)
+        call assert_equal('INPUT READING TERMINATED NORMALLY', getline(l:first - 4), l:name)
+        call assert_equal(['MODEL RESULTS OF THE RUN', 'an indented line', '', 'after an empty line'],
+            \ getline(l:first + 1, l:last), l:name)
+        call assert_equal(0, search('SUMMARY OF ANALYSIS', 'nw'), l:name)
+        for l:lnum in filter(range(l:first, l:last), 'getline(v:val) =~# "\\S"')
+            call assert_equal(['mplusTitle'], s:LineGroups(l:lnum), l:name . ' line ' . l:lnum)
+        endfor
+        for l:lnum in filter(range(l:last + 1, line('$')), 'getline(v:val) =~# "\\S"')
+            call assert_equal(-1, index(s:LineGroups(l:lnum), 'mplusTitle'),
+                \ l:name . ' line ' . l:lnum . ': ' . getline(l:lnum))
+        endfor
+        setlocal foldminlines=0
+        normal! zM
+        call assert_equal(l:first - 4, foldclosed(l:last), l:name)
+        bwipeout!
+    endfor
+endfunction
+
 function! Test_printed_title_after_warnings() abort
     call s:Buffer('mplus-out', [
         \ 'Mplus VERSION 9.1.1',
