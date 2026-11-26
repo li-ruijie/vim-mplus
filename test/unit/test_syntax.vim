@@ -426,6 +426,13 @@ function! Test_digits_in_names_are_not_numbers() abort
     call assert_equal(['mplusFold', 'mplusFold', 'mplusFold'], l:groups[6:8])
 endfunction
 
+function! Test_end_is_a_name() abort
+    " Mplus has no END statement and stops with an error at END DO, so END
+    " is a name as any other word is, while DO starts a loop.
+    call assert_equal(['mplusFold', 'mplusFold', 'mplusFold'], s:Groups('f BY end y1;')[5:7])
+    call assert_equal('mplusModel', s:Groups('DO (1, 2) y# ON x#;')[0])
+endfunction
+
 function! Test_numeric_literals() abort
     for [l:line, l:numbers] in [
         \ ['NOBSERVATIONS = 500;', ['500']],

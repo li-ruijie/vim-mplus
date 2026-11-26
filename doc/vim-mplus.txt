@@ -101,7 +101,7 @@ Highlight groups:~
 
     *mplusModel*       Links to |hl-Function|
                      Model operators: BY, ON, WITH, |, &, *, @, #, [], (),
-                     SQRT, EXP, LOG, DO, END.
+                     SQRT, EXP, LOG, DO.
                      ON after = (e.g., BASEHAZARD = ON) links to mplusCommand.
                      Bayesian priors: N, IG, IW, D (used with ~).
                      Logical/comparison: EQ, NE, GT, LT, GE, LE, AND, OR, NOT.

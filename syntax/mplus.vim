@@ -77,7 +77,7 @@ syn keyword mplusStatement CONSTRAINT INDIRECT POPULATION PRIORS COVERAGE TEST
 
 "" Model operators
 syn keyword mplusModel WITH BY PWITH AT XWITH IND VIA ALL
-syn keyword mplusModel PON NEW MOD LOOP DO END DIFF DIFFERENCE SQRT EXP LOG
+syn keyword mplusModel PON NEW MOD LOOP DO DIFF DIFFERENCE SQRT EXP LOG
 syn keyword mplusModel N IG IW D
 syn keyword mplusModel EQ NE GT LT GE LE AND OR NOT
 syn match   mplusModel "|"

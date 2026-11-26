@@ -120,7 +120,6 @@ highlighted as mplusSection in the base file.
 │ MOD        │ Model modification           │
 │ LOOP       │ Loop over values             │
 │ DO         │ Loop construct               │
-│ END        │ End loop (END DO)            │
 │ DIFFERENCE │ Parameter difference         │
 │ SQRT       │ Square root function         │
 │ EXP        │ Exponential function         │
