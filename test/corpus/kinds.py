@@ -288,6 +288,14 @@ def classify(texts):
                     j += 1
                 if j < foot and lines[j].indent:
                     break
+            # A part that follows the title after two empty lines or more, as CROSSTABS does in an
+            # analysis of imputed data, ends it at the first of those lines.
+            if lines[i].blank and i > mark + 1 and not lines[i - 1].blank:
+                j = i
+                while j < foot and lines[j].blank:
+                    j += 1
+                if j - i >= 2 and j < foot and _part_shape(lines, j):
+                    break
             if not lines[i].blank:
                 lines[i].kind = "title"
             title.add(i)
@@ -359,6 +367,16 @@ def _heading_text(text):
 
 def _part_line(text):
     return caps(text) and not CAPS_LABEL.match(text) and _heading_text(text)
+
+
+def _part_shape(lines, i):
+    """Line i stands where and as a part header stands: alone, or with a second line below it."""
+    line = lines[i]
+    below = lines[i + 1] if i + 1 < len(lines) else None
+    after = lines[i + 2] if i + 2 < len(lines) else None
+    return not line.indent and line.up and _starts_header(line.text) and _part_line(line.text) \
+        and (below is None or below.blank or not below.indent and _part_line(below.text)
+             and (after is None or after.blank))
 
 
 def _col0_sub_line(text):

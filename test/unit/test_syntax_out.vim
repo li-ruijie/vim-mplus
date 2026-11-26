@@ -5,8 +5,9 @@
 " random starts, CROSSTABS, TECH1, and TECH8, kinds-boot.out a factor model
 " with bootstrap draws, TECH9, and an OUTPUT option that Mplus ignores with
 " an error, kinds-efa.out an exploratory factor analysis of binary items
-" with warnings, and kinds-groups.out CROSSTABS in an analysis of two
-" groups. test/corpus/check-syntax.sh holds the syntax to the same rules on
+" with warnings, kinds-groups.out CROSSTABS in an analysis of two groups,
+" and kinds-imputation.out CROSSTABS in an analysis of imputed data, which
+" Mplus prints below the title. test/corpus/check-syntax.sh holds the syntax to the same rules on
 " every line of the example outputs.
 
 source <sfile>:p:h/common.vim
@@ -21,6 +22,13 @@ let s:data = expand('<sfile>:p:h:h') . '/data/'
 let s:input_groups = ['mplusStatement', 'mplusCommand', 'mplusModel', 'mplusNumber',
     \ 'mplusString', 'mplusSpeccom', 'mplusFold', 'mplusBlockComment', 'mplusTitleComment',
     \ 'mplusTitleBlockComment']
+
+" Show a:lines in a buffer of type mplus-out.
+function! s:Buffer(lines) abort
+    enew!
+    call setline(1, a:lines)
+    set filetype=mplus-out
+endfunction
 
 function! s:Edit(name) abort
     execute 'edit' fnameescape(s:data . a:name)
@@ -106,6 +114,21 @@ function! Test_kinds_of_lines() abort
         \ [77, 'mplusPart', 1], [79, 'mplusPartFold', 1], [80, 'mplusSub', 2],
         \ [83, 'mplusSubFold', 2], [91, 'mplusSubFold', 2], [97, 'mplusSubFold', 2],
         \ [98, 'mplusSub', 2], [117, 'mplusStatus', 0]])
+endfunction
+
+function! Test_title_ends_above_a_part() abort
+    " In an analysis of imputed data Mplus prints CROSSTABS two empty lines
+    " below the printed title and above SUMMARY OF ANALYSIS. The part ends
+    " the title, which a title line in capitals at its start does not.
+    call s:CheckLines('kinds-imputation.out', [
+        \ [21, 'mplusTitle', 0], [22, '', 0], [24, 'mplusPart', 1], [26, 'mplusSub', 2],
+        \ [29, 'mplusSubFold', 2], [65, 'mplusPart', 1]])
+    call s:Buffer(['Mplus VERSION 9.1.1', 'MUTHEN & MUTHEN', '11/26/2026  10:30 AM', '',
+        \ 'INPUT INSTRUCTIONS', '', '  TITLE: A STUDY', '  DATA: FILE IS x.dat;', '',
+        \ 'INPUT READING TERMINATED NORMALLY', '', '', '', 'A STUDY', '', 'SUMMARY OF ANALYSIS',
+        \ '', 'Number of groups                                                 1'])
+    call assert_equal(['mplusTitle', 0], [s:Group(14), foldlevel(14)])
+    call assert_equal(['mplusPart', 1], [s:Group(16), foldlevel(16)])
 endfunction
 
 function! Test_fold_starts() abort

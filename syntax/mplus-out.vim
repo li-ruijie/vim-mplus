@@ -207,15 +207,21 @@ execute 'syn region mplusFooter start="\%#=1\%(' . s:footer . '\)\@=" end="\%$"'
 "" the title where the next line with text is indented, so a title line of
 "" the same text ends the title only when it is the last one and warnings
 "" follow it. The output of a run that was ended ends with the title, and
-"" the footer ends it too. The title is title text whatever it looks like,
-"" so nothing is matched in it. The region starts on the empty line that
-"" Mplus writes after such a line, and its pattern tests that a line is
-"" empty before it looks back at the line above.
+"" the footer ends it too. In an analysis of imputed data Mplus prints
+"" CROSSTABS two empty lines below the title, so a part that follows a line
+"" of the title after two empty lines or more ends it at the first of them.
+"" The line above that empty line must not be one that opens the title, so
+"" that a title in capitals is still title text. The title is title text
+"" whatever it looks like, so nothing is matched in it. The region starts on
+"" the empty line that Mplus writes after such a line, and its pattern tests
+"" that a line is empty before it looks back at the line above.
+let s:mark = 'INPUT READING TERMINATED NORMALLY'
+    \ . '\|\s*\d\+ \%(WARNING\|ERROR\)(S) FOUND IN THE INPUT INSTRUCTIONS'
 execute 'syn region mplusTitle extend'
-    \ 'start="^\_$\%(\%(INPUT READING TERMINATED NORMALLY'
-    \ . '\|\s*\d\+ \%(WARNING\|ERROR\)(S) FOUND IN THE INPUT INSTRUCTIONS\)\s*\n\)\@<="'
+    \ 'start="^\_$\%(\%(' . s:mark . '\)\s*\n\)\@<="'
     \ 'end="^\zeSUMMARY OF ANALYSIS\s*$\|^\ze\s\+\S\|^\ze\*\*\* FATAL ERROR\s*\n\%(\s*\n\)*\s\+\S'
-    \ . '\|^\%(' . s:footer . '\)\@="'
+    \ . '\|^\%(' . s:footer . '\)\@='
+    \ . '\|^\%(^\%(\%(' . s:mark . '\)\s*$\)\@!.*\S.*\n\)\@<=\ze\%(\s*\n\)\{2,}\%(' . s:part . '\)\@="'
 
 "" Highlight links. Each can be linked anew, for example with
 "" ":highlight link mplusSub Identifier" in a file after/syntax/mplus-out.vim.
