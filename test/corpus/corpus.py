@@ -2,19 +2,22 @@
 
 Two sets of runs are made, each input in a directory of its own below the cache directory.
 
-  all-options  every example input with its OUTPUT command replaced by every option that Mplus
-               9.1.1 takes, so that the outputs show the parts that the shipped outputs lack
+  all-options  example inputs with their OUTPUT command replaced by every option that Mplus
+               9.1.1 takes, so that the outputs show the parts that the shipped outputs lack.
+               These are the inputs ex*.inp and the ten Monte Carlo inputs of MONTE_CARLO, or
+               with --all-examples every input of the examples
   failures     the inputs of test/corpus/failures/, which make Mplus print the messages of a
                failed or doubtful estimation and of bad input
 
 An option that the analysis does not take gives a warning, and Mplus goes on. Where Mplus stops
 at an option instead, with an error in the OUTPUT command that ignores nothing, the input is run
-again without that option. So is an input whose run was over the time limit with TECH14, without
-TECH14. The run before is kept under the name <stem>-try<n>.
+again without that option, and the run that was stopped is kept under the name <stem>-try<n>. A
+run that is over the time limit is not made again.
 
 An input whose record (run.json) is in its directory has been run and is not run again. The
-manifest (manifest.tsv, one line for each run of Mplus) is written at the end. When every input
-of both sets has a record, and no --only was given, the empty file DONE is written as well.
+manifest (manifest.tsv) is written at the end. It has a line for each run of Mplus, and a line
+for each example that the set leaves out. When every input of both sets has a record, and no
+--only was given, the empty file DONE is written as well.
 """
 import argparse
 import contextlib
@@ -30,6 +33,12 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+# The Monte Carlo inputs of the reduced all-options set, one or two of each chapter and kind of
+# analysis. More OUTPUT options change the output of a Monte Carlo study little.
+MONTE_CARLO = ("chapter03/mcex3.11.inp", "chapter04/mcex4.3.inp", "chapter05/mcex5.13.inp",
+               "chapter06/mcex6.12.inp", "chapter07/mcex7.12.inp", "chapter08/mcex8.1.inp",
+               "chapter09/mcex9.1a.inp", "chapter09/mcex9.21.inp", "chapter10/mcex10.1.inp",
+               "chapter11/mcex11.1.inp")
 
 # The section rule of autoload/mplus/section.vim. A command name in full or shortened to four or
 # more letters, then a colon at once or after one more word.
@@ -115,17 +124,12 @@ def to_drop(record: dict, output: Path, options: list):
     """The option to leave out of the next run of an input, or None.
 
     That is the option at which Mplus stopped in the OUTPUT command. A message that ends in "is
-    ignored" or "will be ignored" did not stop Mplus. After a run that was over the time limit it
-    is TECH14, unless Mplus ignored it, since its bootstrap draws estimate the model many times.
+    ignored" or "will be ignored" did not stop Mplus.
     """
     names = {option.split()[0] for option in options}
-    if not output.exists():
+    if record["timeout"] or record["exit"] != 1 or not output.exists():
         return None
     text = output.read_bytes().decode("latin-1").replace("\r\n", "\n")
-    if record["timeout"]:
-        return "TECH14" if "TECH14" in names and "Request for TECH14" not in text else None
-    if record["exit"] != 1:
-        return None
     for match in OUTPUT_ERROR.finditer(text):
         message = match.group(1)
         if re.search(r"\bignored\b", message):
@@ -159,19 +163,23 @@ class Job:
         self.input = self.run_dir / f"{stem}.inp"
         self.output = self.run_dir / f"{stem}.out"
         self.record = self.run_dir / "run.json"
+        self.chosen = True
 
 
-def jobs(examples: Path, cache: Path, wanted: str):
+def jobs(examples: Path, cache: Path, full: bool):
+    """Every input of both sets. An example outside the reduced set is not chosen, unless full."""
     found = []
     for path in sorted(examples.rglob("*.inp"), key=lambda p: natural(str(p.relative_to(examples)))):
         relative = path.relative_to(examples)
         # The input is named apart from the example, as a time limit of another script ends
         # every Mplus process whose command line holds the name of an example.
-        found.append(Job("all-options", path, relative.as_posix(), cache,
-                         Path("all-options", relative.parent, path.stem), path.stem + "-all"))
+        job = Job("all-options", path, relative.as_posix(), cache,
+                  Path("all-options", relative.parent, path.stem), path.stem + "-all")
+        job.chosen = full or path.name.lower().startswith("ex") or job.label in MONTE_CARLO
+        found.append(job)
     for path in sorted((HERE / "failures").glob("*.inp"), key=lambda p: natural(p.name)):
         found.append(Job("failures", path, path.name, cache, Path("failures", path.stem), path.stem))
-    return [job for job in found if re.search(wanted, f"{job.kind}/{job.label}")]
+    return found
 
 
 def end_mplus(process: subprocess.Popen, image: str, input_path: Path):
@@ -265,15 +273,19 @@ def main():
     parser.add_argument("--time-limit", type=float, default=60, help="seconds for one run")
     parser.add_argument("--jobs", type=int, default=3, help="runs side by side")
     parser.add_argument("--only", default="", help="run only the inputs whose set/input matches")
+    parser.add_argument("--all-examples", action="store_true",
+                        help="run every example, not only ex*.inp and the inputs of MONTE_CARLO")
     args = parser.parse_args()
     cache = args.cache.resolve()
     cache.mkdir(parents=True, exist_ok=True)
     done = cache / "DONE"
     if done.exists():
         done.unlink()
-    every = jobs(args.examples.resolve(), cache, "")
-    todo = [job for job in jobs(args.examples.resolve(), cache, args.only) if not job.record.exists()]
-    print(f"{len(every)} inputs, {len(todo)} to run, {args.jobs} side by side, "
+    every = jobs(args.examples.resolve(), cache, args.all_examples)
+    chosen = [job for job in every if job.chosen]
+    todo = [job for job in chosen
+            if not job.record.exists() and re.search(args.only, f"{job.kind}/{job.label}")]
+    print(f"{len(chosen)} inputs, {len(todo)} to run, {args.jobs} side by side, "
           f"limit {args.time_limit:g} s", flush=True)
 
     def one(job):
@@ -290,16 +302,22 @@ def main():
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         list(pool.map(one, todo))
 
-    made = [job for job in every if job.record.exists()]
+    # The note is "left out" for an example outside the set, and "outside the set" for one that
+    # an earlier call with --all-examples ran.
     columns = ("set", "source", "output", "options", "exit", "seconds", "timeout", "started",
-               "lines", "dropped")
+               "lines", "dropped", "note")
     with open(cache / "manifest.tsv", "w", encoding="utf-8", newline="\n") as manifest:
         manifest.write("\t".join(columns) + "\n")
-        for job in made:
-            for record in json.loads(job.record.read_text(encoding="utf-8")):
-                manifest.write("\t".join(str(record.get(column, "")) for column in columns) + "\n")
-    print(f"manifest: {len(made)} of {len(every)} inputs run", flush=True)
-    if len(made) == len(every) and not args.only:
+        for job in every:
+            if job.record.exists():
+                for record in json.loads(job.record.read_text(encoding="utf-8")):
+                    record["note"] = "" if job.chosen else "outside the set"
+                    manifest.write("\t".join(str(record.get(column, "")) for column in columns) + "\n")
+            elif not job.chosen:
+                manifest.write("\t".join([job.kind, job.label] + [""] * 8 + ["left out"]) + "\n")
+    made = [job for job in chosen if job.record.exists()]
+    print(f"manifest: {len(made)} of {len(chosen)} inputs run", flush=True)
+    if len(made) == len(chosen) and not args.only:
         done.touch()
         print(f"written: {done}", flush=True)
     return 0

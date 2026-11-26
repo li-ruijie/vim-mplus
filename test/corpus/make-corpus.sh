@@ -1,33 +1,36 @@
 #!/usr/bin/env bash
 # Make a corpus of Mplus outputs for the tests of the output syntax.
-# Usage: test/corpus/make-corpus.sh CACHE_DIR [--only REGEX]
+# Usage: test/corpus/make-corpus.sh CACHE_DIR [--all-examples] [--only REGEX]
 #
 # Two sets of runs are made below CACHE_DIR, each run in a directory of its
 # own with the data that its input names.
 #
-#   all-options  every example input with its OUTPUT command replaced by
-#                every option that Mplus takes (an OUTPUT command is added
-#                where the input has none), so that the outputs show the
-#                parts, tables, and warnings that the shipped outputs lack
+#   all-options  example inputs with their OUTPUT command replaced by every
+#                option that Mplus takes (an OUTPUT command is added where
+#                the input has none), so that the outputs show the parts,
+#                tables, and warnings that the shipped outputs lack. These
+#                are the inputs ex*.inp and ten of the Monte Carlo inputs
+#                mcex*.inp (MONTE_CARLO in corpus.py), whose outputs change
+#                little with more options. --all-examples takes every input.
 #   failures     the inputs of test/corpus/failures/, which make Mplus
 #                print the messages of a failed or doubtful estimation and
 #                of bad input
 #
 # Where Mplus stops at an OUTPUT option (MODINDICES with a mixture model),
-# the input is run again without it, and where a run is over the time limit
-# with TECH14, the input is run again without TECH14. The run before is kept
-# as <name>-try<n>.out.
+# the input is run again without it, and the run before is kept as
+# <name>-try<n>.out. A run that is over the time limit is not made again.
 #
 # An input that has a record (run.json in its directory) is not run again,
 # so a second call takes up where the first stopped. Delete the record by
 # name to run the input again. With --only, only the inputs whose set and
-# name ("all-options/chapter07/ex7.1.inp", "failures/noconv-cfa.inp") match
+# name ("all-options/chapter07/ex7.1.inp", "failures/noconv-ml.inp") match
 # the Python regular expression REGEX are run. At the end the script writes
 # CACHE_DIR/manifest.tsv, a line for each run of Mplus (the input, the
 # options added, the exit status, the seconds, and whether the run was over
-# the time limit). When every input has a record and no --only was given,
-# it also writes the empty file CACHE_DIR/DONE. It writes nothing outside
-# CACHE_DIR, and Mplus is given a scratch directory inside the run directory.
+# the time limit) and a line for each example that the set leaves out. When
+# every input has a record and no --only was given, it also writes the empty
+# file CACHE_DIR/DONE. It writes nothing outside CACHE_DIR, and Mplus is
+# given a scratch directory inside the run directory.
 #
 # The script is skipped when Mplus is not found. It reads these variables.
 #
