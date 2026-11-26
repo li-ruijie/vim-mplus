@@ -373,6 +373,23 @@ function! Test_long_line_that_is_not_broken() abort
         \ s:Format(['DATA:', '    FILE = "' . repeat('c', 80) . ' and more.dat";']))
 endfunction
 
+function! Test_break_in_a_file_name_with_spaces() abort
+    " Mplus 9.1.1 reads a file name with spaces that is not quoted. It takes
+    " the white space between two words of the name as one space, also when
+    " that white space is a line break, so a break at a space leaves the
+    " name as it was. A quoted name is never broken, since Mplus joins the
+    " two parts of a quoted name without a space.
+    let l:name = strpart('a data file ' . repeat('with a long name ', 4), 0, 73) . 'End.dat'
+    let l:lines = s:Format(['DATA:', "\t\tFILE = " . l:name . ';', 'SAVEDATA:',
+        \ "\t\tFILE = " . l:name . ';'])
+    call assert_equal(6, len(l:lines))
+    call assert_equal([], filter(copy(l:lines), 'strlen(v:val) > 90'))
+    call assert_equal('FILE = ' . l:name . ';', join(split(join(l:lines[1:2])), ' '))
+    call assert_equal('FILE = ' . l:name . ';', join(split(join(l:lines[4:5])), ' '))
+    call assert_equal(['DATA:', '    FILE =', '    "' . l:name . '";'],
+        \ s:Format(['DATA:', "\t\tFILE = \"" . l:name . '";']))
+endfunction
+
 function! Test_whole_input() abort
     call assert_equal([
         \ 'TITLE:',

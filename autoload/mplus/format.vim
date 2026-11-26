@@ -213,6 +213,12 @@ let s:width = 90
 " the break must not look like a section header or a comment, since on a
 " line of its own Mplus would read it as one.
 "
+" A break may fall in a file name with spaces that is not quoted. Mplus
+" reads the white space between two words of such a name as one space, also
+" when it is a line break, so the name stays the same. Mplus joins the parts
+" of a quoted name without a space, which is one reason why a quoted string
+" stays whole.
+"
 " A comment, a header, and a section that Mplus passes over are not broken.
 " Neither is a line without a place for a break.
 function! s:BreakIndex(lnum) abort
