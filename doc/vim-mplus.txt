@@ -85,7 +85,8 @@ Syntax rules are split across three files:
     syntax/mplus.vim       Shared base (keywords, operators, numbers, comments)
     syntax/mplus-inp.vim   Input: sources mplus.vim, section headers, fold regions
     syntax/mplus-out.vim   Output: standalone (does not source mplus.vim),
-                           all-caps headers, fold regions
+                           headers where Mplus prints them (see
+                           |vim-mplus-folding|), printed title, folds
 
 Output files do not source the shared base because Mplus keywords appear
 as plain English in output text and should not be highlighted.
@@ -124,7 +125,10 @@ Highlight groups:~
                      Connectors: ARE, IS, =.
 
     *mplusHeader*      Links to |hl-Type|
-                     Timestamp and section headers in output files.
+                     Timestamp and headers of an output file, that is
+                     lines in capitals where Mplus prints a header and
+                     the mixed-case headers of the model fit (see
+                     |vim-mplus-folding|).
 
     *mplusTitle*       Links to |hl-String|
                      TITLE section body (suppresses keyword highlighting),

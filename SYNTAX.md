@@ -62,7 +62,8 @@ mplus-inp.vim adds:          mplus-out.vim defines:
 │ mplusComment   │ Comment   │ Line comments (!) and block (!*…*!)  │
 │ mplusSpeccom   │ Special   │ ARE, IS, = connectors                │
 │ mplusHeader    │ Type      │ Timestamp and output headers         │
-│ mplusTitle     │ String    │ TITLE section body (no keywords)     │
+│ mplusTitle     │ String    │ TITLE body, and the title an output  │
+│                │           │ prints (no keywords)                 │
 │ mplusString    │ String    │ Quoted strings ("…" and '…')         │
 └────────────────┴───────────┴──────────────────────────────────────┘
 ```
