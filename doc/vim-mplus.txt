@@ -258,7 +258,8 @@ For mplus-inp files, 'formatexpr' is set to a custom formatter invoked
 with |gq|. The formatter performs the following operations on the
 selected range:
 
-    - Replaces tabs with 4 spaces and strips trailing whitespace.
+    - Replaces tabs with 4 spaces and strips trailing whitespace. A tab in
+      the text of a title becomes one space, as Mplus prints it.
     - Preserves TITLE body lines (free-form text, whitespace cleanup only).
       A title line may hold a colon. It ends the title when it begins with
       a command name that is followed by a colon at once or after one more

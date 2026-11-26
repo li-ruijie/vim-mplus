@@ -372,6 +372,25 @@ function! Test_title_line_that_is_too_long_is_broken() abort
     endfor
 endfunction
 
+function! Test_tab_in_title_text() abort
+    " Mplus 9.1.1 prints a tab in the text of a title as one space and does
+    " not print the indent, so the title that it prints stays the same. A
+    " comment line is not printed, and code keeps four spaces for a tab.
+    call assert_equal([
+        \ 'TITLE:',
+        \ '    a b  c',
+        \ '    where attrition is predicted by time-',
+        \ '    ! a    note',
+        \ 'MODEL:',
+        \ '    F BY Y1    Y2;'],
+        \ s:Format(["TITLE:\ta\tb  c", "\twhere attrition is\tpredicted by time-\t",
+        \ "\t! a\tnote", 'MODEL:', "\tf by y1\ty2;"]))
+    call assert_equal(['TITLE:', '    first line', '    a b', 'DATA:'],
+        \ s:Format(["TITLE: first line", "a\tb", 'DATA:']))
+    call assert_equal(['TITLE:    Model comparison: two groups', '    a b', 'DATA:'],
+        \ s:Format(["TITLE:\tModel comparison:\ttwo groups", "a\tb", 'DATA:']))
+endfunction
+
 function! Test_long_line_that_is_not_broken() abort
     " A comment loses nothing that Mplus reads, a quoted string has to
     " stay whole, and a section that Mplus passes over stays as written.

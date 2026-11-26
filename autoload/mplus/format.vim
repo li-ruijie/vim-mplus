@@ -261,6 +261,14 @@ function! s:BreakIndex(lnum) abort
     return l:best
 endfunction
 
+" Return a:line with each tab in its title text written as one space, as
+" Mplus prints it. The text starts at the first character after the white
+" space that follows byte index a:start. Mplus does not print the indent.
+function! s:TitleTabs(line, start) abort
+    let l:at = match(a:line, '\S', a:start)
+    return l:at < 0 ? a:line : strpart(a:line, 0, l:at) . substitute(strpart(a:line, l:at), '\t', ' ', 'g')
+endfunction
+
 function! mplus#format#Format() abort
     if mode() =~# '[iR]'
         return 1
@@ -280,8 +288,18 @@ function! mplus#format#Format() abort
 
     let l:lnum = l:start
     while l:lnum <= l:end
-        " Whitespace cleanup, on every line
-        let l:line = substitute(getline(l:lnum), '\t', '    ', 'g')
+        " Whitespace cleanup, on every line. Mplus prints a tab in the text
+        " of a title as one space, so it is written so there.
+        let l:line = getline(l:lnum)
+        if !l:state.in_block && l:line !~# '^\s*!'
+            let l:header = mplus#section#Parse(l:line)
+            if !empty(l:header) && l:header[0] ==# 'TITLE' && l:header[3]
+                let l:line = s:TitleTabs(l:line, matchend(l:line, ':'))
+            elseif empty(l:header) && l:state.free && l:state.section ==# 'TITLE'
+                let l:line = s:TitleTabs(l:line, 0)
+            endif
+        endif
+        let l:line = substitute(l:line, '\t', '    ', 'g')
         let l:line = substitute(l:line, '\s\+$', '', '')
 
         " Block comment (!* ... *!): whitespace cleanup only
