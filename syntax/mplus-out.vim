@@ -86,8 +86,12 @@ let s:sub = s:sub0 . '\|' . s:subind
 
 "" The name of a matrix or table: an indented line with a line of column
 "" names below it and a rule of underscores, eight to a column, below that.
-let s:tablelook = '\s\+\S.*\n.*\S.*\n\s*_\{8}\%(\s\+_\{8}\)*\s*$'
-let s:table = '^\s\+\S.*\ze\n.*\S.*\n\s*_\{8}\%(\s\+_\{8}\)*\s*$'
+"" The line of column names is written \s*\S.* and not .*\S.*, which the
+"" backtracking engine would try in a time that grows with the square of
+"" the length of the line, and the rest of a line is taken whole (\@>), so
+"" that a line with no rule two lines below fails at once.
+let s:tablelook = '\s\+\S\%(.*\n\)\@>\s*\S\%(.*\n\)\@>\s*_\{8}\%(\s\+_\{8}\)*\s*$'
+let s:table = '^\s\+\S\%(.*\)\@>\ze\n\s*\S\%(.*\n\)\@>\s*_\{8}\%(\s\+_\{8}\)*\s*$'
 
 "" The footer starts at MUTHEN & MUTHEN after an empty line, or at the line
 "" Mplus VERSION that Mplus on Linux writes above it.
@@ -168,10 +172,11 @@ syn region mplusEcho matchgroup=mplusPart start="^INPUT INSTRUCTIONS\s*$" end="^
 "" Warnings and errors run from their first line to the end of the
 "" paragraph, and start no fold. Mplus writes its messages about the input
 "" one below the other, each marked with ***, and the lines that count them
-"" below the last, so such a line of the other kind ends one as well.
-execute 'syn region mplusWarning start="\%#=1^\%(\s*\%(' . s:warnings . '\)\)\@="'
+"" below the last, so such a line of the other kind ends one as well. The
+"" indent is taken whole (\@>), so that the first words are tried once.
+execute 'syn region mplusWarning start="\%#=1^\%(\%(\s*\)\@>\%(' . s:warnings . '\)\)\@="'
     \ 'end="^\ze\%(\s*$\|\s*\%(\*\*\* \%(ERROR\|FATAL ERROR\)\|\d\+ ERROR(S) FOUND\)\)"'
-execute 'syn region mplusError start="\%#=1^\%(\s*\%(' . s:errors . '\)\)\@="'
+execute 'syn region mplusError start="\%#=1^\%(\%(\s*\)\@>\%(' . s:errors . '\)\)\@="'
     \ 'end="^\ze\%(\s*$\|\s*\%(\*\*\* WARNING\|\d\+ WARNING(S) FOUND\)\)"'
 
 "" The status of the estimation, outside every fold up to the next part or
