@@ -10,10 +10,10 @@ Source: <https://www.statmodel.com/language.html>.
 ```
 mplus-inp.vim                    mplus-out.vim
 (*.inp files)                    (*.out files)
-     │                           (standalone — no shared base)
-     │  runtime syntax/mplus.vim
-     │
-     ▼
+     │                                │  syn include @mplusInput
+     │  runtime syntax/mplus.vim      │  syntax/mplus-inp.vim, which
+     │                                │  applies inside mplusEcho only
+     ▼                                ▼
   mplus.vim (shared)
 ┌─────────────────┐
 │ case ignore     │
@@ -30,43 +30,62 @@ mplus-inp.vim                    mplus-out.vim
 │ highlight links │
 └─────────────────┘
      ▼
-mplus-inp.vim adds:          mplus-out.vim defines:
-  mplusFold regions            mplusComment  (! comments)
-  matchgroup=mplusSection      mplusSection  (%labels%, echoed headers)
-  ^TITLE:  (contains mplusTitle) mplusHeader (timestamp + headers in capitals
-                                              + mixed-case syn matches)
-  ^(SECTION)(\s\S+)?:         mplusFold     (between headers in capitals
-                                              + mixed-case fit headers)
-                               \C^\u[A-Z 0-9/,&():.*%=-]+$ at column 0,
-                               or indented between two empty lines,
-                               and without a decimal number, or
-                               indented two lines above a rule of
-                               underscores (the name of a matrix)
-                               mplusTitle    (the printed title, up to
-                                              SUMMARY OF ANALYSIS, an
-                                              indented line, or
-                                              *** FATAL ERROR)
+mplus-inp.vim adds:
+  mplusFold regions
+  matchgroup=mplusSection
+  ^TITLE:  (contains mplusTitle)
+  ^(SECTION)(\s\S+)?:
+
+mplus-out.vim defines, by the rules of test/corpus/kinds.py:
+  mplusBanner        the lines above INPUT INSTRUCTIONS
+  mplusEcho          INPUT INSTRUCTIONS and the echoed input        fold 1
+                     (the input syntax, its sections at fold 2)
+  mplusPartFold      a part, from its header mplusPart              fold 1
+  mplusSubFold       a sub-header, from its header mplusSub         fold 2
+  mplusTableFold     a matrix or table, from its name mplusTable    fold 3
+                     (fold 2 directly under a part)
+  mplusWarning       a warning, to the end of its paragraph
+  mplusError         an error, to the end of its paragraph
+  mplusStatusBlock   the status block, from the status line
+                     mplusStatus or the verdict on the random
+                     starts to the next part, outside every fold
+  mplusTitle         the printed title, outside every fold
+  mplusFooter        MUTHEN & MUTHEN to the end, outside every fold
+  mplusComment       ! comments
+  mplusSection       %labels%
 ```
 
 ## Highlight Groups
 
 ```
-┌────────────────┬───────────┬──────────────────────────────────────┐
-│ Group          │ Links To  │ Usage                                │
-├────────────────┼───────────┼──────────────────────────────────────┤
-│ mplusStatement │ Statement │ Top-level and OUTPUT option keywords │
-│ mplusCommand   │ Statement │ Section-specific command options     │
-│ mplusModel     │ Function  │ Model operators: BY, ON, *, @, |, &  │
-│ mplusNumber    │ Number    │ Integers, floats, scientific (E/D)   │
-│ mplusSection   │ Include   │ Section headers, %label% markers     │
-│ mplusComment   │ Comment   │ Line comments (!) and block (!*…*!)  │
-│ mplusSpeccom   │ Special   │ ARE, IS, = connectors                │
-│ mplusHeader    │ Type      │ Timestamp and output headers         │
-│ mplusTitle     │ String    │ TITLE body, and the title an output  │
-│                │           │ prints (no keywords)                 │
-│ mplusString    │ String    │ Quoted strings ("…" and '…')         │
-└────────────────┴───────────┴──────────────────────────────────────┘
+┌────────────────┬─────────────┬───────────────────────────────────────────────────┐
+│ Group          │ Links To    │ Usage                                             │
+├────────────────┼─────────────┼───────────────────────────────────────────────────┤
+│ mplusStatement │ Statement   │ Top-level and OUTPUT option keywords              │
+│ mplusCommand   │ Statement   │ Section-specific command options                  │
+│ mplusModel     │ Function    │ Model operators: BY, ON, *, @, |, &               │
+│ mplusNumber    │ Number      │ Integers, floats, scientific (E/D)                │
+│ mplusSection   │ Include     │ Section headers, %label% markers                  │
+│ mplusComment   │ Comment     │ Line comments (!) and block (!*…*!)               │
+│ mplusSpeccom   │ Special     │ ARE, IS, = connectors                             │
+│ mplusHeader    │ Type        │ Input timestamp, and the output headers below     │
+│ mplusPart      │ mplusHeader │ Header of a part of an output, INPUT INSTRUCTIONS │
+│ mplusSub       │ mplusHeader │ Sub-header inside a part                          │
+│ mplusTable     │ mplusHeader │ Name of a matrix or table                         │
+│ mplusBanner    │ mplusHeader │ Lines above INPUT INSTRUCTIONS                    │
+│ mplusStatus    │ Special     │ THE MODEL ESTIMATION TERMINATED NORMALLY          │
+│ mplusWarning   │ WarningMsg  │ A warning in an output                            │
+│ mplusError     │ ErrorMsg    │ An error in an output                             │
+│ mplusFooter    │ Comment     │ Footer of an output                               │
+│ mplusTitle     │ String      │ TITLE body, and the title an output               │
+│                │             │ prints (no keywords)                              │
+│ mplusString    │ String      │ Quoted strings ("…" and '…')                      │
+└────────────────┴─────────────┴───────────────────────────────────────────────────┘
 ```
+
+The groups of an output are linked with `highlight default link`, so a link of your own wins. Put
+it in `after/syntax/mplus-out.vim`, for example `highlight link mplusSub Identifier`, or link
+`mplusHeader` to change the four header groups at once.
 
 ## Section Headers (mplusSection)
 
@@ -673,34 +692,40 @@ highlighted as mplusSection in the base file.
 ## Match Patterns
 
 ```
-┌─────────────────────────────────────────┬─────────┐
-│ Pattern                                 │ Group   │
-├─────────────────────────────────────────┼─────────┤
-│ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$      │ Header  │
-│ \C^\u[A-Z 0-9/,&():.*%=-]+$ (output)    │ Header  │
-│   no decimal number, no slash at end    │         │
-│ \C^\s+\u[A-Z 0-9/,&():.*%=-]+$ (output) │ Header  │
-│   empty line above and below, and no    │         │
-│   decimal number, or a rule of          │         │
-│   underscores two lines below           │         │
-│ Mixed-case fit headers (output)         │ Header  │
-│ ^\s*(SECTION)(\s+[^: \t]+)?\s*:         │ Section │
-│   (input, and the input in an output)   │         │
-│ %[^%]+%  (class/level labels)           │ Section │
-│ -?(\d+\.?\d*|\.\d+)([ED][-+]?\d+)?      │ Number  │
-│   no word character on either side (y1) │         │
-│   - only where a value starts (@-1)     │         │
-│ * (start value), @ (fix value)          │ Model   │
-│ \<ON\> (model operator by default)      │ Model   │
-│ \%(=\s*\)\@<=\<ON\> (setting value)     │ Command │
-│ !.*$                                    │ Comment │
-│ !\*...\*! (block comment, @Spell)       │ Comment │
-│   anywhere, also after code or a !      │         │
-│ in a title: ! and !* on the TITLE line, │ Comment │
-│   and a line below it that starts with  │         │
-│   a ! with no * after it                │         │
-│ ^\s*TITLE: to the next section header   │ Title   │
-│ "…" and '…' (quoted strings)            │ String  │
-└─────────────────────────────────────────┴─────────┘
+┌────────────────────────────────────────────────────────────────────┬─────────┐
+│ Pattern                                                            │ Group   │
+├────────────────────────────────────────────────────────────────────┼─────────┤
+│ ^\d{2}/\d{2}/\d{4}\s+\d+:\d+\s+.M$                                 │ Header  │
+│ Output: capitals at column 0 with an empty line above and below,   │ Part    │
+│   or two such lines, with no decimal number, no period at the end, │         │
+│   and no start of a message (THE, NOTE:, *)                        │         │
+│ Output: at column 0 with lowercase letters and single spaces       │ Sub     │
+│   between words, or a label in capitals (CFI/TLI, CLASS n,         │         │
+│   WITHIN, BETWEEN, U1 AND U2), or an indented line between         │         │
+│   empty lines with its section below it                            │         │
+│ Output: indented, with a line of column names below it and a       │ Table   │
+│   rule of underscores below that                                   │         │
+│ Output: the first words of a message that Mplus marks as a         │ Warning │
+│   warning or that tells of a doubtful estimation                   │         │
+│ Output: the same for an error or a failed estimation               │ Error   │
+│ Output: ^THE MODEL ESTIMATION TERMINATED NORMALLY                  │ Status  │
+│ ^\s*(SECTION)(\s+[^: \t]+)?\s*:                                    │ Section │
+│   (input, and the input in an output)                              │         │
+│ %[^%]+%  (class/level labels)                                      │ Section │
+│ -?(\d+\.?\d*|\.\d+)([ED][-+]?\d+)?                                 │ Number  │
+│   no word character on either side (y1)                            │         │
+│   - only where a value starts (@-1)                                │         │
+│ * (start value), @ (fix value)                                     │ Model   │
+│ \<ON\> (model operator by default)                                 │ Model   │
+│ \%(=\s*\)\@<=\<ON\> (setting value)                                │ Command │
+│ !.*$                                                               │ Comment │
+│ !\*...\*! (block comment, @Spell)                                  │ Comment │
+│   anywhere, also after code or a !                                 │         │
+│ in a title: ! and !* on the TITLE line,                            │ Comment │
+│   and a line below it that starts with                             │         │
+│   a ! with no * after it                                           │         │
+│ ^\s*TITLE: to the next section header                              │ Title   │
+│ "…" and '…' (quoted strings)                                       │ String  │
+└────────────────────────────────────────────────────────────────────┴─────────┘
 ```
 

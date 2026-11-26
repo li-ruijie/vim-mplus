@@ -84,12 +84,14 @@ Syntax rules are split across three files:
 
     syntax/mplus.vim       Shared base (keywords, operators, numbers, comments)
     syntax/mplus-inp.vim   Input: sources mplus.vim, section headers, fold regions
-    syntax/mplus-out.vim   Output: standalone (does not source mplus.vim),
-                           headers where Mplus prints them (see
-                           |vim-mplus-folding|), printed title, folds
+    syntax/mplus-out.vim   Output: each kind of line where Mplus prints it,
+                           and three levels of folds (see
+                           |vim-mplus-folding|), with the input syntax in
+                           the echoed input only
 
-Output files do not source the shared base because Mplus keywords appear
-as plain English in output text and should not be highlighted.
+An output file includes the input syntax inside the input that Mplus
+echoes, and nowhere else, since Mplus keywords appear as plain English in
+the rest of the output text and should not be highlighted there.
 
 Highlight groups:~
 
@@ -135,10 +137,9 @@ Highlight groups:~
                      Connectors: ARE, IS, =.
 
     *mplusHeader*      Links to |hl-Type|
-                     Timestamp and headers of an output file, that is
-                     lines in capitals where Mplus prints a header and
-                     the mixed-case headers of the model fit (see
-                     |vim-mplus-folding|).
+                     The timestamp line of an input. The four header
+                     groups of an output link to it, so that one link
+                     changes them all.
 
     *mplusTitle*       Links to |hl-String|
                      TITLE section body (suppresses keyword highlighting),
@@ -146,6 +147,49 @@ Highlight groups:~
 
     *mplusString*      Links to |hl-String|
                      Quoted strings ("..." and '...').
+
+Highlight groups of an output file:~
+
+    *mplusPart*        Links to |mplusHeader|
+                     The header of a part of the output, both lines of a
+                     header of two lines, and INPUT INSTRUCTIONS.
+
+    *mplusSub*         Links to |mplusHeader|
+                     A sub-header inside a part, and the second line of a
+                     sub-header of two lines.
+
+    *mplusTable*       Links to |mplusHeader|
+                     The name of a matrix or table.
+
+    *mplusBanner*      Links to |mplusHeader|
+                     The lines above INPUT INSTRUCTIONS: the version,
+                     MUTHEN & MUTHEN, and the date and time of the run.
+
+    *mplusStatus*      Links to |hl-Special|
+                     THE MODEL ESTIMATION TERMINATED NORMALLY, the line
+                     that opens the status block.
+
+    *mplusWarning*     Links to |hl-WarningMsg|
+                     A message that Mplus marks as a warning, or that
+                     tells of a doubtful estimation, from its first line
+                     to the end of its paragraph.
+
+    *mplusError*       Links to |hl-ErrorMsg|
+                     A message that Mplus marks as an error, or that tells
+                     of a failed estimation, from its first line to the
+                     end of its paragraph.
+
+    *mplusFooter*      Links to |hl-Comment|
+                     From MUTHEN & MUTHEN at the end of the output, or the
+                     line Mplus VERSION above it, to the end of the file.
+
+The regions mplusEcho, mplusPartFold, mplusSubFold, mplusTableFold, and
+mplusStatusBlock make the folds and the status block and have no colour of
+their own. The output links each group with ":highlight default link", so
+a link of your own wins. To show sub-headers as identifiers, for example,
+put this line in after/syntax/mplus-out.vim: >
+    highlight link mplusSub Identifier
+<A link of mplusHeader changes the four header groups at once.
 
 ==============================================================================
 5. FOLDING                                               *vim-mplus-folding*
@@ -217,20 +261,53 @@ test/mplus-rules.sh checks the rule against an installed Mplus, with the
 cases of test/header-cases.txt.
 
 Output files ~
-Folds span between headers in capitals and specific mixed-case headers
-from model fit output (Loglikelihood, Information Criteria, Chi-Square
-Test of Model Fit, RMSEA, SRMR, WRMR). A line in capitals is a header in
-three places. The first is column 0 (MODEL FIT INFORMATION, STANDARDIZED
-MODEL RESULTS), unless the line holds a decimal number or ends with a
-slash, as the rows of the modification indices do. The second is an
-indented line with an empty line above and below it and no decimal number
-(PARAMETER SPECIFICATION under TECHNICAL 1 OUTPUT). The third is the name
-of a matrix or table (NU, LAMBDA, THETA, ESTIMATED RESIDUAL VARIANCES),
-which Mplus prints above a line of column names and a rule of underscores.
-Every other line in capitals is a result line, is not highlighted, and
-starts no fold. Examples are " F1       BY", the names above the columns of
-a matrix, and the lines of a message. The headers of the input that Mplus echoes at the top are shown as
-|mplusSection|, and one in capitals ("  MODEL:") starts a fold.
+An output folds in three levels, by the kind of each line, which is found
+where and as Mplus prints it:
+
+    Level 1   INPUT INSTRUCTIONS with the input that Mplus echoes, and each
+              part of the output: a line in capitals at column 0 with an
+              empty line above and below it (MODEL FIT INFORMATION,
+              TECHNICAL 1 OUTPUT), or two such lines (FINAL CLASS COUNTS
+              AND PROPORTIONS FOR THE LATENT CLASSES, then BASED ON THE
+              ESTIMATED MODEL).
+    Level 2   Each section of the echoed input, and each sub-header in a
+              part: a line at column 0 with lowercase letters and single
+              spaces between its words (Loglikelihood, Latent Class 1), a
+              label in capitals there (CFI/TLI, WITHIN, U1 AND U2), or an
+              indented line between empty lines with its section below it
+              (PARAMETER SPECIFICATION).
+    Level 3   The name of a matrix or table, which Mplus prints above a
+              line of column names and a rule of underscores (NU, LAMBDA,
+              ESTIMATED RESIDUAL VARIANCES). Directly under a part it is
+              at level 2.
+
+A fold ends above the next header of its level or of a level above. A
+sub-header at column 0 also ends above the next line with text at column 0
+that has an empty line above it and is no row of numbers. A header holds
+no decimal number, ends with no period, and starts with no article, note,
+or asterisk, so a line of results or of a message in capitals
+(" F1       BY", the heads of the columns of TECHNICAL 8) starts no fold.
+A section of the echoed input that has only its header line starts no
+fold, as a fold by syntax needs two lines.
+
+The banner, the messages about the input, the printed title, the status
+block, and the footer stand outside every fold, so that they show when
+all folds are closed (|zM|). The status block tells how the estimation
+ended. It opens at the line THE MODEL ESTIMATION TERMINATED NORMALLY at
+column 0, at the error of an estimation that did not terminate normally,
+or at the verdict on the random starts when one of these follows it, and
+it runs to the next part. TECHNICAL 9 prints a status line for every
+replication and bootstrap draw, and those lines stay in its fold.
+
+Warnings and errors are highlighted (|mplusWarning|, |mplusError|) and
+start no fold. A warning inside a part stays in the fold of the part.
+
+The input that Mplus echoes is highlighted as an input file, and its
+sections fold at level 2 inside INPUT INSTRUCTIONS.
+
+test/corpus/kinds.py states the rule for every kind of line, and
+test/corpus/check-syntax.sh compares the syntax with it, line by line.
+
 The title that Mplus prints between the messages about the input and
 SUMMARY OF ANALYSIS is shown as |mplusTitle|, whatever its lines look like,
 and starts no fold. In the output of a run that stops after the title, the
