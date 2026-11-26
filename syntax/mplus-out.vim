@@ -80,4 +80,10 @@ highlight link mplusComment Comment
 highlight link mplusHeader  Type
 highlight link mplusTitle   String
 
+"" Sections, block comments, and the printed title are regions of many
+"" lines, and a line reads differently inside one of them. Folding by syntax
+"" parses the whole buffer in any case, so every line is read with the state
+"" that the lines above it leave, wherever the window starts.
+syn sync fromstart
+
 let b:current_syntax = "mplus-out"

@@ -13,7 +13,6 @@ function! s:Groups(line) abort
     enew!
     call setline(1, ['MODEL:', a:line])
     set filetype=mplus-inp
-    syntax sync fromstart
     return map(range(1, strlen(a:line)), 'synIDattr(synID(2, v:val, 1), "name")')
 endfunction
 
@@ -39,7 +38,6 @@ function! s:Buffer(filetype, lines) abort
     enew!
     call setline(1, a:lines)
     execute 'set filetype=' . a:filetype
-    syntax sync fromstart
 endfunction
 
 " Return the syntax groups along line a:lnum, each run of one group once.
@@ -295,7 +293,6 @@ function! Test_printed_title_is_title_text() abort
     for [l:name, l:first, l:last] in [['title-same-line.out', 16, 20],
         \ ['title-plain.out', 17, 22], ['title-three-words.out', 17, 22]]
         execute 'edit' fnameescape(s:data . l:name)
-        syntax sync fromstart
         call assert_equal('mplus-out', &filetype, l:name)
         call assert_equal('INPUT READING TERMINATED NORMALLY', getline(l:first - 1), l:name)
         call assert_equal('SUMMARY OF ANALYSIS', getline(l:last + 1), l:name)
@@ -312,7 +309,6 @@ function! Test_printed_title_is_title_text() abort
     endfor
     " In the echoed input the text on the TITLE: line is no header either.
     execute 'edit' fnameescape(s:data . 'title-same-line.out')
-    syntax sync fromstart
     call assert_equal("  TITLE:\tModel comparison: two groups", getline(7))
     call assert_equal(['mplusSection', 'mplusFold'], s:LineGroups(7))
     bwipeout!
@@ -370,7 +366,6 @@ endfunction
 function! Test_examples() abort
     for l:file in ExampleFiles('out')
         execute 'edit' fnameescape(l:file)
-        syntax sync fromstart
         call assert_equal(['mplusHeader'], s:LineGroups(3), l:file)
         bwipeout!
     endfor
