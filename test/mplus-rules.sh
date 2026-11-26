@@ -14,8 +14,9 @@
 #             neither the line nor the line after it
 #
 # The script is skipped when Mplus is not found. MPLUS names the executable,
-# as in run-tests.sh. The inputs and outputs stay in a temporary directory,
-# which is printed.
+# as in run-tests.sh. The inputs and outputs are in a temporary directory.
+# The files of a case that is read as expected are removed, and so is the
+# directory when no case is left in it. Otherwise its name is printed.
 
 set -euo pipefail
 
@@ -30,7 +31,6 @@ fi
 
 WORK="$(mktemp -d)"
 echo "Mplus: $MPLUS"
-echo "Work directory: $WORK"
 
 TOTAL=0
 FAIL=0
@@ -69,8 +69,14 @@ while IFS= read -r case; do
     if [[ "$got" != "$expected" ]]; then
         echo "[FAIL] '${case#*|}' is $got, expected $expected ($dir)"
         FAIL=$((FAIL + 1))
+    else
+        rm -- "$dir/d.dat" "$dir/t.inp" "$dir/t.out"
+        rmdir "$dir"
     fi
 done <"$TEST_DIR/header-cases.txt"
 
 echo "Summary: $((TOTAL - FAIL))/$TOTAL cases read as expected"
+if ! rmdir "$WORK" 2>/dev/null; then
+    echo "Kept: $WORK"
+fi
 exit $FAIL

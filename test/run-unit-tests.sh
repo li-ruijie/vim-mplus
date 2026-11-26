@@ -46,8 +46,9 @@ for editor in "${EDITORS[@]}"; do
     for script in "$TEST_DIR"/unit/test_*.vim; do
         : > "$LOG"
         # Standard input is closed so that an editor left in Ex mode by a
-        # script error exits. The last line of the log gives the result.
-        MPLUS_TEST_LOG="$LOG_PATH" "$editor" "${ARGS[@]}" -S "$script" \
+        # script error exits, and an editor that hangs is ended after ten
+        # minutes. The last line of the log gives the result.
+        MPLUS_TEST_LOG="$LOG_PATH" timeout 600 "$editor" "${ARGS[@]}" -S "$script" \
             </dev/null >/dev/null 2>&1 || true
         if [[ "$(tail -n 1 "$LOG" | tr -d '\r')" == "PASS" ]]; then
             echo "[PASS] $editor $(basename "$script")"

@@ -8,8 +8,15 @@ augroup filetypedetect
 augroup END
 filetype plugin on
 
+" The test files go into a directory of their own. On Windows no editor
+" removes it at exit, so every file is deleted by name after its test, and
+" TearDown() removes the directory, which is empty by then.
 let s:dir = tempname()
 call mkdir(s:dir, 'p')
+
+function! TearDown() abort
+    call assert_equal(0, delete(s:dir, 'd'), 'not removed: ' . s:dir)
+endfunction
 
 " Edit the file a:path and return the file type it is given.
 function! s:TypeOf(path) abort
@@ -19,10 +26,13 @@ function! s:TypeOf(path) abort
     return l:type
 endfunction
 
-" Write a:lines to a file called a:name and return its file type.
+" Write a:lines to a file called a:name, return its file type, and delete
+" the file.
 function! s:Detect(name, lines) abort
     call writefile(a:lines, s:dir . '/' . a:name)
-    return s:TypeOf(s:dir . '/' . a:name)
+    let l:type = s:TypeOf(s:dir . '/' . a:name)
+    call delete(s:dir . '/' . a:name)
+    return l:type
 endfunction
 
 function! Test_inp_new_or_empty() abort

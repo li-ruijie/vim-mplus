@@ -137,9 +137,10 @@ stage() {
 }
 
 # Format the input $1 in place with gq. The editor leaves with an error
-# when the formatter of the plugin is not set or fails.
+# when the formatter of the plugin is not set or fails, and it is ended
+# when it has not finished after a minute.
 format_input() {
-    "$EDITOR_BIN" "${EDITOR_ARGS[@]}" \
+    timeout 60 "$EDITOR_BIN" "${EDITOR_ARGS[@]}" \
         --cmd "let &runtimepath = '$(native_path "$REPO_DIR"),' . \$VIMRUNTIME" \
         --cmd 'filetype plugin indent on' \
         -c 'setfiletype mplus-inp' \

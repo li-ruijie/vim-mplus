@@ -24,7 +24,9 @@ function! ExampleFiles(ext) abort
 endfunction
 
 " Call every Test_* function, write the notes and the failures to the file
-" named by $MPLUS_TEST_LOG with PASS or FAIL as the last line, and quit.
+" named by $MPLUS_TEST_LOG with PASS or FAIL as the last line, and quit. A
+" test file that creates files defines TearDown(), which is called after the
+" tests and removes them, so that a run leaves nothing behind.
 function! RunTests() abort
     for l:name in getcompletion('Test_', 'function')
         let l:name = matchstr(l:name, '^\w\+')
@@ -34,6 +36,9 @@ function! RunTests() abort
             call add(v:errors, l:name . ': ' . v:exception . ' (' . v:throwpoint . ')')
         endtry
     endfor
+    if exists('*TearDown')
+        call TearDown()
+    endif
     call writefile(g:test_notes + v:errors + [empty(v:errors) ? 'PASS' : 'FAIL'],
         \ $MPLUS_TEST_LOG)
     qall!
