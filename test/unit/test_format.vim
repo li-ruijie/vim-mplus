@@ -390,6 +390,35 @@ function! Test_break_in_a_file_name_with_spaces() abort
         \ s:Format(['DATA:', "\t\tFILE = \"" . l:name . '";']))
 endfunction
 
+function! Test_indent_after_a_do_statement() abort
+    " DO (1, 6) expression; is one statement. The line after it belongs to
+    " the section and has the indent of the DO line.
+    call assert_equal([
+        \ 'MODEL PRIORS:',
+        \ '    DO(1,6) DIFF(LAM1_#-LAM10_#)~N(0,0.01);',
+        \ '    DO(1,6) DIFF(NU1_#-NU10_#)~N(0,0.01); ! a note',
+        \ '    DO ($,1,2) DO (#,1,4) S$_# ~ N (0,0.1);',
+        \ '    F1 WITH F2;',
+        \ 'OUTPUT:',
+        \ '    TECH1;'],
+        \ s:Format([
+        \ 'MODEL PRIORS:',
+        \ '  DO(1,6) DIFF(lam1_#-lam10_#)~N(0,0.01);',
+        \ '  DO(1,6) DIFF(nu1_#-nu10_#)~N(0,0.01); ! a note',
+        \ '  DO ($,1,2) DO (#,1,4) s$_# ~ N (0,0.1);',
+        \ '  f1 WITH f2;',
+        \ 'output: tech1;']))
+    " A DO statement that goes on has its next line one level deeper.
+    call assert_equal([
+        \ 'MODEL CONSTRAINT:',
+        \ '    DO (1, 3) 0 = ! not the end; of the statement',
+        \ '        P# - Q#;'],
+        \ s:Format([
+        \ 'MODEL CONSTRAINT:',
+        \ 'DO (1, 3) 0 = ! not the end; of the statement',
+        \ 'p# - q#;']))
+endfunction
+
 function! Test_whole_input() abort
     call assert_equal([
         \ 'TITLE:',

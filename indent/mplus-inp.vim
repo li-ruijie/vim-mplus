@@ -40,8 +40,11 @@ function! GetMplusInpIndent()
     endif
 
     "" Handle DO loops
-    "" If previous line starts with DO and doesn't contain END DO, indent
+    "" If previous line starts with DO and doesn't contain END DO, indent.
+    "" DO (1, 6) expression; is one statement, so a DO line that holds the
+    "" semicolon of its statement has nothing below it that belongs to it.
     if prev_line =~? '^\s*DO\s*(' && prev_line !~? '\<END\s\+DO\>'
+        \ && substitute(prev_line, '!.*', '', '') !~# ';'
         let ind = ind + shiftwidth()
     endif
 
