@@ -38,6 +38,8 @@ mplus-inp.vim adds:          mplus-out.vim defines:
   ^(SECTION)(\s\S+)?:         mplusFold     (between all-caps headers
                                               + mixed-case fit headers)
                                \C^\s*\u[A-Z 0-9/,&():.*%=-]+$
+                               mplusTitle    (the printed title, up to
+                                              SUMMARY OF ANALYSIS)
 ```
 
 ## Highlight Groups

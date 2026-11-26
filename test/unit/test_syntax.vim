@@ -5,6 +5,8 @@ source <sfile>:p:h/common.vim
 filetype plugin on
 syntax on
 
+let s:data = expand('<sfile>:p:h:h') . '/data/'
+
 " Return the syntax group of every character of a:line, taken as a line of
 " a MODEL section.
 function! s:Groups(line) abort
@@ -173,7 +175,7 @@ function! Test_echoed_header_in_capitals() abort
         \ '    f BY y1;',
         \ '  OUTPUT: TECH1;',
         \ '',
-        \ 'INPUT READING TERMINATED NORMALLY',
+        \ 'SUMMARY OF ANALYSIS',
         \ '',
         \ 'MODEL RESULTS',
         \ '',
@@ -192,6 +194,72 @@ function! Test_echoed_header_in_capitals() abort
     " no closed fold, the first as it is not in capitals and the other as
     " its fold has one line.
     call assert_equal([-1, 2, 5, 8, 10, 12, 16, 18, -1, 21], s:FoldStarts())
+endfunction
+
+function! Test_printed_title_is_title_text() abort
+    " Mplus prints the title between the messages about the input and the
+    " summary of the analysis. It is title text whatever it looks like, and
+    " it stays in the fold of the line above it. The files are outputs of
+    " Mplus 9.1.1, with the lines of the title block given here.
+    for [l:name, l:first, l:last] in [['title-same-line.out', 16, 20],
+        \ ['title-plain.out', 17, 22], ['title-three-words.out', 17, 22]]
+        execute 'edit' fnameescape(s:data . l:name)
+        syntax sync fromstart
+        call assert_equal('mplus-out', &filetype, l:name)
+        call assert_equal('INPUT READING TERMINATED NORMALLY', getline(l:first - 1), l:name)
+        call assert_equal('SUMMARY OF ANALYSIS', getline(l:last + 1), l:name)
+        for l:lnum in filter(range(l:first, l:last), 'getline(v:val) =~# "\\S"')
+            call assert_equal(['mplusTitle'], s:LineGroups(l:lnum), l:name . ' line ' . l:lnum)
+        endfor
+        call assert_equal(['mplusHeader'], s:LineGroups(l:first - 1), l:name)
+        call assert_equal(['mplusHeader'], s:LineGroups(l:last + 1), l:name)
+        setlocal foldminlines=0
+        normal! zM
+        call assert_equal([l:first - 1, l:last + 1],
+            \ uniq(map(range(l:first - 1, l:last + 1), 'foldclosed(v:val)')), l:name)
+        bwipeout!
+    endfor
+    " In the echoed input the text on the TITLE: line is no header either.
+    execute 'edit' fnameescape(s:data . 'title-same-line.out')
+    syntax sync fromstart
+    call assert_equal("  TITLE:\tModel comparison: two groups", getline(7))
+    call assert_equal(['mplusSection', 'mplusFold'], s:LineGroups(7))
+    bwipeout!
+endfunction
+
+function! Test_printed_title_after_warnings() abort
+    call s:Buffer('mplus-out', [
+        \ 'Mplus VERSION 9.1.1',
+        \ 'MUTHEN & MUTHEN',
+        \ '11/26/2026   9:58 AM',
+        \ '',
+        \ 'INPUT INSTRUCTIONS',
+        \ '',
+        \ '  TITLE: A TITLE IN CAPITALS',
+        \ '  DATA: FILE IS x.dat;',
+        \ '',
+        \ '*** WARNING in OUTPUT command',
+        \ '  TECH8 option is not available.',
+        \ '   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS',
+        \ '',
+        \ '',
+        \ 'A TITLE IN CAPITALS',
+        \ 'MODEL: this is title text',
+        \ '! and so is this, with %percent% signs',
+        \ '',
+        \ 'SUMMARY OF ANALYSIS',
+        \ '',
+        \ 'Number of groups                                                 1'])
+    for l:lnum in [15, 16, 17]
+        call assert_equal(['mplusTitle'], s:LineGroups(l:lnum), l:lnum)
+    endfor
+    call assert_equal(['mplusHeader'], s:LineGroups(19))
+    call assert_equal('', synIDattr(synID(21, 1, 1), 'name') ==# 'mplusTitle' ? 'title' : '')
+    setlocal foldminlines=0
+    normal! zM
+    call assert_equal(foldclosed(12), foldclosed(15))
+    call assert_equal(foldclosed(12), foldclosed(17))
+    call assert_equal(19, foldclosed(19))
 endfunction
 
 function! Test_timestamp_is_a_header() abort

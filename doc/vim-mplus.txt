@@ -126,7 +126,8 @@ Highlight groups:~
                      Timestamp and section headers in output files.
 
     *mplusTitle*       Links to |hl-String|
-                     TITLE section body (suppresses keyword highlighting).
+                     TITLE section body (suppresses keyword highlighting),
+                     and the title that an output file prints.
 
     *mplusString*      Links to |hl-String|
                      Quoted strings ("..." and '...').
@@ -203,6 +204,9 @@ model fit output (Loglikelihood, Information Criteria, Chi-Square
 Test of Model Fit, RMSEA, SRMR, WRMR). The headers of the input that Mplus
 echoes at the top are shown as |mplusSection|, also where a header in
 capitals ("  MODEL:") starts a fold as every line in capitals does.
+The title that Mplus prints between the messages about the input and
+SUMMARY OF ANALYSIS is shown as |mplusTitle|, whatever its lines look like,
+and starts no fold.
 
 ==============================================================================
 6. INDENTATION                                         *vim-mplus-indentation*
