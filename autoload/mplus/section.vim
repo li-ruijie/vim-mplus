@@ -35,7 +35,9 @@
 " as not read, and the formatter then leaves the section as it is.
 "
 " ftdetect/mplus-inp.vim has its own pattern for the first line of a file,
-" since it has to work before the plugin is on the runtimepath.
+" since it has to work before the plugin is on the runtimepath. The pattern
+" follows the same rule, and test/unit/test_ftdetect.vim checks the two
+" against the same cases.
 
 let s:commands = ['TITLE', 'DATA', 'VARIABLE', 'DEFINE', 'ANALYSIS', 'MODEL',
     \ 'OUTPUT', 'SAVEDATA', 'PLOT', 'MONTECARLO']

@@ -16,13 +16,14 @@ autocmd BufRead,BufNewFile *.mdg setfiletype mplus-inp
 autocmd BufNewFile *.inp setfiletype mplus-inp
 autocmd BufRead *.inp if s:IsMplusInput() | setfiletype mplus-inp | endif
 
-" A command name in full or shortened to four or more letters, then a colon.
-" A second word is taken after DATA and MODEL only (DATA IMPUTATION:, MODEL
-" male:). Mplus starts a section at a second word after any command, as
-" autoload/mplus/section.vim tells, and passes over it after the others.
-let s:header_re = '\c^\s*\%(TITL\%[E]\|VARI\%[ABLE]\|DEFI\%[NE]\|ANAL\%[YSIS]'
-    \ . '\|OUTP\%[UT]\|SAVE\%[DATA]\|PLOT\|MONT\%[ECARLO]'
-    \ . '\|\%(DATA\|MODE\%[L]\)\%(\s\+[^: \t]\+\)\=\)\s*:'
+" A command name in full or shortened to four or more letters, followed by
+" a colon at once or after one more word (DATA IMPUTATION:, MODEL male:,
+" variable names:). This is the rule of autoload/mplus/section.vim for the
+" line where a section starts, written out here as this file is read before
+" the plugin is on the runtimepath. A unit test holds the two together.
+let s:header_re = '\c^\s*\%(TITL\%[E]\|DATA\|VARI\%[ABLE]\|DEFI\%[NE]\|ANAL\%[YSIS]'
+    \ . '\|MODE\%[L]\|OUTP\%[UT]\|SAVE\%[DATA]\|PLOT\|MONT\%[ECARLO]\)'
+    \ . '\%(\s\+[^: \t]\+\)\=\s*:'
 
 " Return whether the buffer is blank or its first line of code, looked for
 " in the first 500 lines, is a command header. Blank lines, comment lines,

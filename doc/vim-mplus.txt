@@ -56,11 +56,12 @@ looks at the content of these files before it sets a filetype:
     - Any other .inp file is mplus-inp when its first line of code is an
       Mplus command header, that is one of TITLE, DATA, VARIABLE, DEFINE,
       ANALYSIS, MODEL, OUTPUT, SAVEDATA, PLOT, and MONTECARLO followed by
-      a colon. The header may be in any case, may be shortened to four or
-      more letters ("anal:"), and may carry a second word after DATA or
-      MODEL ("MODEL INDIRECT:"). Blank lines, comment lines, and block
-      comments above it are passed over, and it must lie within the first
-      500 lines.
+      a colon at once or after one more word ("MODEL INDIRECT:", "variable
+      names:"). The header may be in any case and may be shortened to four
+      or more letters ("anal:"). This is the rule of |vim-mplus-sections|
+      for the line where a section starts. Blank lines, comment lines, and
+      block comments above it are passed over, and it must lie within the
+      first 500 lines.
     - A .inp file that holds only comments gets no filetype. A line that
       starts with "!" is a keyword line in ORCA input and a comment in
       CP2K input, so such a file does not show which program it is for.

@@ -14,6 +14,8 @@ filetype plugin on
 let s:dir = tempname()
 call mkdir(s:dir, 'p')
 
+let s:cases = expand('<sfile>:p:h:h') . '/header-cases.txt'
+
 function! TearDown() abort
     call assert_equal(0, delete(s:dir, 'd'), 'not removed: ' . s:dir)
 endfunction
@@ -53,6 +55,22 @@ function! Test_inp_starts_with_a_command() abort
     endfor
 endfunction
 
+function! Test_inp_follows_the_section_rule() abort
+    " The first line of code decides, and it does so by the rule of
+    " autoload/mplus/section.vim. Every case of header-cases.txt that starts
+    " a section makes the file Mplus input, and no other case does.
+    let l:count = 0
+    for l:case in filter(readfile(s:cases), 'v:val !~# "^\\%(#.*\\)\\=$"')
+        let [l:reading, l:text] = split(l:case, '|')
+        let l:line = substitute(l:text, '\\t', "\t", 'g') . ' zzmark'
+        call assert_equal(l:reading !=# 'text', !empty(mplus#section#Parse(l:line)), l:case)
+        call assert_equal(l:reading !=# 'text', s:Detect('case.inp', [l:line]) ==# 'mplus-inp',
+            \ l:case)
+        let l:count += 1
+    endfor
+    call assert_true(l:count > 100, 'cases: ' . l:count)
+endfunction
+
 function! Test_inp_command_after_comments() abort
     call assert_equal('mplus-inp', s:Detect('case.inp',
         \ ['', '! a comment', '  ! another', '', 'data: file is ex.dat;']))
@@ -76,8 +94,15 @@ function! Test_inp_of_another_program() abort
         \ ['!* a block comment', 'and no command after it', '*!'],
         \ ['!* an open block comment', 'TITLE: inside the comment'],
         \ ['TITLES: x'], ['TIT: x'], ['DAT: x'], ['MODELS: x'],
-        \ ['VARIABLE NAMES: x'], ['TITLE without a colon'], ['[TITLE]'],
-        \ ['MODEL two words: x']]
+        \ ['TITLE without a colon'], ['[TITLE]'], ['MODEL two words: x'],
+        \ ['Output of the run: x'], ['the model: x'],
+        \ ['%pal nprocs 4 end', '! B3LYP def2-SVP', '* xyz 0 1'],
+        \ ['# a CP2K input', '@SET PROJECT water', '&GLOBAL'],
+        \ ['&FORCE_EVAL', '  METHOD Quickstep'],
+        \ [' $CONTRL SCFTYP=RHF $END', ' $DATA', 'Title: water'],
+        \ ['/TITLE, a beam', '/PREP7'],
+        \ ['* a title line', '* TITLE: of another program', '*'],
+        \ ['$molecule', '0 1', '$end']]
         call assert_notequal('mplus-inp', s:Detect('case.inp', l:lines), string(l:lines))
     endfor
     call assert_notequal('mplus-inp', s:Detect('case.inp',
