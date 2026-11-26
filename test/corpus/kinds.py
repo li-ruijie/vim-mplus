@@ -66,6 +66,10 @@ _NAMES = ["TITLE", "DATA", "VARIABLE", "DEFINE", "ANALYSIS", "MODEL", "OUTPUT", 
           "MONTECARLO"]
 _NAME = "|".join(n[:4] + "".join(f"(?:{c}" for c in n[4:]) + ")?" * (len(n) - 4) for n in _NAMES)
 SECTION = re.compile(rf"^\s*(?:{_NAME})(?:\s+[^:\s]+)?\s*:", re.IGNORECASE)
+# A TITLE header with no second word, the only form of it that Mplus reads as a title.
+TITLE_HEADER = re.compile(r"^\s*TITL(?:E)?\s*:", re.IGNORECASE)
+# A line that opens a block comment that is still open at its end (mplus#section#Opens()).
+OPENS = re.compile(r"!\*(?!.*\*!)")
 
 RULE = re.compile(r"^\s*_{8}(?:\s+_{8})*\s*$")
 DECIMAL = re.compile(r"\d\.\d|(?<![\w.])\.\d")
@@ -218,16 +222,22 @@ def classify(texts):
     if head is not None:
         lines[head].kind = "echohead"
         echo_end = next((i for i in range(head + 1, n) if not lines[i].blank and not lines[i].indent), n)
-        comment = False
+        # A block comment opens at a !* anywhere on a line and closes at the next *!, except that
+        # below a TITLE line that opens none, a !* is title text up to the next section header.
+        comment = title = False
         for i in range(head + 1, echo_end):
             line = lines[i]
             if line.blank:
                 continue
-            line.kind = "echosect" if SECTION.match(line.text) and not comment else "echo"
-            if "*!" in line.text:
+            shape = SECTION.match(line.text)
+            line.kind = "echosect" if shape and not comment else "echo"
+            if line.kind == "echosect":
+                title = bool(TITLE_HEADER.match(line.text)) and not OPENS.search(line.text)
+            if OPENS.search(line.text):
+                if line.kind == "echosect" or not title or shape:
+                    comment = True
+            elif "*!" in line.text:
                 comment = False
-            elif re.match(r"^\s*!\*", line.text):
-                comment = True
     # The footer starts at the last MUTHEN & MUTHEN with an empty line above, or at the line Mplus
     # VERSION that Mplus on Linux writes above it, with only empty lines between.
     foot = n
