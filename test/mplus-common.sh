@@ -26,15 +26,18 @@ find_mplus() {
 # End the Mplus run of the input $2, which was started as process $1. The
 # further processes that Mplus starts for an analysis with PROCESSORS = 2
 # are no children of that process on Windows, so every Mplus process with
-# the name of the input on its command line is ended there. PowerShell
-# reads the commands from its standard input, where a command that runs
-# over several lines is carried out at the blank line after it.
+# the name of the input on its command line is ended there. The name has to
+# stand there as a word of its own, so that the run of ex9.33.inp does not
+# end that of mcex9.33.inp beside it. PowerShell reads the commands from its
+# standard input, where a command that runs over several lines is carried
+# out at the blank line after it.
 end_mplus() {
     if command -v powershell >/dev/null 2>&1; then
         MPLUS_IMAGE="$(basename "$MPLUS")" MPLUS_INPUT="$2" \
             powershell -NoProfile -Command - >/dev/null 2>&1 <<'END' || true
+$name = '(^|[\s"\\/])' + [regex]::Escape($env:MPLUS_INPUT) + '($|[\s"])'
 Get-CimInstance Win32_Process -Filter "Name='$env:MPLUS_IMAGE'" |
-    Where-Object { $_.CommandLine -like "*$env:MPLUS_INPUT*" } |
+    Where-Object { $_.CommandLine -match $name } |
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
 
 END
@@ -45,28 +48,52 @@ END
 }
 
 # Run Mplus on the input $2 in the directory $1 and print its exit status,
-# or "timeout" when it has not finished after MPLUS_TIME_LIMIT seconds (60
-# by default). Mplus writes its output next to the input.
+# or "timeout" when it has run for MPLUS_TIME_LIMIT seconds (60 by default)
+# without finishing. Mplus writes its output next to the input. With a file
+# name as $3, the status, the seconds that Mplus ran, and the seconds that
+# the machine slept during the run are written to that file.
 #
-# Mplus is run one input at a time. Several runs side by side reported
-# errors in inputs that are sound. A run that is over its time is therefore
-# ended with all its processes, so that none is left to disturb the next
-# run.
+# The time in which the machine slept does not count. The run is looked at
+# every 0.2 seconds, and a look that comes more than 30 seconds after the
+# one before shows that the machine slept in between, as Mplus waits while
+# it sleeps.
+#
+# A run that is over its time is ended with all its processes, so that none
+# is left to disturb the next run. Several runs side by side reported errors
+# in inputs that are sound, so run-tests.sh runs one at a time by default.
 run_mplus() {
-    local pid status=0 start=$SECONDS
+    local pid status=0 start=$SECONDS last=$SECONDS slept=0 ran
     (cd "$1" && exec "$MPLUS" "$2" </dev/null >/dev/null 2>&1) &
     pid=$!
     while kill -0 "$pid" 2>/dev/null; do
-        if ((SECONDS - start >= ${MPLUS_TIME_LIMIT:-60})); then
+        if ((SECONDS - last > 30)); then
+            slept=$((slept + SECONDS - last))
+        fi
+        last=$SECONDS
+        if ((SECONDS - start - slept >= ${MPLUS_TIME_LIMIT:-60})); then
+            ran=$((SECONDS - start - slept))
             end_mplus "$pid" "$2"
-            wait "$pid" 2>/dev/null || true
-            echo timeout
-            return 0
+            status=timeout
+            break
         fi
         sleep 0.2
     done
-    wait "$pid" || status=$?
+    if [[ "$status" == timeout ]]; then
+        wait "$pid" 2>/dev/null || true
+    else
+        wait "$pid" || status=$?
+    fi
+    if [[ -n "${3:-}" ]]; then
+        echo "$status ${ran:-$((SECONDS - start - slept))} $slept" >"$3"
+    fi
     echo "$status"
+}
+
+# Tell whether the Mplus output $1 is complete. Mplus ends every output
+# that it finishes, also one that stops at an error in the input, with its
+# copyright line.
+complete_output() {
+    [[ -f "$1" ]] && [[ "$(tr -d '\r' <"$1" | grep . | tail -n 1)" == Copyright* ]]
 }
 
 # Print the lines of the Mplus output $1 that follow the echoed input,

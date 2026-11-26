@@ -120,6 +120,16 @@ Highlight groups:~
     *mplusComment*     Links to |hl-Comment|
                      Line comments starting with !
                      Block comments delimited by !* and *! (spell-checked).
+                     Mplus opens a block comment at a !* anywhere on a
+                     line, also after code or in a ! comment, and drops
+                     the whole line where the comment stays open.
+
+    *mplusTitleComment*  Links to |hl-Comment|
+                     A comment in a title. On the TITLE line Mplus reads
+                     ! and !* as it does in code. Below it, only a line
+                     whose first character is a ! with no * after it is a
+                     comment, and Mplus prints every other line of the
+                     title, ! and !* included.
 
     *mplusSpeccom*     Links to |hl-Special|
                      Connectors: ARE, IS, =.
@@ -258,7 +268,8 @@ For mplus-inp files, 'formatexpr' is set to a custom formatter invoked
 with |gq|. The formatter performs the following operations on the
 selected range:
 
-    - Replaces tabs with 4 spaces and strips trailing whitespace.
+    - Replaces tabs with 4 spaces and strips trailing whitespace. A tab in
+      the text of a title becomes one space, as Mplus prints it.
     - Preserves TITLE body lines (free-form text, whitespace cleanup only).
       A title line may hold a colon. It ends the title when it begins with
       a command name that is followed by a colon at once or after one more

@@ -1,6 +1,9 @@
 " Tests for the gq formatter.
 
 source <sfile>:p:h/common.vim
+source <sfile>:p:h/tokens.vim
+
+let s:inputs = expand('<sfile>:p:h:h') . '/inputs/'
 
 filetype plugin indent on
 
@@ -313,6 +316,40 @@ function! Test_header_in_a_block_comment_is_no_header() abort
     call assert_equal(l:lines[0:3], getline(1, 4))
 endfunction
 
+function! Test_block_comment_mark_in_a_title() abort
+    " Below the TITLE line Mplus takes !* for title text, so the header
+    " after it starts a section. On the TITLE line it opens a block comment,
+    " and Mplus drops that line, so it stays as written.
+    call assert_equal(['TITLE:', '    a title', '    !* text of the title', 'DATA:',
+        \ '    FILE = x.dat;', 'MODEL:', '    Y ON X;'],
+        \ s:Format(['TITLE: a title', '!* text of the title', 'data: file is x.dat;',
+        \ 'model: y on x;']))
+    call assert_equal(['TITLE: a title !* a comment', '    data: file = none.dat;', '    *!',
+        \ 'DATA:', '    FILE = x.dat;'],
+        \ s:Format(['TITLE: a title !* a comment', 'data: file = none.dat;', '*!',
+        \ 'data: file = x.dat;']))
+endfunction
+
+function! Test_comment_on_the_title_line_is_kept_there() abort
+    " Mplus reads a ! on the TITLE line as the start of a comment and prints
+    " it as title text on the lines below, so the text stays on its line.
+    call assert_equal(['TITLE: a title ! a comment', '    more', 'DATA:'],
+        \ s:Format(['TITLE: a title ! a comment', 'more', 'DATA:']))
+    call assert_equal(['TITLE:', '    a title', 'DATA:'], s:Format(['TITLE: a title', 'DATA:']))
+endfunction
+
+function! Test_block_comment_after_code() abort
+    " Mplus opens a block comment at a !* after code or in a ! comment, and
+    " drops the line where it stays open. That line and the comment stay as
+    " written, and a header in it is no header.
+    call assert_equal(['MODEL:', '    y on x; !* a note', '    data: x', '    *!', '    Z ON W;',
+        \ '    z on w; ! a !* b', '    output: x *!', 'OUTPUT:', '    TECH1;'],
+        \ s:Format(['MODEL:', 'y on x; !* a note', 'data: x', '*!', 'z on w;',
+        \ 'z on w; ! a !* b', 'output: x *!', 'output: tech1;']))
+    call assert_equal(['MODEL:', '    Y ON X; !* a note *!', 'OUTPUT:', '    TECH1;'],
+        \ s:Format(['MODEL:', 'y on x; !* a note *!', 'output: tech1;']))
+endfunction
+
 function! Test_header_is_read_from_above_a_range() abort
     enew!
     call setline(1, ['TITLE: a study', '  step 2: twenty sets', '  impu = y1;',
@@ -370,6 +407,25 @@ function! Test_title_line_that_is_too_long_is_broken() abort
         call assert_notmatch('^\s*!', l:lines[2], l:tail)
         call assert_equal(toupper('TITLE: ' . l:start . ' ' . l:tail . ' DATA:'), s:Words(l:lines))
     endfor
+endfunction
+
+function! Test_tab_in_title_text() abort
+    " Mplus 9.1.1 prints a tab in the text of a title as one space and does
+    " not print the indent, so the title that it prints stays the same. A
+    " comment line is not printed, and code keeps four spaces for a tab.
+    call assert_equal([
+        \ 'TITLE:',
+        \ '    a b  c',
+        \ '    where attrition is predicted by time-',
+        \ '    ! a    note',
+        \ 'MODEL:',
+        \ '    F BY Y1    Y2;'],
+        \ s:Format(["TITLE:\ta\tb  c", "\twhere attrition is\tpredicted by time-\t",
+        \ "\t! a\tnote", 'MODEL:', "\tf by y1\ty2;"]))
+    call assert_equal(['TITLE:', '    first line', '    a b', 'DATA:'],
+        \ s:Format(["TITLE: first line", "a\tb", 'DATA:']))
+    call assert_equal(['TITLE:    Model comparison: two groups', '    a b', 'DATA:'],
+        \ s:Format(["TITLE:\tModel comparison:\ttwo groups", "a\tb", 'DATA:']))
 endfunction
 
 function! Test_long_line_that_is_not_broken() abort
@@ -519,17 +575,117 @@ function! Test_whole_input() abort
         \ 'saved: file = out.dat; esti = est.dat;']))
 endfunction
 
+" Check that gq changes nothing that Mplus reads in the input a:written,
+" which it formats as a:formatted. A note tells what Mplus drops from a line
+" of a:written that is too long.
+function! s:SameTokens(name, written, formatted) abort
+    let [l:difference, l:note] = MplusTokenCheck(a:written, a:formatted)
+    call assert_equal('', l:difference, 'tokens: ' . a:name)
+    if l:note !=# ''
+        call add(g:test_notes, 'NOTE: ' . fnamemodify(a:name, ':t') . ': ' . l:note)
+    endif
+endfunction
+
 function! Test_examples() abort
     for l:file in ExampleFiles('inp')
         execute 'edit' fnameescape(l:file)
+        let l:written = getline(1, '$')
         let v:errmsg = ''
         normal gggqG
         let l:once = getline(1, '$')
+        call s:SameTokens(l:file, l:written, l:once)
         normal gggqG
         call assert_equal(l:once, getline(1, '$'), 'second pass: ' . l:file)
         call assert_equal('', v:errmsg, l:file)
         bwipeout!
     endfor
+endfunction
+
+function! Test_inputs_keep_their_tokens() abort
+    let l:files = glob(s:inputs . '*.inp', 1, 1)
+    call assert_true(len(l:files) >= 5)
+    for l:file in l:files
+        execute 'edit' fnameescape(l:file)
+        let l:written = getline(1, '$')
+        normal gggqG
+        call s:SameTokens(l:file, l:written, getline(1, '$'))
+        bwipeout!
+    endfor
+endfunction
+
+" Return the tokens of the input a:lines as Mplus reads it, each as kind and
+" text, with the lines cut to a:1 characters (90 by default).
+function! s:Tokens(lines, ...) abort
+    return map(MplusTokens(a:lines, a:0 ? a:1 : 90), 'v:val[0] . ":" . v:val[1]')
+endfunction
+
+function! Test_tokens_as_mplus_reads_them() abort
+    " Each case is a rule that runs of mplus.exe 9.1.1 showed, as told in
+    " tokens.vim. Mplus reads 90 characters of a line, a tab counted as one.
+    let l:long = "MODEL:\t y ON x;" . repeat(' ', 76) . 'z;'
+    call assert_equal(['H:MODEL', 'C:Y', 'C:ON', 'C:X', ';:;'], s:Tokens([l:long]))
+    call assert_equal(['H:MODEL', 'C:Y', 'C:ON', 'C:X', ';:;', 'C:Z', ';:;'], s:Tokens([l:long], 0))
+    " Block comments open anywhere, also in a ! comment, and nest. A line on
+    " which one opens and stays open is dropped whole, the text after *! is
+    " read, and the text before a block comment on its line loses its
+    " trailing white space. *! with none open is a * and a comment.
+    call assert_equal(['H:MODEL', 'C:D', 'C:ON', 'C:E', ';:;', 'C:FH', ';:;', 'C:J', ';:;', 'C:*'],
+        \ s:Tokens(['MODEL:', 'y ON x; !* a', 'b ON c;', '*! d ON e;', 'f !* g *!h;',
+        \ '!* outer', '!* inner', '*!', 'i;', '*!', 'j; *! k', 'l; ! m !* n', 'o;', '*!']))
+    " ! starts a comment also inside a word or a quoted string.
+    call assert_equal(['H:VARIABLE', 'K:NAMES', 'C:=', 'C:Y', 'C:X', 'H:DATA', 'K:FILE', 'C:=',
+        \ 'Q:a'], s:Tokens(['VARIABLE: NAMES = y x!zzz;', 'DATA: FILE = "a!b.dat";']))
+    " Below the TITLE line only a line that starts with a ! with no * after
+    " it is a comment. Mplus prints the other lines without indent, with a
+    " tab as one space. The TITLE line is read as code is.
+    call assert_equal(['H:TITLE', 'T:first', 'T:second ! kept', 'T:third line', 'T:!* kept',
+        \ 'H:DATA', 'K:FILE', 'C:=', 'F:x.dat', ';:;', 'K:*'],
+        \ s:Tokens(['TITLE: first ! a comment', '! a comment', '!x a comment',
+        \ '  second ! kept', "third\tline", '!* kept', '', 'DATA: FILE = x.dat; *!']))
+    " A block comment that opens on the TITLE line drops the line, and a
+    " header in it starts nothing.
+    call assert_equal(['H:DATA', 'K:FILE', 'C:=', 'F:d.dat', ';:;'],
+        \ s:Tokens(['TITLE: a !* b', 'DATA: FILE = n.dat;', '*!', 'DATA: FILE = d.dat;']))
+    " A quoted string keeps its case, a run of spaces in it is one space, it
+    " goes on over a line break without the white space there, and it ends
+    " at a semicolon. A file name keeps its case.
+    call assert_equal(['H:DATA', 'K:FILE', 'C:=', 'Q:DaTa.dat', ';:;', 'H:SAVEDATA', 'K:FILE',
+        \ 'C:=', 'Q:a b.dat', ';:;', 'K:RESULTS', 'C:=', 'Q:c', ';:;', 'K:D.DAT', 'Q:', ';:;'],
+        \ s:Tokens(['DATA: FILE = "Da   ', "   Ta.dat\";", 'SAVEDATA: FILE = "a  b.dat";',
+        \ 'RESULTS = "c;d.dat";']))
+    call assert_equal(['H:DATA', 'K:FILE', 'C:=', 'F:Mixed', 'F:Name.Dat', ';:;'],
+        \ s:Tokens(['data: file is Mixed', '  Name.Dat;']))
+    " IS after an option name is the connector, and a name elsewhere.
+    call assert_equal(['H:VARIABLE', 'K:NAMES', 'C:=', 'C:Y', 'C:IS', ';:;', 'H:MODEL', 'C:Y',
+        \ 'C:ON', 'C:IS', ';:;'], s:Tokens(['VARIABLE: NAMES ARE y is;', 'MODEL: y ON is;']))
+    " Mplus does not read a section that it passes over.
+    call assert_equal(['X:MODEL INDIRECT', 'H:OUTPUT', 'K:SAMP', ';:;'],
+        \ s:Tokens(['mode indirect: y ind x;', 'esti = ml;', 'OUTPUT: samp;']))
+endfunction
+
+function! Test_token_difference() abort
+    " An option name and a word of OUTPUT may be written in full.
+    call assert_equal('', MplusTokenDifference(MplusTokens(['anal: esti = ml;', 'outp: cint(boot);'], 90),
+        \ MplusTokens(['ANALYSIS:', '    ESTIMATOR = ML;', 'OUTPUT:', '    CINTERVAL(BOOTSTRAP);'], 90), 0))
+    for [l:written, l:formatted] in [
+        \ [['MODEL: esti BY y1;'], ['MODEL:', '    ESTIMATOR BY Y1;']],
+        \ [['DATA: FILE = ex.dat;'], ['DATA:', '    FILE = EX.DAT;']],
+        \ [['TITLE: Two groups', 'DATA:'], ['TITLE:', '    TWO GROUPS', 'DATA:']],
+        \ [['DATA: FILE = "a b.dat";'], ['DATA: FILE = "a', 'b.dat";']],
+        \ [['MODEL: y ON x;'], ['MODEL: y ON x']]]
+        call assert_notequal('', MplusTokenDifference(MplusTokens(l:written, 90),
+            \ MplusTokens(l:formatted, 90), 0), string(l:formatted))
+    endfor
+    " A line of title text that is too long may be broken at white space
+    " when it is compared with the written line read whole.
+    let l:title = ['TITLE: ' . repeat('word ', 20) . 'end', 'DATA:']
+    let l:broken = ['TITLE:', '    ' . repeat('word ', 16) . 'word', '    word word word end', 'DATA:']
+    call assert_equal('', MplusTokenDifference(MplusTokens(l:title, 0), MplusTokens(l:broken, 90), 1))
+    call assert_notequal('', MplusTokenDifference(MplusTokens(l:title, 90), MplusTokens(l:broken, 90), 0))
+    call assert_equal(['', ''], MplusTokenCheck(['MODEL: y ON x;'], ['MODEL:', '    Y ON X;']))
+    let [l:difference, l:note] = MplusTokenCheck(l:title, l:broken)
+    call assert_equal('', l:difference)
+    call assert_match("^as written, Mplus drops line 1 'd word word word end'", l:note)
 endfunction
 
 call RunTests()

@@ -1,0 +1,36 @@
+# The examples that Mplus 9.1.1 did not finish within 60 seconds in one or
+# both forms in the full runs of run-tests.sh on 2026-11-26. run-slow.sh
+# runs them with a longer time limit.
+ex4.3
+ex8.3
+ex8.4
+ex8.15
+ex9.10
+ex9.14
+ex9.27
+ex9.30
+ex9.30b
+ex9.32b
+ex9.33
+ex9.33b
+ex9.35
+ex9.36
+ex9.38
+ex9.38b
+ex9.39
+ex9.39b
+ex9.40
+ex9.40part2
+mcex9.30step1
+mcex9.33
+mcex9.35
+mcex9.36
+mcex9.38
+mcex9.39
+mcex9.40part2
+ex10.5
+ex10.7
+ex10.10
+ex10.12
+mcex10.12
+ex12.6step1
