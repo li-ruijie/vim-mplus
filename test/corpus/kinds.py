@@ -26,8 +26,9 @@ Kinds of line, with the fold rank of the kinds that start a fold:
     sub       a sub-header inside a part (rank 2)
     sub2      the second line of a sub-header of two lines at column 0
     table     the name of a matrix or table above a rule of underscores (rank 3)
-    warning   a line of a message that Mplus marks as a problem, or that tells of a failed or doubtful
-              estimation
+    warning   a line of a message that Mplus marks as a warning, or that tells of a doubtful estimation
+    error     a line of a message that Mplus marks as an error, or that tells of a failed estimation
+    status    the line THE MODEL ESTIMATION TERMINATED NORMALLY that opens the status block
     footer    the lines from the MUTHEN & MUTHEN that follows an empty line to the end
 The other lines are plain text. Three kinds of them are named, to say why a line that looks like a
 header is none:
@@ -42,6 +43,15 @@ holds the folds of higher rank that start inside it. A table directly under a pa
 The echoed input ends at its first line with text at column 0, and the folds open in it end there.
 A sub-header at column 0 holds the lines below it up to the next line with text at column 0 that is
 no row of numbers. The footer ends every fold.
+
+The status block tells how the estimation ended. It opens at the status line THE MODEL ESTIMATION
+TERMINATED NORMALLY at column 0, at the error of an estimation that did not terminate normally
+(THE MODEL ESTIMATION DID NOT TERMINATE NORMALLY, NO CONVERGENCE.), or at the verdict on the random
+starts (THE BEST LOGLIKELIHOOD VALUE HAS BEEN REPLICATED, or the warning that it was not) when the
+next paragraph is one of those two. A line inside a part whose header starts with TECHNICAL opens
+none, since TECHNICAL 9 prints a status line for every replication and every bootstrap draw. The
+block ends every fold and runs to the line above the next part header or the footer, outside any
+fold, so that it shows when every fold is closed. No sub-header or table starts inside it.
 """
 import re
 import sys
@@ -77,32 +87,46 @@ CAPS_LABEL = re.compile(r"^(?:CFI/TLI|CLASS \d+|WITHIN|BETWEEN|VARIABLE SET \d+"
 
 # The first words of a message that Mplus marks as a problem, or that tells of a failed or doubtful
 # estimation. Mplus words these messages as it words its other messages, so only the wording tells
-# them apart.
-OPENERS = [
-    r"\*\*\* (?:WARNING|ERROR|FATAL ERROR)",
-    r"WARNING\b",
-    r"ERRORS?\b",
-    r"\d+ WARNING\(S\) FOUND IN THE INPUT INSTRUCTIONS",
+# them apart. An error is a message that Mplus marks as one, or that tells that a step failed and
+# gave no result. ERROR is matched as a word, so that the caption ERRORS DURING ESTIMATION WITH
+# BOOTSTRAP DRAW NUMBER n (shown below, if any) is no error.
+ERROR_OPENERS = [
+    r"\*\*\* (?:ERROR|FATAL ERROR)",
+    r"ERROR\b",
+    r"\d+ ERROR\(S\) FOUND IN THE INPUT INSTRUCTIONS",
     r"Errors for replication with data file",
+    r"NO CONVERGENCE",
+    r"THE MODEL ESTIMATION DID NOT TERMINATE",
+    r"Model estimation did not terminate normally",
+    r"THE LOGLIKELIHOOD DECREASED",
+    r"THE FOLLOWING DATA SET\(S\) DID NOT RESULT",
+    r"DEMO VERSION MAXIMUM EXCEEDED",
+]
+WARNING_OPENERS = [
+    r"\*\*\* WARNING",
+    r"WARNING\b",
+    r"\d+ WARNING\(S\) FOUND IN THE INPUT INSTRUCTIONS",
     r"PROBLEMS? (?:OCCURRED|INVOLVING)",
     r"COMPUTATIONAL PROBLEMS",
-    r"NO CONVERGENCE",
-    r"THE MODEL ESTIMATION (?:DID NOT TERMINATE|HAS REACHED)",
-    r"Model estimation did not terminate normally",
+    r"THE MODEL ESTIMATION HAS REACHED",
     r"THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES",
     r"ONE OR MORE (?:[A-Z]+ )*PARAMETERS WERE FIXED",
     r"THE CONDITION NUMBER IS",
     r"THE NONIDENTIFICATION IS",
     r"THE (?:H1 )?MODEL ESTIMATION DID NOT CONVERGE",
-    r"THE LOGLIKELIHOOD DECREASED",
     r"THIS ANALYSIS MAY HAVE MULTIPLE SOLUTIONS",
     r"THE EFFECTIVE SAMPLE SIZE",
     r"THE WARNING IS DUE TO",
     r"A MATRIX COULD NOT BE INVERTED",
-    r"THE FOLLOWING DATA SET\(S\) DID NOT RESULT",
-    r"DEMO VERSION MAXIMUM EXCEEDED",
 ]
-PROBLEM = re.compile(r"^\s*(?:" + "|".join(OPENERS) + ")")
+ERROR = re.compile(r"^\s*(?:" + "|".join(ERROR_OPENERS) + ")")
+WARNING = re.compile(r"^\s*(?:" + "|".join(WARNING_OPENERS) + ")")
+
+# The lines that open the status block (see above).
+STATUS = re.compile(r"^THE MODEL ESTIMATION TERMINATED NORMALLY\s*$")
+FAILED = re.compile(r"^\s*(?:THE MODEL ESTIMATION DID NOT TERMINATE NORMALLY|NO CONVERGENCE\.)")
+VERDICT = re.compile(r"^(?:THE BEST LOGLIKELIHOOD VALUE HAS BEEN REPLICATED|\s+WARNING:\s+THE BEST "
+                     r"LOGLIKELIHOOD VALUE WAS NOT REPLICATED)")
 
 
 class Line:
@@ -243,12 +267,46 @@ def classify(texts):
     body = [i for i in range(echo_end, foot) if i not in title]
     inside = set(body)
     for i in body:
-        _header(lines, i, inside)
+        _header(lines, i)
+    block = _status(lines, body, foot)
     for lo, hi in _paragraphs(lines, body, inside):
         _problem(lines, lo, hi)
         _plain(lines, lo, hi)
-    _levels(lines, echo_end if head is not None else None, foot)
+    _levels(lines, echo_end if head is not None else None, foot, block)
     return lines
+
+
+def _status(lines, body, foot):
+    """Mark the status line, take the headers out of the status block, and return its lines."""
+    block = set()
+    part = ""
+    opened = False
+    for i in body:
+        line = lines[i]
+        if line.kind == "part":
+            part, opened = line.text, False
+        if opened or part.startswith("TECHNICAL") or line.blank:
+            if opened:
+                block.add(i)
+            continue
+        opens = STATUS.match(line.text) or FAILED.match(line.text)
+        if not opens and VERDICT.match(line.text) and (i == 0 or lines[i - 1].blank):
+            j = i
+            while j < foot and not lines[j].blank:
+                j += 1
+            while j < foot and lines[j].blank:
+                j += 1
+            opens = j < foot and (STATUS.match(lines[j].text) or FAILED.match(lines[j].text))
+        if opens:
+            opened = True
+            block.add(i)
+    for i in block:
+        line = lines[i]
+        if line.kind in ("sub", "sub2", "table"):
+            line.kind = "plain"
+        elif STATUS.match(line.text):
+            line.kind = "status"
+    return block
 
 
 def _paragraphs(lines, body, inside):
@@ -283,19 +341,22 @@ def _starts_header(text):
     return bool(UPPER.match(text.strip()))
 
 
-def _header(lines, i, inside):
+def _header(lines, i):
     """The rules for headers, in the order in which they are tried."""
     line = lines[i]
     if line.blank or line.kind != "plain":
         return
     text = line.text
-    below = lines[i + 1] if i + 1 in inside else None
-    after = lines[i + 2] if i + 2 in inside else None
+    below = lines[i + 1] if i + 1 < len(lines) else None
+    after = lines[i + 2] if i + 2 < len(lines) else None
     alone_below = below is None or below.blank
+
     # A continuation: the next line is at column 0, its text passes the test, and an empty line or
-    # the end of the body follows it.
-    def cont(test):
-        return below is not None and not below.blank and not below.indent and test(below.text) \
+    # the end of the output follows it. A sub-header at column 0 may also go on in an indented line
+    # that starts with a parenthesis, as "     (Ordinal) Outcomes" goes on a header of the fit.
+    def cont(test, indented=False):
+        return below is not None and not below.blank and test(below.text) \
+            and (not below.indent or indented and below.text.lstrip().startswith("(")) \
             and (after is None or after.blank)
 
     if line.rule2 and line.indent:
@@ -309,7 +370,7 @@ def _header(lines, i, inside):
     elif not line.indent and line.up and CAPS_LABEL.match(text) and alone_below:
         line.kind = "sub"
     elif not line.indent and (line.up or line.prev in ("i", "s")) and _col0_sub_line(text) \
-            and (alone_below or cont(_col0_sub_line)):
+            and (alone_below or cont(_col0_sub_line, indented=True)):
         line.kind = "sub"
         if not alone_below:
             below.kind = "sub2"
@@ -319,11 +380,12 @@ def _header(lines, i, inside):
 
 
 def _problem(lines, lo, hi):
-    """A problem message runs from its first line to the end of its paragraph."""
+    """A warning or an error runs from its first line to the end of its paragraph."""
     for k in range(lo, hi):
-        if PROBLEM.match(lines[k].text):
+        kind = "error" if ERROR.match(lines[k].text) else "warning" if WARNING.match(lines[k].text) else ""
+        if kind:
             for j in range(k, hi):
-                lines[j].kind = "warning"
+                lines[j].kind = kind
             return
 
 
@@ -357,11 +419,13 @@ def _plain(lines, lo, hi):
             line.kind = "colhead"
 
 
-def _levels(lines, echo_end, foot):
+def _levels(lines, echo_end, foot, block):
     stack = []   # the open folds, as [rank, whether it is a sub-header at column 0]
     for i, line in enumerate(lines):
-        if i == echo_end or i == foot:
+        if i == echo_end or i == foot or i in block:
             stack = []
+            if i in block:
+                continue
         rank = RANK.get(line.kind)
         if rank is None and not line.blank and not line.indent and line.kind not in ("sub2", "part2") \
                 and not is_row(line.text):
@@ -379,7 +443,7 @@ def _levels(lines, echo_end, foot):
 # The labelled list ------------------------------------------------------------------------------------
 
 KINDS = ("banner", "echohead", "echosect", "echo", "title", "part", "part2", "sub", "sub2", "table",
-         "warning", "message", "label", "colhead", "footer", "plain")
+         "warning", "error", "status", "message", "label", "colhead", "footer", "plain")
 
 
 def norm(text):
@@ -406,14 +470,14 @@ HEADERS = ("echohead", "echosect", "part", "part2", "sub", "sub2", "table")
 
 
 def candidate(line):
-    """Whether a line goes into the labelled list: every header, warning, banner, and footer line,
-    every other line that has the place of a header (at column 0, alone between empty lines, or two
-    lines above a rule of underscores), and a title line in capitals at column 0."""
+    """Whether a line goes into the labelled list: every header, warning, error, status, banner, and
+    footer line, every other line that has the place of a header (at column 0, alone between empty
+    lines, or two lines above a rule of underscores), and a title line in capitals at column 0."""
     if line.blank or line.kind == "echo":
         return False
     if line.kind == "title":
         return not line.indent and caps(line.text)
-    if line.kind in HEADERS or line.kind in ("warning", "banner", "footer"):
+    if line.kind in HEADERS or line.kind in ("warning", "error", "status", "banner", "footer"):
         return True
     return not line.indent or bool(line.up and line.down) or line.rule2
 

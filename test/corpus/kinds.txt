@@ -77,7 +77,7 @@ part           62  0/2+/0c/2a/d       FINAL CLASS COUNTS AND PROPORTIONS FOR THE
 part          267  0/2+/0c/2a/d       FINAL CLASS COUNTS AND PROPORTIONS FOR THE LATENT CLASSES
 part           18  0/2+/1+/1/d        ALTERNATIVE PARAMETERIZATIONS FOR THE CATEGORICAL LATENT VARIABLE
                                       + REGRESSION
-part     ?      9  0/2+/1+/1/d        BETWEEN LEVEL RESULTS
+part            9  0/2+/1+/1/d        BETWEEN LEVEL RESULTS
 part            2  0/2+/1+/1/d        BETWEEN-LEVEL FACTOR SCORE COMPARISONS
 part            1  0/2+/1+/1/d        BRANT WALD TEST FOR PROPORTIONAL ODDS
 part           23  0/2+/1+/1/d        C-SPECIFIC CLASSIFICATION RESULTS
@@ -111,7 +111,7 @@ part            1  0/2+/1+/1/d        LOGRANK OUTPUT
 part          447  0/2+/1+/1/d        MODEL FIT INFORMATION
 part            2  0/2+/1+/1/d        MODEL MODIFICATION INDICES
 part          419  0/2+/1+/1/d        MODEL RESULTS
-part     ?     24  0/2+/1+/1/d        MODEL RESULTS USE THE LATENT CLASS VARIABLE ORDER
+part           24  0/2+/1+/1/d        MODEL RESULTS USE THE LATENT CLASS VARIABLE ORDER
 part            1  0/2+/1+/1/d        MODIFICATION INDICES
 part           13  0/2+/1+/1/d        ODDS RATIO FOR THE ALTERNATIVE PARAMETERIZATIONS FOR THE CATEGORICAL
                                       + LATENT VARIABLE REGRESSION
@@ -122,7 +122,7 @@ part           18  0/2+/1+/1/d        R-SQUARE
 part           19  0/2+/1+/1/d        RANDOM STARTS RESULTS RANKED FROM THE BEST TO THE WORST LOGLIKELIHOOD
                                       + VALUES
 part            2  0/2+/1+/1/d        RESULTS FOR BASIC ANALYSIS
-part     ?      4  0/2+/1+/1/d        RESULTS FOR CLASS #
+part            4  0/2+/1+/1/d        RESULTS FOR CLASS #
 part            7  0/2+/1+/1/d        RESULTS FOR EXPLORATORY FACTOR ANALYSIS
 part           38  0/2+/1+/1/d        RESULTS IN PROBABILITY SCALE
 part            4  0/2+/1+/1/d        SAMPLE STATISTICS
@@ -149,7 +149,7 @@ part            3  0/2+/1+/1/d        TRANSITION PROBABILITY ODDS
 part           79  0/2+/1+/1/d        UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
 part            2  0/2+/1+/1/d        UNIVARIATE PROPORTIONS FOR CATEGORICAL VARIABLES
 part          165  0/2+/1+/1/d        UNIVARIATE SAMPLE STATISTICS
-part     ?     10  0/2+/1+/1/d        WITHIN LEVEL RESULTS
+part           10  0/2+/1+/1/d        WITHIN LEVEL RESULTS
 part          200  0/2+/1+/1/d        WITHIN-LEVEL R-SQUARE FOR CLUSTER #
 part          200  0/2+/1+/1/d        WITHIN-LEVEL STANDARDIZED MODEL RESULTS FOR CLUSTER #
 part2         143  0/0c/1+/2b/d       BASED ON ESTIMATED POSTERIOR PROBABILITIES
@@ -162,13 +162,14 @@ sub             1  0/0i/1+/2b/d       Group #
 sub            25  0/0i/1+/l/d        Latent Class #
 sub             3  0/0i/1+/l/d        Latent Class Pattern # #
 sub             1  0/0i/1+/l/d        Latent Class Pattern # # #
-sub      ?      2  0/0s/1+/2b/d       Final stage loglikelihood values at local maxima, seeds, and initial
+sub             2  0/0s/1+/2b/d       Final stage loglikelihood values at local maxima, seeds, and initial
                                       + stage start numbers:
 sub            59  0/1/0c/2a/d        Average Latent Class Probabilities for Most Likely Latent Class
                                       + Membership (Row)
 sub            56  0/1/0c/2a/d        Chi-Square Test of Model Fit for the Binary and Ordered Categorical
 sub             1  0/1/0c/2a/d        Posterior Predictive P-Value (Confidence Limits), Deviance (DIC), and
                                       + Estimated Number of
+sub             1  0/1/0i/2a/d        Chi-Square Test of Model Fit for the Binary and Ordered Categorical
 sub             2  0/1/1+/1/d         Available post-processing tools
 sub            11  0/1/1+/1/d         Bayesian Posterior Predictive Checking using Chi-Square
 sub            16  0/1/1+/1/d         Between LEVEL# Level
@@ -193,10 +194,10 @@ sub            36  0/1/1+/1/d         Classification Quality for C#
 sub             8  0/1/1+/1/d         Classification Quality for CB
 sub             5  0/1/1+/1/d         Classification Quality for CG
 sub             2  0/1/1+/1/d         Classification Quality for CW
-sub      ?     18  0/1/1+/1/d         Continuous latent variables
+sub            18  0/1/1+/1/d         Continuous latent variables
 sub             1  0/1/1+/1/d         Effects from F# to F#
 sub             2  0/1/1+/1/d         Effects from X# to Y#
-sub      ?     50  0/1/1+/1/d         Final stage loglikelihood values at local maxima, seeds, and initial
+sub            50  0/1/1+/1/d         Final stage loglikelihood values at local maxima, seeds, and initial
                                       + stage start numbers:
 sub             5  0/1/1+/1/d         Group #
 sub             5  0/1/1+/1/d         Group DZ
@@ -221,7 +222,7 @@ sub            21  0/1/1+/1/d         Latent Class Pattern # # Compared to Laten
 sub           328  0/1/1+/1/d         Loglikelihood
 sub             1  0/1/1+/1/d         Loglikelihood Including the Auxiliary Part
 sub             2  0/1/1+/1/d         ON Statements
-sub      ?    428  0/1/1+/1/d         Observed dependent variables
+sub           428  0/1/1+/1/d         Observed dependent variables
 sub            10  0/1/1+/1/d         Optimum Function Value for Weighted Least-Squares Estimator
 sub            31  0/1/1+/1/d         Parameterization using Reference Class #
 sub             2  0/1/1+/1/d         Parameters for Class-specific Model Parts
@@ -237,8 +238,8 @@ sub            13  0/1/1+/1/d         SRMR (Standardized Root Mean Square Residu
 sub             2  0/1/1+/1/d         VARIABLE SET #
 sub             6  0/1/1+/1/d         Variable Y#
 sub             5  0/1/1+/1/d         Variable Z#
-sub      ?      1  0/1/1+/1/d         Variables used for imputation
-sub      ?    144  0/1/1+/1/d         Variables with special functions
+sub             1  0/1/1+/1/d         Variables used for imputation
+sub           144  0/1/1+/1/d         Variables with special functions
 sub             2  0/1/1+/1/d         Variances/Residual Variances
 sub             3  0/1/1+/1/d         WITH Statements
 sub             8  0/1/1+/1/d         WRMR (Weighted Root Mean Square Residual)
@@ -254,14 +255,14 @@ sub           121  0/2+/0c/2a/d       Classification Probabilities for the Most 
 sub           121  0/2+/0c/2a/d       Logits for the Classification Probabilities for the Most Likely
                                       + Latent Class Membership (Column)
 sub             2  0/2+/1+/1/d        Between Level
-sub      ?      2  0/2+/1+/1/d        Final stage loglikelihood values at local maxima, seeds, and initial
+sub             2  0/2+/1+/1/d        Final stage loglikelihood values at local maxima, seeds, and initial
                                       + stage start numbers:
 sub             1  0/2+/1+/1/d        ON Statements
 sub             2  0/2+/1+/1/d        ON/BY Statements
 sub           205  0/2+/1+/1/d        STD Standardization
 sub           208  0/2+/1+/1/d        STDY Standardization
 sub           205  0/2+/1+/1/d        STDYX Standardization
-sub      ?      1  0/2+/1+/1/d        Variables used for imputation
+sub             1  0/2+/1+/1/d        Variables used for imputation
 sub             2  1/1/1+/1/d         Item Categories
 sub             7  1/1/1+/1/d         Item Discriminations
 sub             2  1/1/1+/1/d         Results for Factor LOGV
@@ -277,7 +278,7 @@ sub            19  2/1/1+/1/d         C# Classes (Rows) by C# Classes (Columns)
 sub             4  2/1/1+/1/d         CG Classes (Rows) by C Classes (Columns)
 sub             3  2/1/1+/1/d         CG Classes (Rows) by C# Classes (Columns)
 sub             2  2/1/1+/1/d         Conditional probabilities and odds for the latent class variables
-sub      ?     16  2/1/1+/1/d         Error messages for each replication (if any)
+sub            16  2/1/1+/1/d         Error messages for each replication (if any)
 sub            16  2/1/1+/1/d         Latent Class Variable Patterns
 sub             1  2/1/1+/1/d         Loop plots
 sub             1  2/1/1+/1/d         Order and format of variables
@@ -321,7 +322,7 @@ sub             2  5/1/1+/1/d         EFFECT OF X
 sub            31  5/1/1+/1/d         Estimated Intraclass Correlations for the Y Variables
 sub             4  5/1/1+/1/d         Estimated Intraclass Correlations for the Y Variables for LEVEL# level
 sub             1  5/1/1+/1/d         LOGRANK TEST FOR SURVIVAL VARIABLE T COMPARING CLASS # AGAINST CLASS #
-sub      ?     28  5/1/1+/1/d         REPLICATION #:
+sub            28  5/1/1+/1/d         REPLICATION #:
 sub             1  5/2+/1+/1/d        BIVARIATE MODEL FIT INFORMATION
 sub             3  5/2+/1+/1/d        ESTIMATED CONDITIONAL PROBABILITIES FOR THE LATENT CLASS VARIABLES
 sub             3  5/2+/1+/1/d        ESTIMATED MARGINAL PROBABILITIES FOR THE LATENT CLASS VARIABLES
@@ -468,6 +469,7 @@ sub2            1  0/0c/1+/2b/d       Parameters (pD) From Each Group
 sub2          152  0/0c/1+/2b/d       by Latent Class (Column)
 sub2          242  0/0c/1+/2b/d       by Latent Class (Row)
 sub2            8  0/0c/1+/2b/d       by Latent Class Pattern (Column)
+sub2            1  5/0c/1+/2b/d       (Ordinal) Outcomes
 table        2364  11/2+/0i/f/d/R     ALPHA
 table         398  11/2+/0i/f/d/R     ALPHA(C)
 table          28  11/2+/0i/f/d/R     ALPHA(F) FOR LATENT CLASS #
@@ -545,11 +547,9 @@ warning         2  0/0i/0i/m/d        *** WARNING
 warning         5  0/0i/0i/m/d        *** WARNING in MODEL POPULATION command
 warning        12  0/0i/0i/m/d        *** WARNING in MODEL command
 warning         2  0/1/0i/f/d         *** WARNING in MODEL command
-warning  ?     99  0/1/1+/1/d         Errors for replication with data file ex#.#rep#.dat:
 warning        13  0/2+/0i/f/d        *** WARNING
 warning        45  0/2+/0i/f/d        *** WARNING in MODEL command
 warning         5  0/2+/0i/f/d        *** WARNING in OUTPUT command
-warning  ?      1  0/2+/1+/1/d        Errors for replication with data file ex#.#rep#.dat:
 warning         1  10/0i/1+/l/s       #
 warning         1  11/0i/0i/m/s       for a continuous dependent variable with a covariate, linear trend,
                                       + random slopes,
@@ -622,8 +622,8 @@ warning        11  2/0i/0i/m/d        variable.  To use the latent within-level 
                                       + in the ANALYSIS command.
 warning         1  2/0i/0i/m/d        x-variables.  These cases were not included in the analysis.
 warning        11  2/0i/1+/l/d        cluster for the following clusters.
-warning  ?     54  3/0i/1+/l/s        # WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
-warning  ?      9  3/1/1+/1/s         # WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+warning        54  3/0i/1+/l/s        # WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+warning         9  3/1/1+/1/s         # WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
 warning         1  4/0i/0c/m/s        B | Y ON M
 warning         1  4/0i/0c/m/s        S | Y ON X
 warning         1  4/0i/0c/m/s        S# | Y ON W
@@ -696,13 +696,17 @@ warning         2  5/2+/0i/f/d        WARNING:  THE LATENT VARIABLE COVARIANCE M
 warning         1  5/2+/0i/f/d        WARNING: PROBLEMS OCCURRED IN SEVERAL ITERATIONS IN THE COMPUTATION
                                       + OF THE STANDARDIZED ESTIMATES FOR SEVERAL
 warning         1  5/2+/1+/1/d        WARNING:  THE BIVARIATE TABLE OF U# AND U# HAS AN EMPTY CELL.
+error          99  0/1/1+/1/d         Errors for replication with data file ex#.#rep#.dat:
+error           1  0/2+/1+/1/d        Errors for replication with data file ex#.#rep#.dat:
+status          1  0/1/1+/1/d         THE MODEL ESTIMATION TERMINATED NORMALLY
+status        210  0/2+/1+/1/d        THE MODEL ESTIMATION TERMINATED NORMALLY
 message         2  0/0c/0c/m/d        regressed on covariates may not be included.  To include these,
                                       + request
 message        50  0/0c/1+/2b/d       RANDOM STARTS TO CHECK THAT THE BEST LOGLIKELIHOOD IS STILL OBTAINED
                                       + AND REPLICATED.
-message  ?      3  0/0c/1+/2b/d       optimizations.
+message         3  0/0c/1+/2b/d       optimizations.
 message         2  0/0c/1+/l/d        MODINDICES (ALL).
-message  ?      3  0/1/0c/2a/d        # perturbed starting value run(s) did not converge in the initial
+message         3  0/1/0c/2a/d        # perturbed starting value run(s) did not converge in the initial
                                       + stage
 message         2  0/1/0c/f/d         NOTE:  Modification indices for direct effects of observed dependent
                                       + variables
@@ -713,23 +717,21 @@ message         2  0/1/0i/2a/d        ** Of the # cells in the latent class indi
 message        34  0/1/0i/f/d         *  The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV
                                       + cannot be used
 message        14  0/1/0i/f/d         NOTE:  The sample statistics for within and between refer to the
-message  ?      1  0/1/1+/1/d         # perturbed starting value run(s) did not converge or were rejected
+message         1  0/1/1+/1/d         # perturbed starting value run(s) did not converge or were rejected
                                       + in the third stage.
 message         3  0/1/1+/1/d         ** Large values were truncated at #.
 message         8  0/1/1+/1/d         NOTE:  These are average results over # data sets.
 message         1  0/1/1+/1/d         No modification indices above the minimum value.
-message         1  0/1/1+/1/d         THE MODEL ESTIMATION TERMINATED NORMALLY
-message  ?     42  0/1/1+/1/d         The following plots are available:
-message  ?      2  0/2+/0c/2a/d       # perturbed starting value run(s) did not converge.
+message        42  0/1/1+/1/d         The following plots are available:
+message         2  0/2+/0c/2a/d       # perturbed starting value run(s) did not converge.
 message        50  0/2+/0c/2a/d       THE BEST LOGLIKELIHOOD VALUE HAS BEEN REPLICATED.  RERUN WITH AT
                                       + LEAST TWICE THE
 message       365  0/2+/1+/1/d        INPUT READING TERMINATED NORMALLY
-message       310  0/2+/1+/1/d        THE MODEL ESTIMATION TERMINATED NORMALLY
+message       100  0/2+/1+/1/d        THE MODEL ESTIMATION TERMINATED NORMALLY
 message         1  5/1/1+/1/d         * based on the first set of variables
-message  ?      1  5/2+/1+/1/d        Kolmogorov-Smirnov comparing posterior distributions across chains #
+message         1  5/2+/1+/1/d        Kolmogorov-Smirnov comparing posterior distributions across chains #
                                       + and # using # draws.
 label         126  0/1/0i/2a/d        Categorical latent variables
-label    ?      1  0/1/0i/2a/d        Chi-Square Test of Model Fit for the Binary and Ordered Categorical
 label         258  0/1/0i/2a/d        Continuous latent variables
 label          58  0/1/0i/2a/d        Input data file(s)
 label           5  0/1/0i/2a/d        New/Additional Parameters
@@ -949,7 +951,7 @@ plain           4  2/1/1+/1/d         Save file record length  #
 plain           1  2/1/1+/1/d         Save missing symbol  *
 plain           1  2/1/1+/1/d         Sum of indirect  #.#  #.#  #.#  #.#
 plain           1  2/1/1+/1/d         Sum of indirect  #.#  #.#  #.#  #.#  #.#  #.#  #.#
-plain    ?    143  2/1/1+/1/s         Error messages for each replication (if any)
+plain         143  2/1/1+/1/s         Error messages for each replication (if any)
 plain          10  2/1/1+/1/s         Overall test  #.#  #.#
 plain           3  4/1/1+/1/s         #  #.#
 plain           1  4/1/1+/1/s         U
