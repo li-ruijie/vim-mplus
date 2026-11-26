@@ -1,0 +1,7 @@
+! Random starts with one initial and three final EM iterations each.
+TITLE: noconv-starts
+DATA: FILE = lca.dat;
+VARIABLE: NAMES = u1-u6; CATEGORICAL = u1-u6;
+  CLASSES = c (3);
+ANALYSIS: TYPE = MIXTURE; STARTS = 10 3;
+  STITERATIONS = 1; MITERATIONS = 3;

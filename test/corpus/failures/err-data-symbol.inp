@@ -1,0 +1,5 @@
+! The data file holds a word where a number belongs.
+TITLE: err-data-symbol
+DATA: FILE = symbol.dat;
+VARIABLE: NAMES = y1-y3;
+MODEL: f BY y1-y3;

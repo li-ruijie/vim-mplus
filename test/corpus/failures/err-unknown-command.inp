@@ -1,0 +1,6 @@
+! DATA NOTES is no command of Mplus.
+TITLE: err-unknown-command
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+DATA NOTES: none;
+MODEL: f1 BY y1-y3; f2 BY y4-y6;

@@ -1,0 +1,11 @@
+! V is declared BETWEEN but varies within clusters.
+TITLE: err-between-varies
+DATA: FILE = twolevel.dat;
+VARIABLE: NAMES = y x w v clus;
+  USEVARIABLES = y x v; WITHIN = x; BETWEEN = v;
+  CLUSTER = clus;
+ANALYSIS: TYPE = TWOLEVEL;
+MODEL: %WITHIN%
+  y ON x;
+  %BETWEEN%
+  y ON v;

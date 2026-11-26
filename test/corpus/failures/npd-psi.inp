@@ -1,0 +1,5 @@
+! The correlations imply a correlation of 1.67 between the two factors.
+TITLE: npd-psi
+DATA: FILE = psi.dat; TYPE = CORRELATION; NOBSERVATIONS = 300;
+VARIABLE: NAMES = y1-y4;
+MODEL: f1 BY y1 y2; f2 BY y3 y4;

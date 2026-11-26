@@ -1,0 +1,9 @@
+! MODEL CONSTRAINT uses the label ZZ, which no parameter has.
+TITLE: err-constraint
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 x2;
+MODEL: y1 ON x1 (a);
+  y1 ON x2 (b);
+MODEL CONSTRAINT: NEW (d);
+  d = a - zz;

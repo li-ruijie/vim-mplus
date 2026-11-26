@@ -1,0 +1,7 @@
+! DEFINE uses Q, which is not among the variables.
+TITLE: err-define
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1 z;
+DEFINE: z = y1 + q;
+MODEL: y1 ON x1 z;

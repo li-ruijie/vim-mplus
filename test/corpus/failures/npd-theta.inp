@@ -1,0 +1,5 @@
+! The correlations imply a negative residual variance of Y1.
+TITLE: npd-theta
+DATA: FILE = theta.dat; TYPE = CORRELATION; NOBSERVATIONS = 300;
+VARIABLE: NAMES = y1-y3;
+MODEL: f BY y1-y3;

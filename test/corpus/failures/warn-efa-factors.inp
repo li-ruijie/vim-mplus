@@ -1,0 +1,6 @@
+! EFA asks for up to five factors of four variables.
+TITLE: warn-efa-factors
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1-y4;
+ANALYSIS: TYPE = EFA 1 5;

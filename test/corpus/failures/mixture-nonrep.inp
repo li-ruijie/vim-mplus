@@ -1,0 +1,6 @@
+! Four latent classes with four random starts and two final stages.
+TITLE: mixture-nonrep
+DATA: FILE = lca.dat;
+VARIABLE: NAMES = u1-u6; CATEGORICAL = u1-u6;
+  CLASSES = c (4);
+ANALYSIS: TYPE = MIXTURE; STARTS = 4 2;

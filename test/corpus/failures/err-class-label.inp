@@ -1,0 +1,9 @@
+! MODEL names class 3 of a latent class variable with two classes.
+TITLE: err-class-label
+DATA: FILE = lca.dat;
+VARIABLE: NAMES = u1-u6; CATEGORICAL = u1-u6;
+  CLASSES = c (2);
+ANALYSIS: TYPE = MIXTURE;
+MODEL: %OVERALL%
+  %c#3%
+  [u1$1];

@@ -1,0 +1,7 @@
+! WLSMV with one iteration at most, on items with empty cells.
+TITLE: noconv-wlsmv
+DATA: FILE = binary.dat;
+VARIABLE: NAMES = u1-u4 xb;
+  USEVARIABLES = u1-u3 xb; CATEGORICAL = u1-u3;
+ANALYSIS: ESTIMATOR = WLSMV; ITERATIONS = 1;
+MODEL: f BY u1-u3; f ON xb;

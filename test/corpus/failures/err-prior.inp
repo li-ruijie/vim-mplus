@@ -1,0 +1,8 @@
+! MODEL PRIORS names a distribution that Mplus does not know.
+TITLE: err-prior
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 x1;
+ANALYSIS: ESTIMATOR = BAYES;
+MODEL: y1 ON x1 (a);
+MODEL PRIORS: a ~ X(0, 1);

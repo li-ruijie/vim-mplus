@@ -1,0 +1,7 @@
+! MODEL INDIRECT asks for an effect through a path that the model lacks.
+TITLE: warn-indirect
+DATA: FILE = cont.dat;
+VARIABLE: NAMES = y1-y6 x1 x2;
+  USEVARIABLES = y1 y2 x1;
+MODEL: y1 ON x1; y2 ON x1;
+MODEL INDIRECT: y2 IND y1 x1;

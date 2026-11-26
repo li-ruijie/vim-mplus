@@ -1,0 +1,12 @@
+! A random slope model on three clusters.
+TITLE: twolevel-few-clusters
+DATA: FILE = twolevel.dat;
+VARIABLE: NAMES = y x w v clus;
+  USEVARIABLES = y x w; WITHIN = x; BETWEEN = w;
+  CLUSTER = clus; USEOBSERVATIONS = clus LE 3;
+ANALYSIS: TYPE = TWOLEVEL RANDOM;
+MODEL: %WITHIN%
+  s | y ON x;
+  %BETWEEN%
+  y s ON w;
+  y WITH s;
