@@ -24,13 +24,13 @@ banner        428  banner             MUTHEN & MUTHEN
 banner         95  banner             Mplus VERSION #
 banner        333  banner             Mplus VERSION #.#
 echohead      428  echo               INPUT INSTRUCTIONS
-echosect      321  echo               ANALYSIS:
+echosect      241  echo               ANALYSIS:
 echosect        3  echo               DATA IMPUTATION:
 echosect        3  echo               DATA MISSING:
 echosect        1  echo               DATA TWOPART:
 echosect        1  echo               DATA WIDETOLONG:
-echosect      224  echo               DATA:
-echosect       13  echo               DEFINE:
+echosect        5  echo               DATA:
+echosect        2  echo               DEFINE:
 echosect        2  echo               MODEL #:
 echosect       46  echo               MODEL C#:
 echosect        8  echo               MODEL C:
@@ -40,9 +40,9 @@ echosect       24  echo               MODEL CONSTRAINT:
 echosect        2  echo               MODEL CU:
 echosect        2  echo               MODEL CW:
 echosect        2  echo               MODEL CY:
-echosect        4  echo               MODEL DZ:
+echosect        2  echo               MODEL DZ:
 echosect        4  echo               MODEL FEMALE:
-echosect       17  echo               MODEL G#:
+echosect       16  echo               MODEL G#:
 echosect        2  echo               MODEL INDIRECT:
 echosect       10  echo               MODEL MISSING:
 echosect       16  echo               MODEL MONTECARLO:
@@ -57,13 +57,13 @@ echosect       14  echo               MODEL POPULATION-G#:
 echosect      188  echo               MODEL POPULATION:
 echosect        1  echo               MODEL PRIOR:
 echosect        7  echo               MODEL PRIORS:
-echosect      416  echo               MODEL:
+echosect      407  echo               MODEL:
 echosect      204  echo               MONTECARLO:
-echosect      336  echo               OUTPUT:
-echosect       42  echo               PLOT:
+echosect      298  echo               OUTPUT:
+echosect       39  echo               PLOT:
 echosect        6  echo               SAVEDATA:
-echosect      427  echo               TITLE:
-echosect      224  echo               VARIABLE:
+echosect      414  echo               TITLE:
+echosect      189  echo               VARIABLE:
 part            4  0/1/1+/1/d         QUALITY OF NUMERICAL RESULTS
 part           33  0/1/1+/1/d         RANDOM STARTS RESULTS RANKED FROM THE BEST TO THE WORST LOGLIKELIHOOD
                                       + VALUES

@@ -41,6 +41,7 @@ header is none:
 A fold of rank r runs from its header to the line above the next header of rank r or lower, and
 holds the folds of higher rank that start inside it. A table directly under a part is at level 2.
 The echoed input ends at its first line with text at column 0, and the folds open in it end there.
+A section of the echoed input that has only its header line starts no fold, and its header is echo.
 A sub-header at column 0 holds the lines below it up to the next line with text at column 0 that has
 an empty line above it and is no row of numbers. The footer ends every fold.
 
@@ -76,8 +77,10 @@ DECIMAL = re.compile(r"\d\.\d|(?<![\w.])\.\d")
 GAP = re.compile(r"\S {2,}\S")
 LOWER = re.compile(r"[a-z]")
 UPPER = re.compile(r"[A-Z]")
-TITLE_MARK = re.compile(r"^(?:INPUT READING TERMINATED NORMALLY|\s*\d+ WARNING\(S\) FOUND IN THE INPUT "
-                        r"INSTRUCTIONS)\s*$")
+# The line above the empty line that opens the printed title: the end of the reading of the input,
+# or the last of the lines that count the warnings and the errors in it.
+TITLE_MARK = re.compile(r"^(?:INPUT READING TERMINATED NORMALLY|\s*\d+ (?:WARNING|ERROR)\(S\) FOUND IN THE "
+                        r"INPUT INSTRUCTIONS)\s*$")
 
 # The start of a message. Mplus starts none of its headers with an article, a note, or an asterisk,
 # and the line that ends the reading of the input is no header either.
@@ -125,6 +128,9 @@ WARNING_OPENERS = [
 ]
 ERROR = re.compile(r"^\s*(?:" + "|".join(ERROR_OPENERS) + ")")
 WARNING = re.compile(r"^\s*(?:" + "|".join(WARNING_OPENERS) + ")")
+# Mplus writes the messages about the input one below the other with no empty line between, each
+# marked with ***, and the lines that count them below the last. Each starts a message of its own.
+NEXT = re.compile(r"^\s*(?:\*\*\* |\d+ (?:ERROR|WARNING)\(S\) FOUND IN THE INPUT INSTRUCTIONS)")
 
 # The lines that open the status block (see above).
 STATUS = re.compile(r"^THE MODEL ESTIMATION TERMINATED NORMALLY\s*$")
@@ -219,6 +225,7 @@ def classify(texts):
         if not lines[i].blank:
             lines[i].kind = "banner"
     echo_end = 0
+    single = set()
     if head is not None:
         lines[head].kind = "echohead"
         echo_end = next((i for i in range(head + 1, n) if not lines[i].blank and not lines[i].indent), n)
@@ -238,6 +245,12 @@ def classify(texts):
                     comment = True
             elif "*!" in line.text:
                 comment = False
+        # A section of a single line starts no fold, since a fold of syntax spans two lines or more.
+        # Its header is then a line of the section above it, which ends there.
+        for i in range(head + 1, echo_end):
+            if lines[i].kind == "echosect" and (i + 1 == echo_end or lines[i + 1].kind == "echosect"):
+                lines[i].kind = "echo"
+                single.add(i)
     # The footer starts at the last MUTHEN & MUTHEN with an empty line above, or at the line Mplus
     # VERSION that Mplus on Linux writes above it, with only empty lines between.
     foot = n
@@ -256,8 +269,9 @@ def classify(texts):
 
     # The printed title, as mplusTitle in syntax/mplus-out.vim reads it.
     title = set()
-    mark = next((i for i in range(echo_end, foot) if TITLE_MARK.match(lines[i].text)), None)
-    if mark is not None and mark + 1 < foot and lines[mark + 1].blank:
+    mark = next((i for i in range(echo_end, foot - 1)
+                 if TITLE_MARK.match(lines[i].text) and lines[i + 1].blank), None)
+    if mark is not None:
         i = mark + 1
         while i < foot:
             text = lines[i].text
@@ -282,7 +296,7 @@ def classify(texts):
     for lo, hi in _paragraphs(lines, body, inside):
         _problem(lines, lo, hi)
         _plain(lines, lo, hi)
-    _levels(lines, echo_end if head is not None else None, foot, block)
+    _levels(lines, echo_end if head is not None else None, foot, block, single)
     return lines
 
 
@@ -390,13 +404,15 @@ def _header(lines, i):
 
 
 def _problem(lines, lo, hi):
-    """A warning or an error runs from its first line to the end of its paragraph."""
+    """A warning or an error runs from its first line to the end of its paragraph, or to the line
+    above the next message of the other kind that Mplus marks with *** or counts."""
+    kind = ""
     for k in range(lo, hi):
-        kind = "error" if ERROR.match(lines[k].text) else "warning" if WARNING.match(lines[k].text) else ""
+        text = lines[k].text
+        if not kind or NEXT.match(text):
+            kind = "error" if ERROR.match(text) else "warning" if WARNING.match(text) else kind
         if kind:
-            for j in range(k, hi):
-                lines[j].kind = kind
-            return
+            lines[k].kind = kind
 
 
 def _plain(lines, lo, hi):
@@ -429,13 +445,15 @@ def _plain(lines, lo, hi):
             line.kind = "colhead"
 
 
-def _levels(lines, echo_end, foot, block):
+def _levels(lines, echo_end, foot, block, single):
     stack = []   # the open folds, as [rank, whether it is a sub-header at column 0]
     for i, line in enumerate(lines):
         if i == echo_end or i == foot or i in block:
             stack = []
             if i in block:
                 continue
+        if i in single:
+            del stack[1:]
         rank = RANK.get(line.kind)
         if rank is None and not line.blank and not line.indent and line.up \
                 and line.kind not in ("sub2", "part2") and not is_row(line.text):
