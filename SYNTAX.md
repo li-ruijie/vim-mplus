@@ -195,44 +195,50 @@ highlighted as mplusSection in the base file.
 ### Output Options
 
 ```
-┌───────────────┬─────────────────────────────────┐
-│ Keyword       │ Description                     │
-├───────────────┼─────────────────────────────────┤
-│ MODINDICES    │ Modification indices            │
-│ RESIDUAL      │ Residual output                 │
-│ SAMPSTAT      │ Sample statistics               │
-│ STANDARDIZED  │ Standardized solution           │
-│ STD           │ Unstandardized std solution     │
-│ STDYX         │ StdYX standardized solution     │
-│ STDY          │ StdY standardized solution      │
-│ CINTERVAL     │ Confidence intervals            │
-│ SVALUES       │ Starting values in output       │
-│ NOCHISQUARE   │ Suppress chi-square test        │
-│ NOSERROR      │ Suppress standard errors        │
-│ H1SE          │ H1 model standard errors        │
-│ H1TECH3       │ H1 model TECH3 output           │
-│ H1MODEL       │ H1 model estimation             │
-│ CROSSTABS     │ Cross-tabulations               │
-│ FSCOEFFICIENT │ Factor score coefficients       │
-│ FSDETERMINACY │ Factor score determinacy        │
-│ FSCOMPARISON  │ Factor score comparison         │
-│ LOGRANK       │ Log-rank test                   │
-│ ALIGNMENT     │ Alignment optimization          │
-│ ENTROPY       │ Entropy statistic               │
-│ PATTERNS      │ Missing data patterns           │
-│ PAIRS         │ Pairwise output                 │
-│ CONSTRAINT    │ MODEL CONSTRAINT sub-section    │
-│ INDIRECT      │ MODEL INDIRECT sub-section      │
-│ POPULATION    │ MODEL POPULATION sub-section    │
-│ PRIORS        │ MODEL PRIORS sub-section        │
-│ COVERAGE      │ MODEL COVERAGE sub-section      │
-│ TEST          │ MODEL TEST sub-section          │
-│ TECH1–TECH16  │ Technical outputs 1 through 16  │
-│ SYMMETRIC     │ Symmetric confidence interval   │
-│ BCBOOTSTRAP   │ Bias-corrected bootstrap CI     │
-│ EQTAIL        │ Equal-tail credibility interval │
-│ HPD           │ Highest posterior density CI    │
-└───────────────┴─────────────────────────────────┘
+┌────────────────┬─────────────────────────────────┐
+│ Keyword        │ Description                     │
+├────────────────┼─────────────────────────────────┤
+│ MODINDICES     │ Modification indices            │
+│ RESIDUAL       │ Residual output                 │
+│ SAMPSTAT       │ Sample statistics               │
+│ STANDARDIZED   │ Standardized solution           │
+│ STD            │ Unstandardized std solution     │
+│ STDYX          │ StdYX standardized solution     │
+│ STDY           │ StdY standardized solution      │
+│ CINTERVAL      │ Confidence intervals            │
+│ SVALUES        │ Starting values in output       │
+│ NOCHISQUARE    │ Suppress chi-square test        │
+│ NOSERROR       │ Suppress standard errors        │
+│ H1SE           │ H1 model standard errors        │
+│ H1TECH3        │ H1 model TECH3 output           │
+│ H1MODEL        │ H1 model estimation             │
+│ CROSSTABS      │ Cross-tabulations               │
+│ FSCOEFFICIENT  │ Factor score coefficients       │
+│ FSDETERMINACY  │ Factor score determinacy        │
+│ FSCOMPARISON   │ Factor score comparison         │
+│ LOGRANK        │ Log-rank test                   │
+│ ALIGNMENT      │ Alignment optimization          │
+│ ENTROPY        │ Entropy statistic               │
+│ PATTERNS       │ Missing data patterns           │
+│ SERROR         │ Standard errors (EFA with ULS)  │
+│ KOLMOGOROV     │ Kolmogorov-Smirnov test (Bayes) │
+│ ODDSRATIO      │ Taken by 9.1.1, not in guide    │
+│ DELETEDRECORDS │ Taken by 9.1.1, not in guide    │
+│ FULLOUTPUT     │ Taken by 9.1.1, not in guide    │
+│ NOCFI          │ Taken by 9.1.1, not in guide    │
+│ NOSVALUES      │ Taken by 9.1.1, not in guide    │
+│ CONSTRAINT     │ MODEL CONSTRAINT sub-section    │
+│ INDIRECT       │ MODEL INDIRECT sub-section      │
+│ POPULATION     │ MODEL POPULATION sub-section    │
+│ PRIORS         │ MODEL PRIORS sub-section        │
+│ COVERAGE       │ MODEL COVERAGE sub-section      │
+│ TEST           │ MODEL TEST sub-section          │
+│ TECH1–TECH16   │ Technical outputs 1 through 16  │
+│ SYMMETRIC      │ Symmetric confidence interval   │
+│ BCBOOTSTRAP    │ Bias-corrected bootstrap CI     │
+│ EQTAIL         │ Equal-tail credibility interval │
+│ HPD            │ Highest posterior density CI    │
+└────────────────┴─────────────────────────────────┘
 ```
 
 ## Command Keywords by Section (mplusCommand)

@@ -81,7 +81,11 @@ syn keyword mplusStatement TECH9 TECH10 TECH11 TECH12 TECH13 TECH14 TECH15 TECH1
 syn keyword mplusStatement STDY CINTERVAL SVALUES NOCHISQUARE NOSERROR H1SE
 syn keyword mplusStatement H1TECH3 H1MODEL CROSSTABS FSCOEFFICIENT FSDETERMINACY
 syn keyword mplusStatement FSCOMPARISON LOGRANK ALIGNMENT ENTROPY
-syn keyword mplusStatement PATTERNS PAIRS
+syn keyword mplusStatement PATTERNS
+"" Taken by Mplus 9.1.1, though the user's guide does not list them. Mplus has
+"" no PAIRS option. KOLMOGOROV is an ANALYSIS option as well, below.
+syn keyword mplusStatement ODDSRATIO DELETEDRECORDS FULLOUTPUT SERROR NOCFI
+syn keyword mplusStatement NOSVALUES
 "" Model sub-sections
 syn keyword mplusStatement CONSTRAINT INDIRECT POPULATION PRIORS COVERAGE TEST
 
@@ -204,7 +208,6 @@ syn keyword mplusStatement LOGRANK LOGR LOGRA LOGRAN
 syn keyword mplusStatement MODINDICES MODI MODIN MODIND MODINDI MODINDIC MODINDICE
 syn keyword mplusStatement NOCHISQUARE NOCH NOCHI NOCHIS NOCHISQ NOCHISQU NOCHISQUA NOCHISQUAR
 syn keyword mplusStatement NOSERROR NOSE NOSER NOSERR NOSERRO
-syn keyword mplusStatement PAIRS PAIR
 syn keyword mplusStatement PATTERNS PATT PATTE PATTER PATTERN
 syn keyword mplusStatement POPULATION POPU POPUL POPULA POPULAT POPULATI POPULATIO
 syn keyword mplusStatement PRIORS PRIO PRIOR
