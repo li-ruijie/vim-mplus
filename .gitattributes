@@ -1,3 +1,9 @@
 # Shell scripts keep LF line endings in every clone, whatever core.autocrlf
 # says there, since bash does not run a script that has CRLF endings.
 *.sh text eol=lf
+
+# Files that Vim reads keep LF endings in every clone. Vim on Linux does not detect
+# CRLF in a sourced script, so each line would end in a stray carriage return.
+*.vim text eol=lf
+doc/*.txt text eol=lf
+*.snippets text eol=lf
